@@ -1,51 +1,52 @@
 [
   {
+    "_id": "628b10786868509e83b1350c",
     "email": "abc@test.com",
     "fullName": "설재혁",
-  ​    "password": "$2b$10$RJOD8BpH.UMI/Rnld.Vlm.ZJZsMJwBDjEr4r5CNbk3irKQnIkpoTe",
-  ​    "role": "basic-user",
-  ​    "createdAt": "2022-05-23T04:41:28.372Z",
-  ​    "updatedAt": "2022-05-23T04:41:28.372Z",
-  ​    "__v": 0
+    "password": "$2b$10$RJOD8BpH.UMI/Rnld.Vlm.ZJZsMJwBDjEr4r5CNbk3irKQnIkpoTe",
+    "role": "basic-user",
+    "createdAt": "2022-05-23T04:41:28.372Z",
+    "updatedAt": "2022-05-23T04:41:28.372Z",
+    "__v": 0
   },
   {
-  ​    "_id": "628b2221fa45a2c6ef0569fd",
-  ​    "email": "chss3339@gmail.com",
-  ​    "fullName": "신윤수",
-  ​    "password": "$2b$10$UyzxjDZZ34wl13BCw1uipe2AVGSJn7p18bsuX1VMDMyaY6lV/b4jG",
-  ​    "role": "basic-user",
-  ​    "createdAt": "2022-05-23T05:56:49.878Z",
-  ​    "updatedAt": "2022-05-23T05:56:49.878Z",
-  ​    "__v": 0
+    "_id": "628b2221fa45a2c6ef0569fd",
+    "email": "chss3339@gmail.com",
+    "fullName": "신윤수",
+    "password": "$2b$10$UyzxjDZZ34wl13BCw1uipe2AVGSJn7p18bsuX1VMDMyaY6lV/b4jG",
+    "role": "basic-user",
+    "createdAt": "2022-05-23T05:56:49.878Z",
+    "updatedAt": "2022-05-23T05:56:49.878Z",
+    "__v": 0
   },
   {
-  ​    "_id": "628c71b2876ec234789cc78a",
-  ​    "email": "test@test.com",
-  ​    "fullName": "유재석",
-  ​    "password": "$2b$10$Af8UqinQr34KUhlYOgP6aOXnQfMY8.aVqSe2rhHTIzIqriyOy0tvC",
-  ​    "role": "basic-user",
-  ​    "createdAt": "2022-05-24T05:48:34.480Z",
-  ​    "updatedAt": "2022-05-24T05:48:34.480Z",
-  ​    "__v": 0
+    "_id": "628c71b2876ec234789cc78a",
+    "email": "test@test.com",
+    "fullName": "유재석",
+    "password": "$2b$10$Af8UqinQr34KUhlYOgP6aOXnQfMY8.aVqSe2rhHTIzIqriyOy0tvC",
+    "role": "basic-user",
+    "createdAt": "2022-05-24T05:48:34.480Z",
+    "updatedAt": "2022-05-24T05:48:34.480Z",
+    "__v": 0
   },
   {
-  ​    "_id": "628c7202bc555b23e33f7841",
-  ​    "email": "test1@test.com",
-  ​    "fullName": "설재혁",
-  ​    "password": "$2b$10$XIb.xg1iIWsWENoprmJcLuhDXS5j56Sv4Nn3iVe44IYWmf7X2WuDG",
-  ​    "role": "basic-user",
-  ​    "createdAt": "2022-05-24T05:49:54.190Z",
-  ​    "updatedAt": "2022-05-24T05:49:54.190Z",
-  ​    "__v": 0
+    "_id": "628c7202bc555b23e33f7841",
+    "email": "test1@test.com",
+    "fullName": "설재혁",
+    "password": "$2b$10$XIb.xg1iIWsWENoprmJcLuhDXS5j56Sv4Nn3iVe44IYWmf7X2WuDG",
+    "role": "basic-user",
+    "createdAt": "2022-05-24T05:49:54.190Z",
+    "updatedAt": "2022-05-24T05:49:54.190Z",
+    "__v": 0
   },
   {
-  ​    "_id": "628c7202bc555b23e33f7841",
-  ​    "email": "test1@test.com",
-  ​    "fullName": "설재혁",
-  ​    "password": "$2b$10$XIb.xg1iIWsWENoprmJcLuhDXS5j56Sv4Nn3iVe44IYWmf7X2WuDG",
-  ​    "role": "admin-user",
-  ​    "createdAt": "2022-05-24T05:49:54.190Z",
-  ​    "updatedAt": "2022-05-24T05:49:54.190Z",
-  ​    "__v": 0
+    "_id": "628c7202bc555b23e33f7841",
+    "email": "test1@test.com",
+    "fullName": "설재혁",
+    "password": "$2b$10$XIb.xg1iIWsWENoprmJcLuhDXS5j56Sv4Nn3iVe44IYWmf7X2WuDG",
+    "role": "admin-user",
+    "createdAt": "2022-05-24T05:49:54.190Z",
+    "updatedAt": "2022-05-24T05:49:54.190Z",
+    "__v": 0
   }
 ]
