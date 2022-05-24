@@ -128,6 +128,14 @@ class UserService {
 
     return user;
   }
+
+  async deleteUser(userInfoRequired) {
+    const { userId, currentPassword } = userInfoRequired;
+    console.log('user-service', userId);
+    // 우선 해당 id의 유저가 db에 있는지 확인
+    let user = await this.userModel.deleteById({userId});
+    return user;
+  }
 }
 
 const userService = new UserService(userModel);

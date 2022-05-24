@@ -53,7 +53,6 @@ userRouter.post('/login', async function (req, res, next) {
 
     // 로그인 진행 (로그인 성공 시 jwt 토큰을 프론트에 보내 줌)
     const userToken = await userService.getUserToken({ email, password });
-
     // jwt 토큰을 프론트에 보냄 (jwt 토큰은, 문자열임)
     res.status(200).json(userToken);
   } catch (error) {
@@ -63,7 +62,7 @@ userRouter.post('/login', async function (req, res, next) {
 
 // 로그아웃 api
 userRouter.post('/logout', loginRequired, async(req, res, next) => {
-  console.log(req.currentUserId);
+  console.log(res.cookie);
   console.log('오');
   res.clearCookie('user');
   res.redirect('/');
@@ -75,7 +74,6 @@ userRouter.get('/userlist', async function (req, res, next) {
   try {
     // 전체 사용자 목록을 얻음
     const users = await userService.getUsers();
-
     // 사용자 목록(배열)을 JSON 형태로 프론트에 보냄
     res.status(200).json(users);
   } catch (error) {
@@ -136,6 +134,41 @@ userRouter.patch(
 
       // 업데이트 이후의 유저 데이터를 프론트에 보내 줌
       res.status(200).json(updatedUserInfo);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+userRouter.delete(
+  '/users/:userId',
+  loginRequired,
+  async function (req, res, next) {
+    try {
+      // content-type 을 application/json 로 프론트에서
+      // 설정 안 하고 요청하면, body가 비어 있게 됨.
+      if (is.emptyObject(req.body)) {
+        throw new Error(
+          'headers의 Content-Type을 application/json으로 설정해주세요'
+        );
+      }
+      const userId = req.params.userId;
+      console.log(userId);
+      // body data로부터, 확인용으로 사용할 현재 비밀번호를 추출함.
+      const currentPassword = req.body.currentPassword;
+
+      // currentPassword 없을 시, 진행 불가
+      if (!currentPassword) {
+        throw new Error('회원 탈퇴를 위해, 비밀번호를 입력해주세요.');
+      }
+      const userInfoRequired = { userId, currentPassword };
+      // 사용자 정보를 업데이트함.
+      const deleteUserInfo = await userService.deleteUser(
+        userInfoRequired
+      );
+        console.log("삭제 완료");
+      // 업데이트 이후의 유저 데이터를 프론트에 보내 줌
+      res.status(200).json(deleteUserInfo);
     } catch (error) {
       next(error);
     }
