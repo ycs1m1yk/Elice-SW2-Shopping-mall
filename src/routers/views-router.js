@@ -11,8 +11,15 @@ viewsRouter.use("/register", serveStatic("register"));
 viewsRouter.use("/login", serveStatic("login"));
 viewsRouter.use("/account", serveStatic("account"));
 viewsRouter.use("/account/orders", serveStatic("account/orders", "orders"));
-viewsRouter.use("/account/security", serveStatic("account/security", "security"));
+viewsRouter.use(
+  "/account/security",
+  serveStatic("account/security", "security")
+);
 viewsRouter.use("/product/add", serveStatic("product/add", "product-add"));
+viewsRouter.use(
+  "/account/security",
+  serveStatic("account/security", "security")
+);
 
 // views 폴더의 최상단 파일인 rabbit.png, api.js 등을 쓸 수 있게 함
 viewsRouter.use("/", serveStatic(""));
@@ -26,6 +33,5 @@ function serveStatic(resource, fileName = resource) {
   // express.static 은 express 가 기본으로 제공하는 함수임
   return express.static(resourcePath, option);
 }
-
 
 export { viewsRouter };

@@ -14,13 +14,13 @@ export const validateEmail = (email) => {
 
 // 숫자에 쉼표를 추가함. (10000 -> 10,000)
 export const addCommas = (n) => {
-  return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
 // 13,000원, 2개 등의 문자열에서 쉼표, 글자 등 제외 후 숫자만 뺴냄
 // 예시: 13,000원 -> 13000, 20,000개 -> 20000
 export const convertToNumber = (string) => {
-  return parseInt(string.replace(/(,|개|원)/g, ''));
+  return parseInt(string.replace(/(,|개|원)/g, ""));
 };
 
 // ms만큼 기다리게 함.
@@ -29,11 +29,16 @@ export const wait = (ms) => {
 };
 
 export const decodeJWT = (token) => {
-  const base64Url = token.split('.')[1];
-  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-  const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-  }).join(''));
+  const base64Url = token.split(".")[1];
+  const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+  const jsonPayload = decodeURIComponent(
+    atob(base64)
+      .split("")
+      .map(function (c) {
+        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+      })
+      .join("")
+  );
 
   return JSON.parse(jsonPayload);
-}
+};
