@@ -87,6 +87,40 @@ class UserService {
     // 객체 destructuring
     const { userId, currentPassword } = userInfoRequired;
 
+    // 기본 코드 수정. 유저 정보 존재 확인 및 비밀번호 검증 메소드
+    await this.userVerify(userId, currentPassword);
+
+    // 이제 드디어 업데이트 시작
+
+    // 비밀번호도 변경하는 경우에는, 회원가입 때처럼 해쉬화 해주어야 함.
+    const { password } = toUpdate;
+
+    if (password) {
+      const newPasswordHash = await bcrypt.hash(password, 10);
+      toUpdate.password = newPasswordHash;
+    }
+
+    // 업데이트 진행
+    let user = await this.userModel.update({
+      userId,
+      update: toUpdate,
+    });
+
+    return user;
+  }
+
+  async deleteUser(userInfoRequired) {
+    const { userId, currentPassword } = userInfoRequired;
+    console.log("user-service", userId);
+
+    // 기본 코드 수정. 유저 정보 존재 확인 및 비밀번호 검증 메소드
+    await this.userVerify(userId, currentPassword);
+
+    let user = await this.userModel.deleteById({ userId });
+    return user;
+  }
+
+  async userVerify(userId, currentPassword) {
     // 우선 해당 id의 유저가 db에 있는지 확인
     let user = await this.userModel.findById(userId);
 
@@ -109,32 +143,6 @@ class UserService {
         "현재 비밀번호가 일치하지 않습니다. 다시 한 번 확인해 주세요."
       );
     }
-
-    // 이제 드디어 업데이트 시작
-
-    // 비밀번호도 변경하는 경우에는, 회원가입 때처럼 해쉬화 해주어야 함.
-    const { password } = toUpdate;
-
-    if (password) {
-      const newPasswordHash = await bcrypt.hash(password, 10);
-      toUpdate.password = newPasswordHash;
-    }
-
-    // 업데이트 진행
-    user = await this.userModel.update({
-      userId,
-      update: toUpdate,
-    });
-
-    return user;
-  }
-
-  async deleteUser(userInfoRequired) {
-    const { userId, currentPassword } = userInfoRequired;
-    console.log("user-service", userId);
-    // 우선 해당 id의 유저가 db에 있는지 확인
-    let user = await this.userModel.deleteById({ userId });
-    return user;
   }
 }
 
