@@ -1,7 +1,7 @@
-import { model } from 'mongoose';
-import { ProductSchema } from '../schemas/product-schema';
+import { model } from "mongoose";
+import { ProductSchema } from "../schemas/product-schema";
 
-const Product = model('product', ProductSchema);
+const Product = model("product", ProductSchema);
 
 export class ProductModel {
   async findByProductName(name) {

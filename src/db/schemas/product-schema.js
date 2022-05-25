@@ -1,10 +1,10 @@
-import { Schema } from 'mongoose';
+import { Schema } from "mongoose";
 
 const ProductSchema = new Schema(
   {
     productId: {
-       type: Number,
-       required: true, 
+      type: Number,
+      required: true,
     },
     name: {
       type: String,
@@ -23,32 +23,28 @@ const ProductSchema = new Schema(
       required: false,
       default: 0,
     },
-    img: {
-
-    },
+    img: {},
     size: {
-        type: Number,
-        required: false,
-        default: 0,
+      type: Number,
+      required: false,
+      default: 0,
     },
     brandName: {
-        type: String,
-        required: false,
-        default: "",
+      type: String,
+      required: false,
+      default: "",
     },
     keyword: {
-        type: String,
-        required: false, 
+      type: String,
+      required: false,
     },
     decription: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
-    
-
-    },
-    {
-    collection: 'users',
+  },
+  {
+    collection: "users",
     timestamps: true,
   }
 );
