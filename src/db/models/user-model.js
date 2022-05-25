@@ -1,7 +1,7 @@
-import { model } from 'mongoose';
-import { UserSchema } from '../schemas/user-schema';
+import { model } from "mongoose";
+import { UserSchema } from "../schemas/user-schema";
 
-const User = model('users', UserSchema);
+const User = model("users", UserSchema);
 
 export class UserModel {
   async findByEmail(email) {
@@ -32,9 +32,9 @@ export class UserModel {
     return updatedUser;
   }
 
-  async deleteById({userId}) {
-    const filter = {_id: userId};
-    const user = await User.findOne({filter});
+  async deleteById({ userId }) {
+    const filter = { _id: userId };
+    const user = await User.findOne({ filter });
     const deleteUser = await User.findOneAndDelete(filter);
     return deleteUser;
   }
