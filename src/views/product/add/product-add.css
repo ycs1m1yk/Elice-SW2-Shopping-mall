@@ -1,0 +1,27 @@
+.account-header {
+  border-bottom: 1px solid #ddd;
+  display: block;
+  padding-bottom: .7rem
+}
+
+.register-product-form-container {
+  display: flex;
+  justify-content: center
+}
+
+.register-product-form-box {
+  width: 40rem
+}
+
+.register-product-form-box .title {
+  text-align: center
+}
+
+.register-product-form-box .button {
+  font-weight: 700
+}
+
+.register-product-form-box .input:focus,.register-product-form-box .textarea:focus,.register-product-form-box select:focus {
+  border-color: #00d1b2;
+  box-shadow: 0 0 0 .125em rgba(0,209,178,.25)
+}
