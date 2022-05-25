@@ -1,10 +1,10 @@
-import { Schema } from 'mongoose';
+import { Schema } from "mongoose";
 
 const CartSchema = new Schema(
   {
     productId: {
-       type: [Number],
-       required: true, 
+      type: [Number],
+      required: true,
     },
     name: {
       type: [String],
@@ -19,39 +19,37 @@ const CartSchema = new Schema(
       required: false,
       default: 0,
     },
-    img: {
-
-    },
+    img: {},
     size: {
-        type: [Number],
-        required: false,
-        default: 0,
+      type: [Number],
+      required: false,
+      default: 0,
     },
     brandName: {
-        type: [String],
-        required: false,
-        default: "",
+      type: [String],
+      required: false,
+      default: "",
     },
     customerEmail: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     customerAddress: {
-        type: new Schema(
-          {
-            postalCode: String,
-            address1: String,
-            address2: String,
-          },
-          {
-            _id: false,
-          }
-        ),
-        required: false,
+      type: new Schema(
+        {
+          postalCode: String,
+          address1: String,
+          address2: String,
+        },
+        {
+          _id: false,
+        }
+      ),
+      required: false,
     },
   },
   {
-    collection: 'users',
+    collection: "users",
     timestamps: true,
   }
 );

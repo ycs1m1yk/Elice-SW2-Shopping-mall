@@ -10,15 +10,21 @@ viewsRouter.use("/", serveStatic("home"));
 viewsRouter.use("/register", serveStatic("register"));
 viewsRouter.use("/login", serveStatic("login"));
 viewsRouter.use("/account", serveStatic("account"));
+viewsRouter.use("/account/orders", serveStatic("account/orders", "orders"));
+viewsRouter.use(
+  "/account/security",
+  serveStatic("account/security", "security")
+);
+viewsRouter.use("/product/add", serveStatic("product/add", "product-add"));
 
 // views 폴더의 최상단 파일인 rabbit.png, api.js 등을 쓸 수 있게 함
 viewsRouter.use("/", serveStatic(""));
 
 // views폴더 내의 ${resource} 폴더 내의 모든 파일을 웹에 띄우며,
 // 이 때 ${resource}.html 을 기본 파일로 설정함.
-function serveStatic(resource) {
+function serveStatic(resource, fileName = resource) {
   const resourcePath = path.join(__dirname, `../views/${resource}`);
-  const option = { index: `${resource}.html` };
+  const option = { index: `${fileName}.html` };
 
   // express.static 은 express 가 기본으로 제공하는 함수임
   return express.static(resourcePath, option);
