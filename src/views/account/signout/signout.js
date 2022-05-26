@@ -1,4 +1,7 @@
-import { decodeJWT } from "/useful-functions.js";
+import { decodeJWT, removeToken } from "/useful-functions.js";
+import header from "/components/Header.js";
+
+document.body.insertAdjacentElement("afterbegin", header);
 
 const submitButton = document.getElementById("submitButton");
 const modalBox = document.getElementById("modal");
@@ -35,7 +38,7 @@ const handleModalButtonClick = async (e) => {
     if (res.ok) {
       alert("회원 탈퇴가 정상적으로 이루어졌습니다.");
       window.location.href = "/";
-      localStorage.removeItem("token");
+      removeToken();
       return;
     }
 

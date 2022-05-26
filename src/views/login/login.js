@@ -1,5 +1,8 @@
 import * as Api from "/api.js";
 import { validateEmail } from "/useful-functions.js";
+import header from "/components/Header.js";
+
+document.body.insertAdjacentElement("afterbegin", header);
 
 // 요소(element), input 혹은 상수
 const emailInput = document.querySelector("#emailInput");
