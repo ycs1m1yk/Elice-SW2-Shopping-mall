@@ -13,6 +13,7 @@ const handleSubmitButtonClick = (e) => {
 };
 
 const handleModalButtonClick = async (e) => {
+  e.preventDefault();
   const token = localStorage.getItem("token");
   const payload = decodeJWT(token);
   const userId = payload.userId;
@@ -29,13 +30,18 @@ const handleModalButtonClick = async (e) => {
     body: JSON.stringify({
       currentPassword: password,
     }),
-  }).then((response) => {
-    console.log(response);
-    if (!response.ok) {
-      throw new Error("네트워크 응답이 올바르지 않습니다.");
+  }).then((res) => {
+    // 삭제 완료
+    if (res.ok) {
+      alert("회원 탈퇴가 정상적으로 이루어졌습니다.");
+      window.location.href = "/";
+      localStorage.removeItem("token");
+      return;
     }
-    localStorage.removeItem("token");
-    window.location.href = "/";
+
+    // 삭제가 안됐을 시 다시 입력할 수 있게끔
+    alert("비밀번호를 다시 입력해주세요.");
+    window.location.href = "/account/signout";
   });
 };
 
