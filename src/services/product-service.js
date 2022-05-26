@@ -57,6 +57,11 @@ class ProductService {
     const products = await this.productModel.findByCategory(category);
     return products;
   }
+  //상품 상세 조회
+  async getProductById(productId) {
+    const product = await this.productModel.findById(productId);
+    return product;
+  }
 
   // 상품정보 수정(미완성), 현재 비밀번호가 있어야 수정 가능함.
   // async setProduct(userInfoRequired, toUpdate) {

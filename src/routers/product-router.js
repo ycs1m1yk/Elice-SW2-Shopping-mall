@@ -18,7 +18,20 @@ productRouter.get("/list", async function (req, res, next) {
   }
 });
 
-//
+//상품 상세 페이지
+productRouter.get("/:id", async function(req, res, next) {
+  try {
+    const productId = req.params.id;
+    const productInfo = await productService.getProductById(productId);
+    // 상품 스키마를 JSON 형태로 프론트에 보냄
+    res.status(200).json(productInfo);
+  } catch(error) {
+    next(error);
+  }
+});
+
+
+
 // 상품 업로드 api
 productRouter.post(
   "/add",
@@ -80,3 +93,5 @@ productRouter.get("/list/category/:category", async (req, res, next) => {
     next(error);
   }
 });
+
+
