@@ -87,12 +87,12 @@ const handlePrevButtonClick = () => {
 const handlePlayButtonClick = () => {
   playId = setInterval(nextEvent, 3000);
   playBtn.style.display = "none";
-  pauseBtn.style.display = "block";
+  pauseBtn.style.display = "inline-block";
 };
 const handlePauseButtonClick = () => {
   clearInterval(playId);
   pauseBtn.style.display = "none";
-  playBtn.style.display = "block";
+  playBtn.style.display = "inline-block";
 };
 
 // Slide 이미지 클릭했을 때 해당 카테고리로 이동
