@@ -2,10 +2,6 @@ import { Schema } from "mongoose";
 
 const ProductSchema = new Schema(
   {
-    productId: {
-      type: Number,
-      required: true,
-    },
     name: {
       type: String,
       required: true,
@@ -23,7 +19,10 @@ const ProductSchema = new Schema(
       required: false,
       default: 0,
     },
-    img: {},
+    img: {
+      type: String,
+      required: true,
+    },
     size: {
       type: Number,
       required: false,
@@ -32,19 +31,23 @@ const ProductSchema = new Schema(
     brandName: {
       type: String,
       required: false,
-      default: "",
+      default: null,
     },
     keyword: {
-      type: String,
+      type: [String],
       required: false,
     },
-    decription: {
+    shortdecription: {
+      type: String,
+      required: true,
+    },
+    detaildecription: {
       type: String,
       required: true,
     },
   },
   {
-    collection: "users",
+    collection: "products",
     timestamps: true,
   }
 );

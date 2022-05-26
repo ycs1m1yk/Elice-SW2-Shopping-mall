@@ -29,6 +29,7 @@ export const wait = (ms) => {
 };
 
 export const decodeJWT = (token) => {
+  if (!token) return;
   const base64Url = token.split(".")[1];
   const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
   const jsonPayload = decodeURIComponent(
@@ -41,4 +42,14 @@ export const decodeJWT = (token) => {
   );
 
   return JSON.parse(jsonPayload);
+};
+
+// Local Storage 내의 JWT 토큰 얻어오기
+export const getToken = () => {
+  return localStorage.getItem("token");
+};
+
+// Local Storage 내의 JWT 토큰 삭제
+export const removeToken = () => {
+  localStorage.removeItem("token");
 };
