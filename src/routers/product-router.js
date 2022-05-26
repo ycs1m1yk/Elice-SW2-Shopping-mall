@@ -80,3 +80,5 @@ productRouter.get("/list/category/:category", async (req, res, next) => {
     next(error);
   }
 });
+
+export { productRouter };
