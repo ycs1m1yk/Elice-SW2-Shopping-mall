@@ -61,12 +61,10 @@ userRouter.post("/login", async function (req, res, next) {
 });
 
 // 로그아웃 api
-userRouter.post("/logout", loginRequired, async (req, res, next) => {
-  console.log(res.cookie);
-  console.log("오");
-  res.clearCookie("user");
-  res.redirect("/");
-});
+// userRouter.post("/logout", loginRequired, async (req, res, next) => {
+//   localStorage.removeItem("token");
+//   res.redirect("/");
+// });
 
 // 전체 유저 목록을 가져옴 (배열 형태임)
 // 미들웨어로 loginRequired 를 썼음 (이로써, jwt 토큰이 없으면 사용 불가한 라우팅이 됨)
@@ -142,7 +140,7 @@ userRouter.patch(
 
 userRouter.delete(
   "/users/:userId",
-  loginRequired,
+
   async function (req, res, next) {
     try {
       // content-type 을 application/json 로 프론트에서
@@ -164,6 +162,7 @@ userRouter.delete(
       const userInfoRequired = { userId, currentPassword };
       // 사용자 정보를 업데이트함.
       const deleteUserInfo = await userService.deleteUser(userInfoRequired);
+      console.log(deleteUserInfo);
       console.log("삭제 완료");
       // 업데이트 이후의 유저 데이터를 프론트에 보내 줌
       res.status(200).json(deleteUserInfo);

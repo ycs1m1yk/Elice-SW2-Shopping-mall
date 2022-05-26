@@ -42,6 +42,11 @@ const OrderSchema = new Schema(
       type: Number,
       required: true,
     },
+    shippingFee: {
+      type: Number,
+      required: false,
+      default: 5000,
+    },
   },
   {
     collection: "orders",
