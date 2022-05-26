@@ -1,6 +1,5 @@
 import { Schema } from "mongoose";
 
-
 const ProductSchema = new Schema(
   {
     name: {
@@ -32,11 +31,11 @@ const ProductSchema = new Schema(
     brandName: {
       type: String,
       required: false,
-      default: null
+      default: null,
     },
     keyword: {
       type: [String],
-      required: false, 
+      required: false,
     },
     shortdecription: {
       type: String,
@@ -46,15 +45,11 @@ const ProductSchema = new Schema(
       type: String,
       required: true,
     },
-    
-
-    },
-    {
-    collection: 'products',
+  },
+  {
+    collection: "products",
     timestamps: true,
   }
 );
 
-
 export { ProductSchema };
-

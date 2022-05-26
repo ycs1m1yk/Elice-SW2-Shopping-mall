@@ -1,11 +1,11 @@
 import { model } from "mongoose";
 import { ProductSchema } from "../schemas/product-schema";
 
-const Product = model('products', ProductSchema);
+const Product = model("products", ProductSchema);
 
 export class ProductModel {
   async findByName(productName) {
-    const product = await Product.findOne({name: productName });
+    const product = await Product.findOne({ name: productName });
     return product;
   }
 
@@ -33,7 +33,11 @@ export class ProductModel {
     const filter = { _id: productId };
     const option = { returnOriginal: false };
 
-    const updatedProduct = await Product.findOneAndUpdate(filter, update, option);
+    const updatedProduct = await Product.findOneAndUpdate(
+      filter,
+      update,
+      option
+    );
     return updatedProduct;
   }
 }
