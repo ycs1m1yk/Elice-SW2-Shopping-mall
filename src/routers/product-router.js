@@ -19,63 +19,76 @@ productRouter.get("/list", async function (req, res, next) {
 });
 
 //상품 상세 페이지
-productRouter.get("/:id", async function(req, res, next) {
+productRouter.get("/:productId", async function (req, res, next) {
   try {
-    const productId = req.params.id;
+    const productId = req.params.productId;
     const productInfo = await productService.getProductById(productId);
     // 상품 스키마를 JSON 형태로 프론트에 보냄
     res.status(200).json(productInfo);
-  } catch(error) {
+  } catch (error) {
     next(error);
   }
 });
 
-productRouter.patch("/:id/update", async function(req, res, next) {
+//상품 수정 위해 상품 데이터 보내기
+productRouter.get("/:productId/update", async function (req, res, next) {
   try {
-  
-    if (is.emptyObject(req.body)) {
-    throw new Error(
-        'headers의 Content-Type을 application/json으로 설정해주세요'
-    );
-    }
-
-    // req (request)의 body 에서 데이터 가져오기
-    const productId = req.params.id;
-
-    const img = req.file.location;
-    const name = req.body.name;
-    const price = req.body.price;
-    const category = req.body.category;
-    const quantity = req.body.quantity;
-    const size = req.body.size;
-    const brandName = req.body.brandName
-    const keyword = req.body.keyword;
-    const shortDescription = req.body.shortDescription;
-    const detailDescription = req.body.detailDescription;
-
-    const toUpdate = {
-      ...(img && { img }),
-      ...(name && { name }),
-      ...(price && { price }),
-      ...(category && { category }),
-      ...(quantity && { quantity }),
-      ...(size && { size }),
-      ...(brandName && { brandName }),
-      ...(keyword && { keyword }),
-      ...(shortDescription && { shortDescription }),
-      ...(detailDescription && { detailDescription }),
-    };
-
-    // 사용자 정보를 업데이트함.
-    const updatedProductInfo = await productService.setProduct(
-      userInfoRequired,
-      toUpdate
-    );
-  } catch(error) {
+    const productId = req.params.productId;
+    const productInfo = await productService.getProductById(productId);
+    // 상품 스키마를 JSON 형태로 프론트에 보냄
+    res.status(200).json(productInfo);
+  } catch (error) {
     next(error);
   }
 });
 
+productRouter.patch(
+  "/:productId/update",
+  upload.single("image-file"),
+  async function (req, res, next) {
+    try {
+      if (is.emptyObject(req.body)) {
+        throw new Error(
+          "headers의 Content-Type을 application/json으로 설정해주세요"
+        );
+      }
+
+      const productId = req.params.id;
+      const img = req.file.location;
+      const name = req.body.name;
+      const price = req.body.price;
+      const category = req.body.category;
+      const quantity = req.body.quantity;
+      const size = req.body.size;
+      const brandName = req.body.brandName;
+      const keyword = req.body.keyword;
+      const shortDescription = req.body.shortDescription;
+      const detailDescription = req.body.detailDescription;
+
+      const toUpdate = {
+        ...(img && { img }),
+        ...(name && { name }),
+        ...(price && { price }),
+        ...(category && { category }),
+        ...(quantity && { quantity }),
+        ...(size && { size }),
+        ...(brandName && { brandName }),
+        ...(keyword && { keyword }),
+        ...(shortDescription && { shortDescription }),
+        ...(detailDescription && { detailDescription }),
+      };
+
+      // 사용자 정보를 업데이트함.
+      const updatedProductInfo = await productService.setProduct(
+        productId,
+        toUpdate
+      );
+      res.status(200).json(updatedProductInfo);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 // 상품 업로드 api
 productRouter.post(

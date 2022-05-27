@@ -63,8 +63,6 @@ class ProductService {
     return product;
   }
 
-  
-
   // 상품정보 수정(미완성), 현재 비밀번호가 있어야 수정 가능함.
   async setProduct(productId, toUpdate) {
     //우선 해당 id의 상품이 db에 있는지 확인
