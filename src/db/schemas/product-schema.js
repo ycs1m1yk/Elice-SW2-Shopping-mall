@@ -37,11 +37,11 @@ const ProductSchema = new Schema(
       type: [String],
       required: false,
     },
-    shortdecription: {
+    shortDecription: {
       type: String,
       required: true,
     },
-    detaildecription: {
+    detailDecription: {
       type: String,
       required: true,
     },

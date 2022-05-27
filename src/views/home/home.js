@@ -1,3 +1,7 @@
+import header from "/components/Header.js";
+
+document.body.insertAdjacentElement("afterbegin", header);
+
 const slideWrap = document.querySelector(".slide-container");
 const slideList = document.querySelector(".slide-list");
 const slideItems = document.querySelectorAll(".slide-items");

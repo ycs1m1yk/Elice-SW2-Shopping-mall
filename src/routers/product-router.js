@@ -30,6 +30,51 @@ productRouter.get("/:id", async function(req, res, next) {
   }
 });
 
+productRouter.patch("/:id/update", async function(req, res, next) {
+  try {
+  
+    if (is.emptyObject(req.body)) {
+    throw new Error(
+        'headers의 Content-Type을 application/json으로 설정해주세요'
+    );
+    }
+
+    // req (request)의 body 에서 데이터 가져오기
+    const productId = req.params.id;
+
+    const img = req.file.location;
+    const name = req.body.name;
+    const price = req.body.price;
+    const category = req.body.category;
+    const quantity = req.body.quantity;
+    const size = req.body.size;
+    const brandName = req.body.brandName
+    const keyword = req.body.keyword;
+    const shortDescription = req.body.shortDescription;
+    const detailDescription = req.body.detailDescription;
+
+    const toUpdate = {
+      ...(img && { img }),
+      ...(name && { name }),
+      ...(price && { price }),
+      ...(category && { category }),
+      ...(quantity && { quantity }),
+      ...(size && { size }),
+      ...(brandName && { brandName }),
+      ...(keyword && { keyword }),
+      ...(shortDescription && { shortDescription }),
+      ...(detailDescription && { detailDescription }),
+    };
+
+    // 사용자 정보를 업데이트함.
+    const updatedProductInfo = await productService.setProduct(
+      userInfoRequired,
+      toUpdate
+    );
+  } catch(error) {
+    next(error);
+  }
+});
 
 
 // 상품 업로드 api
@@ -53,8 +98,8 @@ productRouter.post(
       const size = req.body.size;
       const brandName = req.body.brandName;
       const keyword = req.body.keyword;
-      const shortdescription = req.body.shortdescription;
-      const detaildescription = req.body.detaildescription;
+      const shortDescription = req.body.shortDescription;
+      const detailDescription = req.body.detailDescription;
 
       console.log(name);
 
@@ -68,8 +113,8 @@ productRouter.post(
         size,
         brandName,
         keyword,
-        shortdescription,
-        detaildescription,
+        shortDescription,
+        detailDescription,
       });
 
       // 추가된 유저의 db 데이터를 프론트에 다시 보내줌
@@ -94,4 +139,4 @@ productRouter.get("/list/category/:category", async (req, res, next) => {
   }
 });
 
-
+export { productRouter };

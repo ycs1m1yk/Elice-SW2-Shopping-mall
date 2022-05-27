@@ -9,6 +9,11 @@ export class OrderModel {
     return order;
   }
 
+  async findByOrderId(orderId) {
+    const order = await Order.findOne({ _id: orderId });
+    return order;
+  }
+
   async create(orderInfo) {
     const createdNewOrder = await Order.create(orderInfo);
     return createdNewOrder;
@@ -21,7 +26,7 @@ export class OrderModel {
 
   async deleteByProductId({ productId }) {
     const filter = { _id: productId };
-    const deleteProduct = await User.findOneAndDelete(filter);
+    const deleteProduct = await Order.findOneAndDelete(filter);
     return deleteProduct;
   }
 }

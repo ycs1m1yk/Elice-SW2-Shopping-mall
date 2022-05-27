@@ -20,6 +20,7 @@ class OrderService {
       requirement,
       orderList,
       totalPrice,
+      shippingFee,
     } = orderInfo;
 
     const newOrderInfo = {
@@ -30,6 +31,7 @@ class OrderService {
       requirement,
       orderList,
       totalPrice,
+      shippingFee,
     };
 
     // db에 저장
@@ -43,10 +45,17 @@ class OrderService {
     const order = await this.orderModel.findByUserId(userId);
     return order;
   }
+  // 주문 목록 전체를 받음.
+  async getOrdersAll() {
+    const order = await this.orderModel.findByUserId();
+    return order;
+  }
 
+  // 주문 취소
   async deleteOrder(orderIdArray) {
-    
-    let order = orderIdArray.map(productId => await this.userModel.deleteByProductId({ productId }));
+    let order = await orderIdArray.map((productId) =>
+      this.userModel.deleteByProductId({ productId })
+    );
     return order;
   }
 }
