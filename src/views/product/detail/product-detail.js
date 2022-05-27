@@ -45,11 +45,6 @@ const paintProduct = (product) => {
   detailDescriptionTag.innerText = product.detailDescription;
 };
 
-const getDataFromApi = async () => {
-  const product = await Api.get("/api/product", productId);
-  paintProduct(product);
-};
-
 const handleAddCart = () => {
   const cartItem = JSON.parse(localStorage.getItem("cart")) || {}; // 현재 장바구니 목록
 
@@ -69,8 +64,14 @@ const handleAddCart = () => {
   localStorage.setItem("cart", JSON.stringify(cartItem));
 };
 
+// 주문하기 클릭 -> Order 페이지 라우팅
 const handlePurchase = (e) => {
   window.location.href = "/order";
+};
+
+const getDataFromApi = async () => {
+  const product = await Api.get("/api/product", productId);
+  paintProduct(product);
 };
 
 addToCartButton.addEventListener("click", handleAddCart);
