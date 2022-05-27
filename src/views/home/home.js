@@ -102,7 +102,7 @@ const handlePauseButtonClick = () => {
 // Slide 이미지 클릭했을 때 해당 카테고리로 이동
 const handleSelectedCategoryImageClick = (e) => {
   const category = e.target.name;
-  window.location.href = `/product/list/?category=${category}`;
+  window.location.href = `/product/list/?category=${category} Clothes`;
 };
 
 // 이벤트 등록
