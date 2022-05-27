@@ -20,21 +20,29 @@ orderRouter.post("/complete", loginRequired, async (req, res, next) => {
     // req (request)의 body 에서 데이터 가져오기
     // 배송지 정보
     const userId = req.currentUserId;
+    // const userId = "628f1cd47995f06194b76554";
     const fullName = req.body.fullName;
     const phoneNumber = req.body.phoneNumber;
-    const email = req.body.phoneNumber;
+    const address = {
+      postalCode: req.body.postalCode,
+      address1: req.body.address1,
+      address2: req.body.address2,
+    };
     const requirement = req.body.requirement;
-    // 결제정보
-    const orderList = [null];
-    const totalPrice = 0;
-    const shippingFee = 0;
+    const orderList = req.body.orderList.map((e) => ({
+      productId: e.productId,
+      quantity: e.quantity,
+      price: e.price,
+    }));
+    const totalPrice = req.body.totalPrice;
+    const shippingFee = req.body.shippingFee;
 
     // 위 데이터를 유저 db에 추가하기
     const newOrder = await orderService.addOrder({
       userId,
       fullName,
       phoneNumber,
-      email,
+      address,
       requirement,
       orderList,
       totalPrice,
@@ -49,7 +57,7 @@ orderRouter.post("/complete", loginRequired, async (req, res, next) => {
   }
 });
 
-// 개인 주문 목록 보기 api (아래는 /:userId 이지만, 실제로는 /api/order/userId로 요청해야 함.)
+// 내 주문 목록 보기 api (아래는 /:userId 이지만, 실제로는 /api/order/userId로 요청해야 함.)
 orderRouter.get("/:userId", loginRequired, async function (req, res, next) {
   try {
     const userId = req.params.userId;
@@ -66,19 +74,22 @@ orderRouter.get("/:userId", loginRequired, async function (req, res, next) {
   }
 });
 
-orderRouter.delete("/:orderId", loginRequired, async function (req, res, next) {
+orderRouter.delete("/delete", async function (req, res, next) {
   try {
-    const orderId = req.params.orderId;
-    const userId = req.currentUserId;
-    console.log("orderId", orderId);
+    const orderIdList = req.body.orderIdList; // 배열
+    // const userId = req.currentUserId;
+    const userId = "628f1cd47995f06194b76554";
 
-    const orderInfo = await orderService.getOrders(orderId);
-    if (userId !== orderInfo.userId) {
-      throw new Error("본인의 주문 내역만 취소할 수 있습니다.");
-    }
-    const orderInfoRequired = { userId, orderId };
+    const orderList = await orderService.getOrdersForDelete(orderIdList);
+    console.log(orderList);
+    orderList.map((orderInfo) => {
+      if (userId !== orderInfo.userId) {
+        throw new Error("본인의 주문 내역만 취소할 수 있습니다.");
+      }
+    });
+    const orderDeleteRequired = orderIdList;
     // 사용자 정보를 업데이트함.
-    const deleteOrderInfo = await orderService.deleteUser(orderInfoRequired);
+    const deleteOrderInfo = await orderService.deleteOrder(orderDeleteRequired);
     console.log("삭제 완료");
     // 업데이트 이후의 유저 데이터를 프론트에 보내 줌
     res.status(200).json(deleteOrderInfo);
