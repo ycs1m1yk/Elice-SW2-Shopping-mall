@@ -18,8 +18,8 @@ class ProductService {
       size,
       brandName,
       keyword,
-      shortdescription,
-      detaildescription,
+      shortDescription,
+      detailDescription,
     } = productInfo;
 
     // 상품명 중복 확인
@@ -38,8 +38,8 @@ class ProductService {
       size,
       brandName,
       keyword,
-      shortdescription,
-      detaildescription,
+      shortDescription,
+      detailDescription,
     };
     // 상품명 중복은 이제 아니므로, 상품 등록을 진행함
     const createdNewProduct = await this.productModel.create(newProductInfo);
@@ -57,38 +57,29 @@ class ProductService {
     const products = await this.productModel.findByCategory(category);
     return products;
   }
+  //상품 상세 조회
+  async getProductById(productId) {
+    const product = await this.productModel.findById(productId);
+    return product;
+  }
 
   // 상품정보 수정(미완성), 현재 비밀번호가 있어야 수정 가능함.
-  // async setProduct(userInfoRequired, toUpdate) {
-  // 객체 destructuring
-  //const { userId, currentPassword } = userInfoRequired;
+  async setProduct(productId, toUpdate) {
+    //우선 해당 id의 상품이 db에 있는지 확인
+    let product = await this.productModel.findById(productId);
 
-  // 우선 해당 id의 상품이 db에 있는지 확인
-  //let user = await this.userModel.findById(userId);
+    //db에서 찾지 못한 경우, 에러 메시지 반환
+    if (!product) {
+      throw new Error("상품 내역이 없습니다. 다시 한 번 확인해 주세요.");
+    }
+    //업데이트 진행
+    product = await this.productModel.update({
+      productId,
+      update: toUpdate,
+    });
 
-  // db에서 찾지 못한 경우, 에러 메시지 반환
-  // if (!user) {
-  //   throw new Error("가입 내역이 없습니다. 다시 한 번 확인해 주세요.");
-  // }
-
-  // 이제 드디어 업데이트 시작
-
-  // 비밀번호도 변경하는 경우에는, 회원가입 때처럼 해쉬화 해주어야 함.
-  // const { password } = toUpdate;
-
-  // if (password) {
-  //   const newPasswordHash = await bcrypt.hash(password, 10);
-  //   toUpdate.password = newPasswordHash;
-  // }
-
-  // 업데이트 진행
-  //   user = await this.userModel.update({
-  //     userId,
-  //     update: toUpdate,
-  //   });
-
-  //   return user;
-  // }
+    return product;
+  }
 }
 const productService = new ProductService(productModel);
 export { productService };

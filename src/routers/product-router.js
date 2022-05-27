@@ -18,7 +18,78 @@ productRouter.get("/list", async function (req, res, next) {
   }
 });
 
-//
+//상품 상세 페이지
+productRouter.get("/:productId", async function (req, res, next) {
+  try {
+    const productId = req.params.productId;
+    const productInfo = await productService.getProductById(productId);
+    // 상품 스키마를 JSON 형태로 프론트에 보냄
+    res.status(200).json(productInfo);
+  } catch (error) {
+    next(error);
+  }
+});
+
+//상품 수정 위해 상품 데이터 보내기
+productRouter.get("/:productId/update", async function (req, res, next) {
+  try {
+    const productId = req.params.productId;
+    const productInfo = await productService.getProductById(productId);
+    // 상품 스키마를 JSON 형태로 프론트에 보냄
+    res.status(200).json(productInfo);
+  } catch (error) {
+    next(error);
+  }
+});
+
+productRouter.patch(
+  "/:productId/update",
+  upload.single("image-file"),
+  async function (req, res, next) {
+    try {
+      if (is.emptyObject(req.body)) {
+        throw new Error(
+          "headers의 Content-Type을 application/json으로 설정해주세요"
+        );
+      }
+
+      const productId = req.params.id;
+      const img = req.file.location;
+      const name = req.body.name;
+      const price = req.body.price;
+      const category = req.body.category;
+      const quantity = req.body.quantity;
+      const size = req.body.size;
+      const brandName = req.body.brandName;
+      const keyword = req.body.keyword;
+      const shortDescription = req.body.shortDescription;
+      const detailDescription = req.body.detailDescription;
+
+      const toUpdate = {
+        ...(img && { img }),
+        ...(name && { name }),
+        ...(price && { price }),
+        ...(category && { category }),
+        ...(quantity && { quantity }),
+        ...(size && { size }),
+        ...(brandName && { brandName }),
+        ...(keyword && { keyword }),
+        ...(shortDescription && { shortDescription }),
+        ...(detailDescription && { detailDescription }),
+      };
+
+      // 사용자 정보를 업데이트함.
+      const updatedProductInfo = await productService.setProduct(
+        productId,
+        toUpdate
+      );
+      res.status(200).json(updatedProductInfo);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 // 상품 업로드 api
 productRouter.post(
   "/add",
@@ -40,8 +111,8 @@ productRouter.post(
       const size = req.body.size;
       const brandName = req.body.brandName;
       const keyword = req.body.keyword;
-      const shortdescription = req.body.shortdescription;
-      const detaildescription = req.body.detaildescription;
+      const shortDescription = req.body.shortDescription;
+      const detailDescription = req.body.detailDescription;
 
       console.log(name);
 
@@ -55,8 +126,8 @@ productRouter.post(
         size,
         brandName,
         keyword,
-        shortdescription,
-        detaildescription,
+        shortDescription,
+        detailDescription,
       });
 
       // 추가된 유저의 db 데이터를 프론트에 다시 보내줌
