@@ -10,6 +10,7 @@ viewsRouter.use("/", serveStatic("home"));
 viewsRouter.use("/register", serveStatic("register"));
 viewsRouter.use("/login", serveStatic("login"));
 viewsRouter.use("/account", serveStatic("account"));
+viewsRouter.use("/cart", serveStatic("cart"));
 viewsRouter.use("/account/orders", serveStatic("account/orders", "orders"));
 viewsRouter.use(
   "/account/security",
