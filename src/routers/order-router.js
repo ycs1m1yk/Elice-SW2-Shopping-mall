@@ -20,7 +20,7 @@ orderRouter.post("/complete", loginRequired, async (req, res, next) => {
     // req (request)의 body 에서 데이터 가져오기
     // 배송지 정보
     const userId = req.currentUserId;
-    // const userId = "628f1cd47995f06194b76554";
+
     const fullName = req.body.fullName;
     const phoneNumber = req.body.phoneNumber;
     const address = {
@@ -74,11 +74,10 @@ orderRouter.get("/:userId", loginRequired, async function (req, res, next) {
   }
 });
 
-orderRouter.delete("/delete", async function (req, res, next) {
+orderRouter.delete("/delete", loginRequired, async function (req, res, next) {
   try {
     const orderIdList = req.body.orderIdList; // 배열
-    // const userId = req.currentUserId;
-    const userId = "628f1cd47995f06194b76554";
+    const userId = req.currentUserId;
 
     const orderList = await orderService.getOrdersForDelete(orderIdList);
     console.log(orderList);
