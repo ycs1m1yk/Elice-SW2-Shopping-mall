@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Account Page</title>
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="/elice-rabbit-favicon.png"
+    />
+    <!-- bulma css 관련 -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"
+    />
+    <!-- 폰트 어썸: 아이콘 -->
+    <script
+      defer
+      src="https://kit.fontawesome.com/7630448495.js"
+      crossorigin="anonymous"
+    ></script>
+    <!-- 커스텀 css, js -->
+    <link rel="stylesheet" href="product-detail.css" />
+    <script src="product-detail.js" type="module" defer></script>
+  </head>
+  <body>
+    <section class="section">
+      <div class="container">
+        <div class="tile is-ancestor product-detail-card">
+          <div class="tile is-6 is-parent">
+            <div class="tile is-child box product-image">
+              <figure class="image is-sqaure">
+                <img
+                  id="productImageTag"
+                  src="https://kwang-shopping.s3.ap-northeast-2.amazonaws.com/Men%2520Clothes/estxb_mc-2.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=ASIA3WUDLKK5QL2AI66N%2F20220527%2Fap-northeast-2%2Fs3%2Faws4_request&amp;X-Amz-Date=20220527T073114Z&amp;X-Amz-Expires=60&amp;X-Amz-Security-Token=IQoJb3JpZ2luX2VjEND%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaDmFwLW5vcnRoZWFzdC0yIkYwRAIgbM93YUQg9wwFG9DD5sGsmyWdkJMBwy%2FsysOU9HWw1n8CIBSGLSRP1PhlQquewR2LUn0LRUQ%2B%2FaR4KQl2VrcHlIgwKqQGCLn%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEQARoMODA0NTA4MDk1MTYzIgy%2B2%2FUkMbN3gJA0Jecq%2BAWLuuqfs7cb90wJR8g4FcG%2FUuc2NklLKYMXSSw3bQP8aw2cRpY90nbXedXZozjtouwVL7OzR2V6dMUG%2Fqr4mS2wmaZykA4Z7Qw0PPI%2BD7tlsive7exa%2BPnj8ThnhYWzO%2B5M1chBwVoozPLx%2BP4KRHyZ4GwP9UinRFkMs4j%2BKgiq2UvzN02WaFgt%2Fdr7WlR1xXokRDSjp6ltbEWv4KzueEGolPkdoNhZJvS7Db1SNwwuy7uBdUs7I1Cr6B76ltGpKme9bqzHlL0u3WTtqb%2FOCRSoY1az5ik6FawDXA57G8l85qeLlJiAMEv0qIcX93P5QJ7noqtAcR4pkcMhqdjTlaVdClwTQp5EHOZvZDyGau%2Be%2BBFLBhkuefgb0x0XGjgjC6%2BUuLYPi%2BG82%2FR4doKIwMCFjWE6BLQxWEnNF0CCNvrDsJX7S5F%2B0pba5t46MfppodakItM60KYi0xaYSPtL259NfLpQlL%2FNZV4nHT5gQc9Rb40211OEZs1LTPCwM3RJt8mP9iXl%2Fa11Vc7hJG8Sn3aWM2BM0NSGmLLbhkdvgvcw0w8QEQwV2Op8kytsdcxyUhP%2F4WS6t3V59E6SVKy%2FmNZ3pwy0g7HuPz5oKSdPN2xBmdcrQ7t6UtnCw7vHEM%2BvCdeC3K5UuH45bCi5lcvW1jGDC737RNqH71%2FMSnNwXqbb3hldyagI4%2Blyax95A2JXO%2FBckDtxV%2BWqMt9g7V8G0QeZpDXctAKuFNXc1on%2FKc9nc6gRvX2BLxlgjB0EPN%2FV1Tx%2FVdcKPg372MlBAirgYDLvZ73ah0HIfTpCs70VP3LweVNB5uGQzZ9M%2BO312pee8WbnKQJVE%2B9z%2F%2BNrIQj3aRiLXXiYmLet3PzVR9Gl6yrqi90If6oPS0czUvWZLzSGc1BEfB7kIbfvHfZTTT6yj8%2F4gc0aXYos9v2ZM18EvMl%2FNJVWh7iTwZe0wHgRb3bGtqapm0JB3%2BJf40ilhWSTR1lednnyni1%2F1sVyxsy%2FtnJtLolYzzinK%2BjhMML8wZQGOogCw1T4TspT2LBpbpZls87dh7Wl4p2jAzUFl4Fy2S6gwWhbFGzp1I1pZUZsEnYJV33%2FShPQU28PneeTIsby9GZi%2F4ce%2FwnbQ0UfZqMOZ0tqzJw%2Fh%2FDFc7%2Bm50HbQFCFM8sfsaivQEeMhS7XbBBo2tPMXf4d3HJBEoZgXGtUOUI%2FyvGrRs2XpCxU5G7RxW1oCUBzKGZp1FXbzmkOZzoRc1Vfg%2BSDJc6RReSIngWNh0UAfPA4VCTAs8Rn%2B7NaRPsRoD9simJSW7EirFX1f%2BY%2BrMQTTZ6MGpWnju7%2F2Tw34M3%2FzIPQbfucEjWOrcA52UWGOP%2FA%2BPU3yuthCKvUrstq%2BAMTGmCAto6lW7AI&amp;X-Amz-Signature=88d037ec99c197e9f88f8a82ffe4c002f76ab4697ab9bf0d5d2bb63c51def69d&amp;X-Amz-SignedHeaders=host"
+                />
+              </figure>
+            </div>
+          </div>
+          <div class="tile is-parent is-vertical">
+            <div class="tile is-child box product-detail">
+              <div class="tabs">
+                <ul>
+                  <li id="manufacturerTag">스플래시</li>
+                </ul>
+              </div>
+              <div class="content">
+                <p class="subtitle is-3 is-family-monospace" id="titleTag">
+                  아이보리 니트<span class="tag is-success is-rounded"
+                    >추천</span
+                  >
+                </p>
+                <h1 id="priceTag">19,000원</h1>
+                <p class="detail-description" id="detailDescriptionTag">
+                  따뜻한 느낌을 줍니다. 지금깥은 날씨에 제격입니다!
+                </p>
+              </div>
+            </div>
+            <div class="tile is-child box buttons-container">
+              <button class="button is-warning" id="addToCartButton">
+                장바구니 추가하기
+              </button>
+              <button class="button is-info ml-2" id="purchaseButton">
+                바로 구매하기
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>
