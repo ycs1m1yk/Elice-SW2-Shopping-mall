@@ -17,3 +17,12 @@
 2022-05-26T16:31:55.868Z GET 304 0.411 /components/Header.js http://localhost:3000/home.js
 2022-05-26T16:31:55.875Z GET 304 1.047 /useful-functions.js http://localhost:3000/components/Header.js
 2022-05-26T16:31:55.880Z GET 304 0.903 /elice-rabbit.png http://localhost:3000/
+2022-05-27T07:49:58.700Z GET 200 9.162 / -
+2022-05-27T07:49:58.811Z GET 200 17.987 /home.css http://localhost:3000/
+2022-05-27T07:49:58.815Z GET 200 17.789 /home.js http://localhost:3000/
+2022-05-27T07:49:58.819Z GET 200 16.109 /images/child-cloth.jpg http://localhost:3000/
+2022-05-27T07:49:58.822Z GET 200 18.081 /images/men-cloth.jpg http://localhost:3000/
+2022-05-27T07:49:58.830Z GET 200 15.497 /images/women-cloth.jpg http://localhost:3000/
+2022-05-27T07:49:58.991Z GET 200 9.110 /components/Header.js http://localhost:3000/home.js
+2022-05-27T07:49:59.165Z GET 200 2.489 /useful-functions.js http://localhost:3000/components/Header.js
+2022-05-27T07:49:59.187Z GET 200 2.965 /elice-rabbit.png http://localhost:3000/
