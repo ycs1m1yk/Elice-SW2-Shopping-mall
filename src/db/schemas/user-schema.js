@@ -34,7 +34,12 @@ const UserSchema = new Schema(
     role: {
       type: String,
       required: false,
-      default: "basic-user",
+      default: "basic",
+    },
+    seller: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
   {
