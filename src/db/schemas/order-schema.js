@@ -30,6 +30,7 @@ const OrderSchema = new Schema(
     requirement: {
       type: String,
       required: false,
+      default: "요청사항 없음",
     },
     orderList: [
       new Schema({
