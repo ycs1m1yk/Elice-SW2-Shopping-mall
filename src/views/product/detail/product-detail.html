@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Account Page</title>
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="/elice-rabbit-favicon.png"
+    />
+    <!-- bulma css 관련 -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"
+    />
+    <!-- 폰트 어썸: 아이콘 -->
+    <script
+      defer
+      src="https://kit.fontawesome.com/7630448495.js"
+      crossorigin="anonymous"
+    ></script>
+    <!-- 커스텀 css, js -->
+    <link rel="stylesheet" href="product-detail.css" />
+    <script src="product-detail.js" type="module" defer></script>
+  </head>
+  <body>
+    <section class="section">
+      <div class="container">
+        <div class="tile is-ancestor product-detail-card">
+          <div class="tile is-6 is-parent">
+            <div class="tile is-child box product-image">
+              <figure class="image is-sqaure">
+                <img id="productImageTag" />
+              </figure>
+            </div>
+          </div>
+          <div class="tile is-parent is-vertical">
+            <div class="tile is-child box product-detail">
+              <div class="tabs">
+                <ul>
+                  <li id="manufacturerTag"></li>
+                </ul>
+              </div>
+              <div class="content">
+                <p class="subtitle is-3 is-family-monospace" id="titleTag"></p>
+                <h1 id="priceTag"></h1>
+                <p class="detail-description" id="detailDescriptionTag"></p>
+              </div>
+            </div>
+            <div class="tile is-child box buttons-container">
+              <button class="button is-warning" id="addToCartButton">
+                장바구니 추가하기
+              </button>
+              <button class="button is-info ml-2" id="purchaseButton">
+                바로 구매하기
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>

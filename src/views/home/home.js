@@ -1,60 +1,121 @@
-// 아래는 현재 home.html 페이지에서 쓰이는 코드는 아닙니다.
-// 다만, 앞으로 ~.js 파일을 작성할 때 아래의 코드 구조를 참조할 수 있도록,
-// 코드 예시를 남겨 두었습니다.
+import header from "/components/Header.js";
 
-import * as Api from '/api.js';
-import { randomId } from '/useful-functions.js';
+document.body.insertAdjacentElement("afterbegin", header);
 
-// 요소(element), input 혹은 상수
-const landingDiv = document.querySelector('#landingDiv');
-const greetingDiv = document.querySelector('#greetingDiv');
+const slideWrap = document.querySelector(".slide-container");
+const slideList = document.querySelector(".slide-list");
+const slideItems = document.querySelectorAll(".slide-items");
+const firstItem = document.querySelector(".slide-items:first-child");
+const lastItem = document.querySelector(".slide-items:last-child");
+const slideLen = slideItems.length;
+const prevBtn = document.querySelector(".prev");
+const nextBtn = document.querySelector(".next");
+const playBtn = document.querySelector(".play");
+const pauseBtn = document.querySelector(".pause");
+const selectedCategoryImage = slideList.querySelectorAll(".category-image");
 
-addAllElements();
-addAllEvents();
+const active = "slide_active";
+let playId;
+let slideWidth = 100;
+let startNum = 0;
+let carIndex;
+let carSlide;
+let contsWidth = slideWidth / (slideLen + 2);
 
-// html에 요소를 추가하는 함수들을 묶어주어서 코드를 깔끔하게 하는 역할임.
-async function addAllElements() {
-  insertTextToLanding();
-  insertTextToGreeting();
+const firstNode = firstItem.cloneNode(true);
+const lastNode = lastItem.cloneNode(true);
+firstNode.style.width = contsWidth + "%";
+lastNode.style.width = contsWidth + "%";
+
+slideList.appendChild(firstNode);
+slideList.insertBefore(lastNode, slideList.firstElementChild);
+
+slideWrap.style.overflow = "hidden";
+slideList.style.width = slideWidth * (slideLen + 2) + "%";
+for (let i = 0; i < slideLen; i++) {
+  slideItems[i].style.width = contsWidth + "%";
+}
+slideList.style.transform = `translate(-${contsWidth * (startNum + 1)}% , 0)`;
+
+carIndex = startNum;
+carSlide = slideItems[carIndex];
+carSlide.classList.add(active);
+
+// 다음 슬라이드로 이동
+const nextEvent = () => {
+  if (carIndex <= slideLen - 1) {
+    slideList.style.transition = "all 0.3s";
+    slideList.style.transform = `translate(-${
+      contsWidth * (carIndex + 2)
+    }%, 0)`;
+  }
+  if (carIndex === slideLen - 1) {
+    setTimeout(function () {
+      slideList.style.transition = "0s";
+      slideList.style.transform = `translate(-${contsWidth}%, 0)`;
+    }, 300);
+    carIndex = -1;
+  }
+  carSlide.classList.remove(active);
+  carSlide = slideItems[++carIndex];
+  carSlide.classList.add(active);
+};
+
+// 이전 슬라이드로 이동
+const prevEvent = () => {
+  if (carIndex >= 0) {
+    slideList.style.transition = "all 0.3s";
+    slideList.style.transform = `translate(-${contsWidth * carIndex}%, 0)`;
+  }
+  if (carIndex === 0) {
+    setTimeout(function () {
+      slideList.style.transition = "0s";
+      slideList.style.transform = `translate(-${contsWidth * slideLen}%, 0)`;
+    }, 300);
+    carIndex = slideLen;
+  }
+  carSlide.classList.remove(active);
+  carSlide = slideItems[--carIndex];
+  carSlide.classList.add(active);
+};
+
+// Slide 관련 이벤트 핸들러
+const handleNextButtonClick = () => {
+  nextEvent();
+};
+
+const handlePrevButtonClick = () => {
+  prevEvent();
+};
+
+const handlePlayButtonClick = () => {
+  playId = setInterval(nextEvent, 3000);
+  playBtn.style.display = "none";
+  pauseBtn.style.display = "inline-block";
+};
+const handlePauseButtonClick = () => {
+  clearInterval(playId);
+  pauseBtn.style.display = "none";
+  playBtn.style.display = "inline-block";
+};
+
+// Slide 이미지 클릭했을 때 해당 카테고리로 이동
+const handleSelectedCategoryImageClick = (e) => {
+  const category = e.target.name;
+  window.location.href = `/product/list/?category=${category} Clothes`;
+};
+
+// 이벤트 등록
+nextBtn.addEventListener("click", handleNextButtonClick);
+prevBtn.addEventListener("click", handlePrevButtonClick);
+playBtn.addEventListener("click", handlePlayButtonClick);
+pauseBtn.addEventListener("click", handlePauseButtonClick);
+
+for (const target of selectedCategoryImage) {
+  target.addEventListener("click", handleSelectedCategoryImageClick);
 }
 
-// 여러 개의 addEventListener들을 묶어주어서 코드를 깔끔하게 하는 역할임.
-function addAllEvents() {
-  landingDiv.addEventListener('click', alertLandingText);
-  greetingDiv.addEventListener('click', alertGreetingText);
-}
-
-function insertTextToLanding() {
-  landingDiv.insertAdjacentHTML(
-    'beforeend',
-    `
-      <h2>n팀 쇼핑몰의 랜딩 페이지입니다. 자바스크립트 파일에서 삽입되었습니다.</h2>
-    `
-  );
-}
-
-function insertTextToGreeting() {
-  greetingDiv.insertAdjacentHTML(
-    'beforeend',
-    `
-      <h1>반갑습니다! 자바스크립트 파일에서 삽입되었습니다.</h1>
-    `
-  );
-}
-
-function alertLandingText() {
-  alert('n팀 쇼핑몰입니다. 안녕하세요.');
-}
-
-function alertGreetingText() {
-  alert('n팀 쇼핑몰에 오신 것을 환영합니다');
-}
-
-async function getDataFromApi() {
-  // 예시 URI입니다. 현재 주어진 프로젝트 코드에는 없는 URI입니다.
-  const data = await Api.get('/api/user/data');
-  const random = randomId();
-
-  console.log({ data });
-  console.log({ random });
-}
+// 페이지 로딩이 끝나면 슬라이드 바로 시작
+window.onload = () => {
+  handlePlayButtonClick();
+};
