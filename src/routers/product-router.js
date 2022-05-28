@@ -85,16 +85,19 @@ productRouter.patch(
         throw new Error("본인의 상품 내역만 수정할 수 있습니다.");
       }
       const productId = req.params.id;
-      const img = req.file.location;
-      const name = req.body.name;
-      const price = req.body.price;
-      const category = req.body.category;
-      const quantity = req.body.quantity;
-      const size = req.body.size;
-      const brandName = req.body.brandName;
-      const keyword = req.body.keyword;
-      const shortDescription = req.body.shortDescription;
-      const detailDescription = req.body.detailDescription;
+
+      const { location: img } = req.file;
+      const {
+        name,
+        price,
+        category,
+        quantity,
+        size,
+        brandName,
+        keyword,
+        shortDescription,
+        detailDescription,
+      } = req.body;
 
       const toUpdate = {
         ...(img && { img }),
@@ -133,21 +136,19 @@ productRouter.post(
           "headers의 Content-Type을 application/json으로 설정해주세요"
         );
       }
-
-      const img = req.file.location;
-
-      const name = req.body.name;
-      const price = req.body.price;
-      const category = req.body.category;
-      const quantity = req.body.quantity;
-      const size = req.body.size;
-      const brandName = req.body.brandName;
-      const keyword = req.body.keyword;
-      const shortDescription = req.body.shortDescription;
-      const detailDescription = req.body.detailDescription;
+      const { location: img } = req.file;
+      const {
+        name,
+        price,
+        category,
+        quantity,
+        size,
+        brandName,
+        keyword,
+        shortDescription,
+        detailDescription,
+      } = req.body;
       const userId = req.currentUserId;
-
-      console.log(name);
 
       // 위 데이터를 유저 db에 추가하기
       const newProduct = await productService.addProduct({
@@ -182,7 +183,6 @@ productRouter.delete("/delete", loginRequired, async function (req, res, next) {
     const ProductList = await productService.getProductsForDelete(
       productIdList
     );
-    console.log(ProductList);
 
     ProductList.map((productInfo) => {
       if (userId !== productInfo.userId) {
@@ -191,7 +191,6 @@ productRouter.delete("/delete", loginRequired, async function (req, res, next) {
     });
 
     const deleteProductInfo = await productService.deleteProduct(productIdList);
-    console.log("삭제 완료");
 
     res.status(200).json(deleteProductInfo);
   } catch (error) {
