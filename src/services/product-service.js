@@ -23,7 +23,7 @@ class ProductService {
     } = productInfo;
 
     // 상품명 중복 확인
-    const user = await this.productModel.findByName(name);
+    const user = await this.productModel.findByProductName(name);
     if (user) {
       throw new Error(
         "이 상품명은 현재 사용중입니다. 다른 상품명을 입력해 주세요."
@@ -52,21 +52,27 @@ class ProductService {
     const products = await this.productModel.findAll();
     return products;
   }
-  //상품 카테고리별 목록 확인
+  //카테고리별 상품 목록 확인
   async getProductsByCategory(category) {
     const products = await this.productModel.findByCategory(category);
     return products;
   }
+  //유저별 상품 목록 확인
+  async getProductsByUserId(userId) {
+    const products = await this.productModel.findByUserId(userId);
+    return products;
+  }
+
   //상품 상세 조회
-  async getProductById(productId) {
-    const product = await this.productModel.findById(productId);
+  async getProductByProductId(productId) {
+    const product = await this.productModel.findByProductId(productId);
     return product;
   }
 
   // 상품정보 수정(미완성), 현재 비밀번호가 있어야 수정 가능함.
   async setProduct(productId, toUpdate) {
     //우선 해당 id의 상품이 db에 있는지 확인
-    let product = await this.productModel.findById(productId);
+    let product = await this.productModel.findByProductId(productId);
 
     //db에서 찾지 못한 경우, 에러 메시지 반환
     if (!product) {
@@ -77,6 +83,24 @@ class ProductService {
       productId,
       update: toUpdate,
     });
+
+    return product;
+  }
+
+  async getProductsForDelete(productIdList) {
+    let productList = [];
+    for await (const productId of productIdList) {
+      const product = this.productModel.findByProductId(productId);
+      productList.push(product);
+    }
+    console.log("상품 삭제 리스트", productList);
+    return productList;
+  }
+
+  async deleteProduct(productIdArray) {
+    let product = await productIdArray.map((productId) =>
+      this.productModel.deleteByProductId({ productId })
+    );
 
     return product;
   }

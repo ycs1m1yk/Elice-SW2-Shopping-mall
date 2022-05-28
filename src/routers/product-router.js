@@ -31,19 +31,45 @@ productRouter.get("/:productId", async function (req, res, next) {
 });
 
 //상품 수정 위해 상품 데이터 보내기
-productRouter.get("/:productId/update", async function (req, res, next) {
+productRouter.get(
+  "/:productId/update",
+  loginRequired,
+  async function (req, res, next) {
+    try {
+      const userId = req.currentUserId;
+      const productId = req.params.productId;
+      const productInfo = await productService.getProductByProductId(productId);
+      if (userId !== productInfo.userId) {
+        throw new Error("본인의 상품 내역만 수정할 수 있습니다.");
+      }
+      // 상품 스키마를 JSON 형태로 프론트에 보냄
+      res.status(200).json(productInfo);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+//유저별 판매 목록 api
+productRouter.get("/list/:userId", loginRequired, async (req, res, next) => {
   try {
-    const productId = req.params.productId;
-    const productInfo = await productService.getProductById(productId);
-    // 상품 스키마를 JSON 형태로 프론트에 보냄
-    res.status(200).json(productInfo);
+    const userId = req.params.userId;
+    const currentUserId = req.currentUserId;
+    if (userId !== currentUserId) {
+      throw new Error("본인의 판매 목록만 볼 수 있습니다.");
+    }
+    const products = await productService.getProductsByUserId(userId);
+    // 상품 목록(배열)을 JSON 형태로 프론트에 보냄
+    res.status(200).json(products);
   } catch (error) {
     next(error);
   }
 });
 
+//상품 정보 수정
 productRouter.patch(
   "/:productId/update",
+  loginRequired,
   upload.single("image-file"),
   async function (req, res, next) {
     try {
@@ -52,7 +78,12 @@ productRouter.patch(
           "headers의 Content-Type을 application/json으로 설정해주세요"
         );
       }
-
+      const userId = req.currentUserId;
+      const currentProductId = req.params.productId;
+      const productInfo = await productService.getProductById(currentProductId);
+      if (userId !== productInfo.userId) {
+        throw new Error("본인의 상품 내역만 수정할 수 있습니다.");
+      }
       const productId = req.params.id;
       const img = req.file.location;
       const name = req.body.name;
@@ -94,6 +125,7 @@ productRouter.patch(
 productRouter.post(
   "/add",
   upload.single("image-file"),
+  loginRequired,
   async (req, res, next) => {
     try {
       if (is.emptyObject(req.body)) {
@@ -113,6 +145,7 @@ productRouter.post(
       const keyword = req.body.keyword;
       const shortDescription = req.body.shortDescription;
       const detailDescription = req.body.detailDescription;
+      const userId = req.currentUserId;
 
       console.log(name);
 
@@ -128,6 +161,7 @@ productRouter.post(
         keyword,
         shortDescription,
         detailDescription,
+        userId,
       });
 
       // 추가된 유저의 db 데이터를 프론트에 다시 보내줌
@@ -138,6 +172,32 @@ productRouter.post(
     }
   }
 );
+
+//상품 판매 삭제 기능
+productRouter.delete("/delete", loginRequired, async function (req, res, next) {
+  try {
+    const productIdList = req.body.productIdList;
+    const userId = req.currentUserId;
+
+    const ProductList = await productService.getProductsForDelete(
+      productIdList
+    );
+    console.log(ProductList);
+
+    ProductList.map((productInfo) => {
+      if (userId !== productInfo.userId) {
+        throw new Error("본인의 상품 판매 내역만 취소할 수 있습니다.");
+      }
+    });
+
+    const deleteProductInfo = await productService.deleteProduct(productIdList);
+    console.log("삭제 완료");
+
+    res.status(200).json(deleteProductInfo);
+  } catch (error) {
+    next(error);
+  }
+});
 
 // 카테고리에 맞는 상품 api
 productRouter.get("/list/category/:category", async (req, res, next) => {
