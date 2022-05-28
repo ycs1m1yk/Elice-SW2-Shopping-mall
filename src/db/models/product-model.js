@@ -46,7 +46,7 @@ export class ProductModel {
     return updatedProduct;
   }
 
-  async deleteByproductId({ productId }) {
+  async deleteByProductId({ productId }) {
     const filter = { _id: productId };
     const deleteProduct = await Product.findOneAndDelete(filter);
     return deleteProduct;
