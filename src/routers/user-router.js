@@ -147,7 +147,7 @@ userRouter.delete(
       const userId = req.params.userId;
       console.log(userId);
       // body data로부터, 확인용으로 사용할 현재 비밀번호를 추출함.
-      const currentPassword = req.body.currentPassword;
+      const { currentPassword } = req.body;
 
       // currentPassword 없을 시, 진행 불가
       if (!currentPassword) {

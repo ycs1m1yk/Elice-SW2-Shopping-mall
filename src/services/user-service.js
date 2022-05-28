@@ -30,9 +30,7 @@ class UserService {
     const newUserInfo = { fullName, email, password: hashedPassword };
 
     // db에 저장
-    const createdNewUser = await this.userModel.create(newUserInfo);
-
-    return createdNewUser;
+    return await this.userModel.create(newUserInfo);
   }
 
   // 로그인
@@ -78,8 +76,7 @@ class UserService {
 
   // 사용자 목록을 받음.
   async getUsers() {
-    const users = await this.userModel.findAll();
-    return users;
+    return await this.userModel.findAll();
   }
 
   // 유저정보 수정, 현재 비밀번호가 있어야 수정 가능함.
@@ -111,19 +108,16 @@ class UserService {
 
   async deleteUser(userInfoRequired) {
     const { userId, currentPassword } = userInfoRequired;
-    console.log("user-service", userId);
 
     // 기본 코드 수정. 유저 정보 존재 확인 및 비밀번호 검증 메소드
     await this.userVerify(userId, currentPassword);
 
-    let user = await this.userModel.deleteById({ userId });
-    return user;
+    return await this.userModel.deleteById(userId);
   }
 
   async userVerify(userId, currentPassword) {
     // 우선 해당 id의 유저가 db에 있는지 확인
     let user = await this.userModel.findById(userId);
-
     // db에서 찾지 못한 경우, 에러 메시지 반환
     if (!user) {
       throw new Error("가입 내역이 없습니다. 다시 한 번 확인해 주세요.");
@@ -146,6 +140,4 @@ class UserService {
   }
 }
 
-const userService = new UserService(userModel);
-
-export { userService };
+export const userService = new UserService(userModel);
