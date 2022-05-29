@@ -52,6 +52,14 @@
   padding-top: 0.3rem;
 }
 
+#purchaseButton {
+  font-size: 1.3rem;
+  font-weight: 800;
+  height: 4rem;
+  padding: 0;
+  width: 48%;
+}
+
 .content p:not(:last-child) {
   margin-bottom: 0.5rem;
 }

@@ -21,8 +21,8 @@ const producItemContainer = document.getElementById("producItemContainer"); // A
 
 const paintProductList = (productList) => {
   // console.log(productList);
-  productList.map((product, index) => {
-    const productLink = document.createElement("div"); // 포스터 눌렀을 때 제품 상세 페이지로 이동
+  productList.forEach((product) => {
+    const productLink = document.createElement("a"); // 포스터 눌렀을 때 제품 상세 페이지로 이동
     const productImage = document.createElement("img"); // product.img
     const productTitle = document.createElement("div"); // product.name
     const productDesc = document.createElement("div"); // product.shortDescription
@@ -49,10 +49,8 @@ const paintProductList = (productList) => {
     );
 
     producItemContainer.append(productLink);
-    productLink.onclick = () => {
-      window.location.href = `/product/detail/?id=${product._id}`;
-    };
-    productLink.style.cursor = "pointer";
+
+    productLink.href = `/product/detail/?id=${product._id}`;
   });
 };
 
