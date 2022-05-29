@@ -73,7 +73,7 @@ const accoutPageHeader = `
 const registerPageHeader = `
 <li><a href="/login">로그인</a></li>
 <li>
-  <a href="#cart" aria-current="page">
+  <a href="/cart" aria-current="page">
     <span class="icon">
       <i class="fas fa-cart-shopping"></i>
     </span>
@@ -86,7 +86,7 @@ const registerPageHeader = `
 const loginPageHeader = `
 <li><a href="/register">회원가입</a></li>
 <li>
-  <a href="#cart" aria-current="page">
+  <a href="/cart" aria-current="page">
     <span class="icon">
       <i class="fas fa-cart-shopping"></i>
     </span>
