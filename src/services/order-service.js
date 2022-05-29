@@ -36,44 +36,40 @@ class OrderService {
 
     // db에 저장
     const createdNewOrder = await this.orderModel.create(newOrderInfo);
-
+    const checkNewOrder = await this.orderModel.findById({
+      _id: createdNewOrder._id,
+    });
+    if (createdNewOrder.id !== checkNewOrder.id) {
+      throw new Error("주문이 정상적으로 완료되지 않았습니다.");
+    }
     return createdNewOrder;
   }
 
   // 개인의 주문 목록을 받음.
   async getOrders(userId) {
-    const order = await this.orderModel.findByUserId(userId);
-    return order;
+    return await this.orderModel.findByUserId(userId);
   }
 
   async getOrdersForDelete(orderIdList) {
-    // const orderList = await orderIdList.map(async (orderId) => {
-    //   await this.orderModel.findByOrderId(orderId);
-    // });
     const orderList = [];
     for await (const orderId of orderIdList) {
-      const order = await this.orderModel.findByOrderId(orderId);
+      const order = await this.orderModel.findById(orderId);
       orderList.push(order);
     }
-    console.log("오더리스트", orderList);
     return orderList;
   }
 
   // 주문 목록 전체를 받음.
   async getOrdersAll() {
-    const order = await this.orderModel.findByUserId();
-    return order;
+    return await this.orderModel.findByUserId();
   }
 
   // 주문 취소
   async deleteOrder(orderIdArray) {
-    let order = await orderIdArray.map((productId) =>
-      this.orderModel.deleteByProductId({ productId })
+    return await orderIdArray.map((orderId) =>
+      this.orderModel.deleteById(orderId)
     );
-    return order;
   }
 }
 
-const orderService = new OrderService(orderModel);
-
-export { orderService };
+export const orderService = new OrderService(orderModel);

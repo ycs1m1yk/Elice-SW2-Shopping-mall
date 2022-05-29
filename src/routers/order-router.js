@@ -20,21 +20,29 @@ orderRouter.post("/complete", loginRequired, async (req, res, next) => {
     const userId = req.currentUserId;
 
     // req (request)의 body 에서 데이터 가져오기
-    const fullName = req.body.fullName;
-    const phoneNumber = req.body.phoneNumber;
+
+    const {
+      fullName,
+      phoneNumber,
+      postalCode,
+      address1,
+      address2,
+      requirement,
+      orderList,
+      totalPrice,
+      shippingFee,
+    } = req.body;
+
     const address = {
-      postalCode: req.body.postalCode,
-      address1: req.body.address1,
-      address2: req.body.address2,
+      postalCode,
+      address1,
+      address2,
     };
-    const requirement = req.body.requirement;
-    const orderList = req.body.orderList.map((e) => ({
+    const wholeorderList = orderList.map((e) => ({
       productId: e.productId,
       quantity: e.quantity,
       price: e.price,
     }));
-    const totalPrice = req.body.totalPrice;
-    const shippingFee = req.body.shippingFee;
 
     // 위 데이터를 주문 db에 추가하기
     const newOrder = await orderService.addOrder({
@@ -43,7 +51,7 @@ orderRouter.post("/complete", loginRequired, async (req, res, next) => {
       phoneNumber,
       address,
       requirement,
-      orderList,
+      orderList: wholeorderList,
       totalPrice,
       shippingFee,
     });
@@ -74,7 +82,7 @@ orderRouter.get("/:userId", loginRequired, async function (req, res, next) {
 
 orderRouter.delete("/delete", loginRequired, async function (req, res, next) {
   try {
-    const orderIdList = req.body.orderIdList; // 배열
+    const { orderIdList } = req.body; // 배열
     const userId = req.currentUserId;
 
     const orderList = await orderService.getOrdersForDelete(orderIdList);
