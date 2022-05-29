@@ -12,7 +12,6 @@ const prevBtn = document.querySelector(".prev");
 const nextBtn = document.querySelector(".next");
 const playBtn = document.querySelector(".play");
 const pauseBtn = document.querySelector(".pause");
-const selectedCategoryImage = slideList.querySelectorAll(".category-image");
 
 const active = "slide_active";
 let playId;
@@ -99,21 +98,11 @@ const handlePauseButtonClick = () => {
   playBtn.style.display = "inline-block";
 };
 
-// Slide 이미지 클릭했을 때 해당 카테고리로 이동
-const handleSelectedCategoryImageClick = (e) => {
-  const category = e.target.name;
-  window.location.href = `/product/list/?category=${category} Clothes`;
-};
-
 // 이벤트 등록
 nextBtn.addEventListener("click", handleNextButtonClick);
 prevBtn.addEventListener("click", handlePrevButtonClick);
 playBtn.addEventListener("click", handlePlayButtonClick);
 pauseBtn.addEventListener("click", handlePauseButtonClick);
-
-for (const target of selectedCategoryImage) {
-  target.addEventListener("click", handleSelectedCategoryImageClick);
-}
 
 // 페이지 로딩이 끝나면 슬라이드 바로 시작
 window.onload = () => {

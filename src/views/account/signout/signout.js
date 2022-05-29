@@ -3,14 +3,18 @@ import header from "/components/Header.js";
 
 document.body.insertAdjacentElement("afterbegin", header);
 
-const submitButton = document.getElementById("submitButton");
+const registerForm = document.getElementById("registerUserForm");
 const modalBox = document.getElementById("modal");
 const modalButton = document.getElementById("deleteCompleteButton");
-let password = ""; // 현재 비밀번호
+const passwordInput = document.getElementById("passwordInput");
 
-const handleSubmitButtonClick = (e) => {
+const formData = new FormData();
+
+passwordInput.focus();
+
+const handleSubmit = (e) => {
   e.preventDefault();
-  password = e.target.form[0].value;
+  formData.append("password", e.target[0].value);
   // 모달 창 재확인
   modalBox.classList.toggle("is-active");
 };
@@ -21,9 +25,6 @@ const handleModalButtonClick = async (e) => {
   const payload = decodeJWT(token);
   const userId = payload.userId;
 
-  // console.log(userId);
-  // console.log(password);
-
   await fetch(`/api/users/${userId}`, {
     method: "DELETE",
     headers: {
@@ -31,7 +32,7 @@ const handleModalButtonClick = async (e) => {
       Authorization: "Bearer " + token,
     },
     body: JSON.stringify({
-      currentPassword: password,
+      currentPassword: formData.get("password"),
     }),
   }).then((res) => {
     // 삭제 완료
@@ -48,5 +49,5 @@ const handleModalButtonClick = async (e) => {
   });
 };
 
-submitButton.addEventListener("click", handleSubmitButtonClick);
+registerForm.addEventListener("submit", handleSubmit);
 modalButton.addEventListener("click", handleModalButtonClick);
