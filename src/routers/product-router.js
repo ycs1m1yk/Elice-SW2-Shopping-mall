@@ -7,7 +7,7 @@ import { upload } from "../middlewares";
 const productRouter = Router();
 
 // 전체 상품 가져오기
-productRouter.get("/list", async function (req, res, next) {
+productRouter.get("/", async function (req, res, next) {
   try {
     // 전체 사용자 목록을 얻음
     const products = await productService.getProducts();
@@ -19,9 +19,9 @@ productRouter.get("/list", async function (req, res, next) {
 });
 
 //상품 상세 페이지
-productRouter.get("/:productId", async function (req, res, next) {
+productRouter.get("/:id", async function (req, res, next) {
   try {
-    const productId = req.params.productId;
+    const productId = req.params.id;
     const productInfo = await productService.getProductById(productId);
     // 상품 스키마를 JSON 형태로 프론트에 보냄
     res.status(200).json(productInfo);
@@ -30,28 +30,8 @@ productRouter.get("/:productId", async function (req, res, next) {
   }
 });
 
-//상품 수정 위해 상품 데이터 보내기
-productRouter.get(
-  "/:productId/update",
-  loginRequired,
-  async function (req, res, next) {
-    try {
-      const userId = req.currentUserId;
-      const productId = req.params.productId;
-      const productInfo = await productService.getProductByProductId(productId);
-      if (userId !== productInfo.userId) {
-        throw new Error("본인의 상품 내역만 수정할 수 있습니다.");
-      }
-      // 상품 스키마를 JSON 형태로 프론트에 보냄
-      res.status(200).json(productInfo);
-    } catch (error) {
-      next(error);
-    }
-  }
-);
-
 //유저별 판매 목록 api
-productRouter.get("/list/:userId", loginRequired, async (req, res, next) => {
+productRouter.get("/:userId", loginRequired, async (req, res, next) => {
   try {
     const userId = req.params.userId;
     const currentUserId = req.currentUserId;
@@ -66,9 +46,29 @@ productRouter.get("/list/:userId", loginRequired, async (req, res, next) => {
   }
 });
 
+//상품 수정 위해 상품 데이터 보내기
+productRouter.get(
+  "/:id/update",
+  loginRequired,
+  async function (req, res, next) {
+    try {
+      const userId = req.currentUserId;
+      const productId = req.params.id;
+      const productInfo = await productService.getProductByProductId(productId);
+      if (userId !== productInfo.userId) {
+        throw new Error("본인의 상품 내역만 수정할 수 있습니다.");
+      }
+      // 상품 스키마를 JSON 형태로 프론트에 보냄
+      res.status(200).json(productInfo);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 //상품 정보 수정
 productRouter.patch(
-  "/:productId/update",
+  "/:id/update",
   loginRequired,
   upload.single("image-file"),
   async function (req, res, next) {
@@ -79,12 +79,11 @@ productRouter.patch(
         );
       }
       const userId = req.currentUserId;
-      const currentProductId = req.params.productId;
-      const productInfo = await productService.getProductById(currentProductId);
+      const productId = req.params.id;
+      const productInfo = await productService.getProductById(productId);
       if (userId !== productInfo.userId) {
         throw new Error("본인의 상품 내역만 수정할 수 있습니다.");
       }
-      const productId = req.params.id;
 
       const { location: img } = req.file;
       const {

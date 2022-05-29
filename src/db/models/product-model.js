@@ -4,52 +4,40 @@ import { ProductSchema } from "../schemas/product-schema";
 const Product = model("products", ProductSchema);
 
 export class ProductModel {
-  async findByProductName(productName) {
-    const product = await Product.findOne({ name: productName });
-    return product;
+  async findByName(name) {
+    return await Product.findOne({ name });
   }
 
-  async findByProductId(productId) {
-    const product = await Product.findOne({ _id: productId });
-    return product;
+  async findById(_id) {
+    return await Product.findOne({ _id });
   }
 
   async findByCategory(category) {
-    const products = await Product.find({ category });
-    return products;
-  }
-
-  async findByUserId(userId) {
-    const products = await Product.find({ userId });
-    return products;
-  }
-
-  async create(productInfo) {
-    const createdNewProduct = await Product.create(productInfo);
-    return createdNewProduct;
+    return await Product.find({ category });
   }
 
   async findAll() {
-    const products = await Product.find({});
-    return products;
+    return await Product.find({});
+  }
+
+  async findByUserId(userId) {
+    return await Product.find({ userId });
+  }
+
+  async create(productInfo) {
+    return await Product.create(productInfo);
   }
 
   async update({ productId, update }) {
     const filter = { _id: productId };
     const option = { returnOriginal: false };
 
-    const updatedProduct = await Product.findOneAndUpdate(
-      filter,
-      update,
-      option
-    );
-    return updatedProduct;
+    return await Product.findOneAndUpdate(filter, update, option);
   }
 
-  async deleteByProductId({ productId }) {
+  async deleteById({ productId }) {
     const filter = { _id: productId };
-    const deleteProduct = await Product.findOneAndDelete(filter);
-    return deleteProduct;
+    return await Product.findOneAndDelete(filter);
   }
 }
 
