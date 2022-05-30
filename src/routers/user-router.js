@@ -57,6 +57,18 @@ userRouter.post("/login", async function (req, res, next) {
   }
 });
 
+// 내 정보 보기 api
+userRouter.get("/my", async (req, res, next) => {
+  try {
+    // const userId = req.currentUserId;
+    const userId = "629389b99d6260b106e699d7";
+    const myInfo = await userService.getMyInfo(userId);
+    res.status(200).json(myInfo);
+  } catch (error) {
+    next(error);
+  }
+});
+
 // 사용자 정보 수정
 // (예를 들어 /api/users/abc12345 로 요청하면 req.params.userId는 'abc12345' 문자열로 됨)
 userRouter.patch("/user", loginRequired, async function (req, res, next) {
@@ -70,7 +82,7 @@ userRouter.patch("/user", loginRequired, async function (req, res, next) {
     }
 
     // token으로부터 id를 가져옴
-    const userId = req.currentPassword;
+    const userId = req.currentUserId;
 
     // body data 로부터 업데이트할 사용자 정보를 추출함.
     const fullName = req.body.fullName;

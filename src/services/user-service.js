@@ -74,6 +74,11 @@ class UserService {
     return { token };
   }
 
+  async getMyInfo(userId) {
+    console.log(userId);
+    return await userModel.findById(userId);
+  }
+
   // 유저정보 수정, 현재 비밀번호가 있어야 수정 가능함.
   async setUser(userInfoRequired, toUpdate) {
     // 객체 destructuring
