@@ -30,6 +30,10 @@ export class UserModel {
   async deleteById(_id) {
     return await User.findOneAndDelete({ _id });
   }
+
+  async deleteByEmail(email) {
+    return await User.findOneAndDelete({ email });
+  }
 }
 
 export const userModel = new UserModel();
