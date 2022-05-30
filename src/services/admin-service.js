@@ -5,8 +5,9 @@ import jwt from "jsonwebtoken";
 
 class AdminService {
   // 본 파일의 맨 아래에서, new UserService(userModel) 하면, 이 함수의 인자로 전달됨
-  constructor(userModel) {
+  constructor(userModel, orderModel) {
     this.userModel = userModel;
+    this.orderModel = orderModel;
   }
 
   // 사용자 목록을 받음.
@@ -19,7 +20,7 @@ class AdminService {
     return await this.userModel.deleteByEmail(email);
   }
 
-  async getOrder() {
+  async getOrders() {
     return await this.orderModel.findAll();
   }
 
@@ -94,4 +95,4 @@ class AdminService {
   }
 }
 
-export const adminService = new AdminService(userModel);
+export const adminService = new AdminService(userModel, orderModel);

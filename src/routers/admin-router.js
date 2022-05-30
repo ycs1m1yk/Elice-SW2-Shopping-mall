@@ -25,10 +25,14 @@ adminRouter.get("/users", loginRequired, async (req, res, next) => {
 adminRouter.patch("/user/:email", loginRequired, async (req, res, next) => {
   try {
     // 관리자 계정 검증
-
+    if (is.emptyObject(req.body)) {
+      throw new Error(
+        "headers의 Content-Type을 application/json으로 설정해주세요"
+      );
+    }
     const { email } = req.params;
-    const userId = req.currentUserId;
     const { role } = req.body;
+    const userId = req.currentUserId;
 
     await adminService.adminVerify(userId);
 
@@ -56,6 +60,7 @@ adminRouter.delete("/user/:email", loginRequired, async (req, res, next) => {
   try {
     const userEmail = req.params.email;
     const userId = req.currentUserId;
+
     // 관리자 계정 검증
     await adminService.adminVerify(userId);
 
@@ -72,6 +77,7 @@ adminRouter.get("/orders", loginRequired, async (req, res, next) => {
   try {
     // 관리자 계정 검증
     const userId = req.currentUserId;
+
     await adminService.adminVerify(userId);
 
     const orders = await adminService.getOrders();
@@ -116,10 +122,12 @@ adminRouter.patch(
   }
 );
 
-adminRouter.delete("/order/:orderId", loginRequired, async (req, res, next) => {
+adminRouter.delete("/order/:orderId", async (req, res, next) => {
   try {
     const { orderId } = req.params;
-    const userId = req.currentUserId;
+    // const userId = req.currentUserId;
+    const userId = "6294a87e94ed1f9043ff02ce"; // admin 계정
+    // const userId = "6292812379c87d3f39dbfb13"; // user 계정
 
     await adminService.adminVerify(userId);
     const orderInfoRequired = { orderId };
