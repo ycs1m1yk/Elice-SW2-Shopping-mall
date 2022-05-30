@@ -2,9 +2,7 @@ import { Router } from "express";
 import is from "@sindresorhus/is";
 // 폴더에서 import하면, 자동으로 폴더의 index.js에서 가져옴
 import { loginRequired } from "../middlewares";
-import { borderService } from "../services";
-import { upload } from "../middlewares";
-import { commentService } from "../services/comment-service";
+import { commentService } from "../services";
 
 const commentRouter = Router();
 
@@ -19,7 +17,7 @@ commentRouter.get("/", async function(req, res, next){
   }
 });
 
-//특정 유저 상품 후기 목록
+//특정 유저 상품 후기 목록 조회
 commentRouter.get("/commentlist/user", loginRequired, async function (req, res, next) {
   try {
     const userId = req.currentUserId;
@@ -44,7 +42,7 @@ commentRouter.get("/:productId", async function(req, res, next){
 })
 
 //후기글 작성(미완)
-commentRouter.post("/add/:productId", loginRequired, async function(req, res, next){
+commentRouter.post("/:productId/add", loginRequired, async function(req, res, next){
   try {
     const productId = req.params.productId;
     const userId = req.currentUserId;
@@ -60,7 +58,7 @@ commentRouter.post("/add/:productId", loginRequired, async function(req, res, ne
     const newComment = await commentService.addComment({
       productId,
       userId,
-      test,
+      text,
       starRating,
       parentComment
     });
@@ -71,4 +69,6 @@ commentRouter.post("/add/:productId", loginRequired, async function(req, res, ne
     next(error);
   }
 })
+
+export { commentRouter };
 
