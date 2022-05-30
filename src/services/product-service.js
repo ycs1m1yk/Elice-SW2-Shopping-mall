@@ -42,25 +42,25 @@ class ProductService {
       detailDescription,
     };
     // 상품명 중복은 이제 아니므로, 상품 등록을 진행함
-    const createdNewProduct = await this.productModel.create(newProductInfo);
-
-    return createdNewProduct;
+    return await this.productModel.create(newProductInfo);
   }
 
   // 상품 전체 목록 확인
   async getProducts() {
-    const products = await this.productModel.findAll();
-    return products;
+    return await this.productModel.findAll();
   }
-  //상품 카테고리별 목록 확인
+  //카테고리별 상품 목록 확인
   async getProductsByCategory(category) {
-    const products = await this.productModel.findByCategory(category);
-    return products;
+    return await this.productModel.findByCategory(category);
   }
-  //상품 상세 조회
-  async getProductById(productId) {
-    const product = await this.productModel.findById(productId);
-    return product;
+  //유저별 상품 목록 확인
+  async getProductsByUserId(userId) {
+    return await this.productModel.findByUserId(userId);
+  }
+
+  //상품 id로 상세 조회
+  async getProductByProductId(productId) {
+    return await this.productModel.findById(productId);
   }
 
   // 상품정보 수정(미완성), 현재 비밀번호가 있어야 수정 가능함.
@@ -73,13 +73,28 @@ class ProductService {
       throw new Error("상품 내역이 없습니다. 다시 한 번 확인해 주세요.");
     }
     //업데이트 진행
-    product = await this.productModel.update({
+    return await this.productModel.update({
       productId,
       update: toUpdate,
     });
+  }
 
+  async getProductsForDelete(productIdList) {
+    let productList = [];
+    for await (const productId of productIdList) {
+      const product = this.productModel.findById(productId);
+      productList.push(product);
+    }
+    return productList;
+  }
+
+  async deleteProduct(productIdArray) {
+    let product = await productIdArray.map((productId) =>
+      this.productModel.deleteById({ productId })
+    );
     return product;
   }
 }
-const productService = new ProductService(productModel);
-export { productService };
+
+export const productService = new ProductService(productModel);
+
