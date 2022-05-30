@@ -1,5 +1,5 @@
 import { model } from "mongoose";
-import { CommentSchema } from "../schemas/product-schema";
+import { CommentSchema } from "../schemas/comment-schema";
 
 const Comment = model("comments", CommentSchema);
 

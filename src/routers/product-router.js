@@ -87,7 +87,6 @@ productRouter.patch(
         price,
         category,
         quantity,
-        size,
         brandName,
         keyword,
         shortDescription,
@@ -100,7 +99,6 @@ productRouter.patch(
         ...(price && { price }),
         ...(category && { category }),
         ...(quantity && { quantity }),
-        ...(size && { size }),
         ...(brandName && { brandName }),
         ...(keyword && { keyword }),
         ...(shortDescription && { shortDescription }),
@@ -123,7 +121,7 @@ productRouter.patch(
 productRouter.post(
   "/add",
   upload.single("image-file"),
-  loginRequired,
+
   async (req, res, next) => {
     try {
       if (is.emptyObject(req.body)) {
@@ -137,7 +135,6 @@ productRouter.post(
         price,
         category,
         quantity,
-        size,
         brandName,
         keyword,
         shortDescription,
@@ -152,12 +149,11 @@ productRouter.post(
         img,
         category,
         quantity,
-        size,
         brandName,
         keyword,
         shortDescription,
         detailDescription,
-        userId,
+        userId
       });
 
       // 추가된 유저의 db 데이터를 프론트에 다시 보내줌
@@ -178,6 +174,7 @@ productRouter.delete("/delete", loginRequired, async function (req, res, next) {
     const ProductList = await productService.getProductsForDelete(
       productIdList
     );
+
 
     ProductList.map((productInfo) => {
       if (userId !== productInfo.userId) {
