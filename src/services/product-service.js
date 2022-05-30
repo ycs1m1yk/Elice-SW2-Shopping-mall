@@ -95,5 +95,6 @@ class ProductService {
     return product;
   }
 }
-const productService = new ProductService(productModel);
-export { productService };
+
+export const productService = new ProductService(productModel);
+
