@@ -60,7 +60,7 @@ const getDataFromApi = async () => {
   const category = url.searchParams.get("category"); // 현재 선택한 카테고리
 
   // 카테고리에 맞는 상품 리스트 요청
-  const productList = await Api.get("/api/product/list/category", category);
+  const productList = await Api.get("/api/product/category", category);
 
   // TODO: API를 통해 받아온 모든 상품들을 순회하면서 동적으로 producItemContainer에 추가
   paintProductList(productList);
