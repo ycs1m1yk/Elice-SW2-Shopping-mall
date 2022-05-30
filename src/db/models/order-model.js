@@ -16,6 +16,12 @@ export class OrderModel {
     return await Order.create(orderInfo);
   }
 
+  async update({ orderId, update }) {
+    const filter = { _id: orderId };
+    const option = { returnOriginal: false };
+
+    return await Order.findOneAndUpdate(filter, update, option);
+  }
   async findAll() {
     return await Order.find({});
   }

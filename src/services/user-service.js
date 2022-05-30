@@ -74,9 +74,8 @@ class UserService {
     return { token };
   }
 
-  // 사용자 목록을 받음.
-  async getUsers() {
-    return await this.userModel.findAll();
+  async getMyInfo(userId) {
+    return await userModel.findById(userId);
   }
 
   // 유저정보 수정, 현재 비밀번호가 있어야 수정 가능함.
