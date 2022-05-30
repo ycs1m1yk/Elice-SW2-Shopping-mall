@@ -58,10 +58,9 @@ userRouter.post("/login", async function (req, res, next) {
 });
 
 // 내 정보 보기 api
-userRouter.get("/my", async (req, res, next) => {
+userRouter.get("/my", loginRequired, async (req, res, next) => {
   try {
-    // const userId = req.currentUserId;
-    const userId = "629389b99d6260b106e699d7";
+    const userId = req.currentUserId;
     const myInfo = await userService.getMyInfo(userId);
     res.status(200).json(myInfo);
   } catch (error) {

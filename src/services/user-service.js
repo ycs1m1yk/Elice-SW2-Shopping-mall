@@ -75,7 +75,6 @@ class UserService {
   }
 
   async getMyInfo(userId) {
-    console.log(userId);
     return await userModel.findById(userId);
   }
 
