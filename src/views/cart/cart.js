@@ -37,8 +37,8 @@ const handlePartialDeleteLabelClick = () => {
   });
 };
 
-const handlePurchase = (e) => {
-  location.href = "../order";
+const handlePurchase = () => {
+  location.href = "../login";
 };
 
 // live nodes 이벤트핸들러
@@ -173,6 +173,7 @@ const insertProductsToCartProductsContainer = async () => {
     };
     products.push(product);
 
+    cart[_id].name = data.name;
     cart[_id].price = data.price;
   }
 
