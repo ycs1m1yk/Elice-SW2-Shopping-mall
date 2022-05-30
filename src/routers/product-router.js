@@ -22,7 +22,7 @@ productRouter.get("/", async function (req, res, next) {
 productRouter.get("/:id", async function (req, res, next) {
   try {
     const productId = req.params.id;
-    const productInfo = await productService.getProductById(productId);
+    const productInfo = await productService.getProductByProductId(productId);
     // 상품 스키마를 JSON 형태로 프론트에 보냄
     res.status(200).json(productInfo);
   } catch (error) {
@@ -31,7 +31,7 @@ productRouter.get("/:id", async function (req, res, next) {
 });
 
 //유저별 판매 목록 api
-productRouter.get("/:userId", loginRequired, async (req, res, next) => {
+productRouter.get("/sellinglist/user", loginRequired, async (req, res, next) => {
   try {
     const userId = req.params.userId;
     const currentUserId = req.currentUserId;
@@ -80,7 +80,7 @@ productRouter.patch(
       }
       const userId = req.currentUserId;
       const productId = req.params.id;
-      const productInfo = await productService.getProductById(productId);
+      const productInfo = await productService.getProductByProductId(productId);
       if (userId !== productInfo.userId) {
         throw new Error("본인의 상품 내역만 수정할 수 있습니다.");
       }
@@ -198,7 +198,20 @@ productRouter.delete("/delete", loginRequired, async function (req, res, next) {
 });
 
 // 카테고리에 맞는 상품 api
-productRouter.get("/list/category/:category", async (req, res, next) => {
+productRouter.get("/category/:category", async (req, res, next) => {
+  try {
+    const category = req.params.category;
+    // 특정 카테고리에 맞는 상품 목록을 얻음
+    const products = await productService.getProductsByCategory(category);
+    // 상품 목록(배열)을 JSON 형태로 프론트에 보냄
+    res.status(200).json(products);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 카테고리 추가 기능 
+productRouter.get("/category/update", async (req, res, next) => {
   try {
     const category = req.params.category;
     // 특정 카테고리에 맞는 상품 목록을 얻음
