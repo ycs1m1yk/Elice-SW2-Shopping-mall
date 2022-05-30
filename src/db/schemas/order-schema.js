@@ -29,23 +29,11 @@ const OrderSchema = new Schema(
       ),
       required: true,
     },
-    requirement: {
+    request: {
       type: String,
       required: false,
       default: "요청사항 없음",
     },
-    orderList: [
-      new Schema({
-        productId: String,
-        quantity: Number,
-        price: Number,
-        status: {
-          type: String,
-          required: false,
-          default: "상품 준비중",
-        },
-      }),
-    ],
     totalPrice: {
       type: Number,
       required: true,

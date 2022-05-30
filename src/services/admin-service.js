@@ -93,6 +93,11 @@ class AdminService {
       );
     }
   }
+
+  exceptPwd(object) {
+    const { password, ...otherKeys } = object;
+    return otherKeys;
+  }
 }
 
 export const adminService = new AdminService(userModel, orderModel);

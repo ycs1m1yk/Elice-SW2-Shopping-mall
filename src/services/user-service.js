@@ -16,6 +16,7 @@ class UserService {
 
     // 이메일 중복 확인
     const user = await this.userModel.findByEmail(email);
+
     if (user) {
       throw new Error(
         "이 이메일은 현재 사용중입니다. 다른 이메일을 입력해 주세요."
@@ -136,6 +137,11 @@ class UserService {
         "현재 비밀번호가 일치하지 않습니다. 다시 한 번 확인해 주세요."
       );
     }
+  }
+
+  async exceptPwd(userInfo, exceptKey) {
+    const { [exceptKey]: deletedKey, ...otherKeys } = userInfo;
+    return otherKeys;
   }
 }
 
