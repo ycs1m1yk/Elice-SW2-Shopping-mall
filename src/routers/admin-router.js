@@ -32,7 +32,7 @@ adminRouter.patch("/user/:email", loginRequired, async (req, res, next) => {
 
     await adminService.adminVerify(userId);
 
-    const userInfoRequired = { userId };
+    const userInfoRequired = { email };
     // 위 데이터가 undefined가 아니라면, 즉, 프론트에서 업데이트를 위해
     // 보내주었다면, 업데이트용 객체에 삽입함.
     const toUpdate = {
@@ -83,19 +83,19 @@ adminRouter.get("/orders", loginRequired, async (req, res, next) => {
 });
 
 adminRouter.patch(
-  "/order/:orderId/:index",
+  "/order/:orderId/:productId",
   loginRequired,
   async (req, res, next) => {
     try {
       // 관리자 계정 검증
 
-      const { orderId, index } = req.params;
+      const { orderId, productId } = req.params;
       const userId = req.currentUserId;
       const { status } = req.body;
 
       await adminService.adminVerify(userId);
 
-      const orderInfoRequired = { orderId, index };
+      const orderInfoRequired = { orderId, productId };
       // 위 데이터가 undefined가 아니라면, 즉, 프론트에서 업데이트를 위해
       // 보내주었다면, 업데이트용 객체에 삽입함.
       const toUpdate = {

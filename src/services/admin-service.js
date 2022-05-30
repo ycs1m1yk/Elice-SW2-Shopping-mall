@@ -24,8 +24,23 @@ class AdminService {
   }
 
   async setOrderStatus(orderInfoRequired, toUpdate) {
-    const { orderId, index } = orderInfoRequired;
-    return await this.orderModel.update({ orderId, update: toUpdate });
+    const { orderId, productId } = orderInfoRequired;
+    const { status } = toUpdate;
+    const findCondition = { orderId, "orderList.productId": productId };
+    const update = {
+      $set: {
+        "orderList.$.status": status,
+      },
+    };
+    // Order.findOneAndUpdate(
+    //   { orderId, "orderList.productId": productId },
+    //   {
+    //     $set: {
+    //       "orderList.$.status": status,
+    //     },
+    //   }
+    // );
+    return await this.orderModel.update({ findCondition, update });
   }
 
   async deleteOrder(orderInfoRequired) {
@@ -46,7 +61,6 @@ class AdminService {
     }
   }
 
-  // 미완성
   async setUserRole(userInfoRequired, toUpdate) {
     const { email } = userInfoRequired;
     const userInfo = await this.userModel.findByEmail(email);

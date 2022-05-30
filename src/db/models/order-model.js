@@ -22,6 +22,11 @@ export class OrderModel {
 
     return await Order.findOneAndUpdate(filter, update, option);
   }
+
+  async updateStatus({ findCondition, update }) {
+    return await Order.findOneAndUpdate(findCondition, update);
+  }
+
   async findAll() {
     return await Order.find({});
   }
