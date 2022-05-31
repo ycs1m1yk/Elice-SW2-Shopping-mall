@@ -357,3 +357,4 @@ const addAllEvents = () => {
 
 addAllElements();
 addAllEvents();
+updateAllSelectCheckbox();
