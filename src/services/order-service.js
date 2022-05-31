@@ -12,21 +12,11 @@ class OrderService {
   // 주문하기
   async addOrder(orderInfo) {
     // 객체 destructuring, address는 타입 객체, orderList는 타입 배열
-    const {
-      userId,
-      fullName,
-      phoneNumber,
-      address,
-      request,
-      orderList,
-      totalPrice,
-      shippingFee,
-    } = orderInfo;
+    const { userId, address, request, orderList, totalPrice, shippingFee } =
+      orderInfo;
 
     const newOrderInfo = {
       userId,
-      fullName,
-      phoneNumber,
       address,
       request,
       orderList,

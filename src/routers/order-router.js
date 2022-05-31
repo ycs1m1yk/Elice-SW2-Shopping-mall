@@ -21,8 +21,6 @@ orderRouter.post("/complete", loginRequired, async (req, res, next) => {
     // req (request)의 body 에서 데이터 가져오기
 
     const {
-      fullName,
-      phoneNumber,
       addressName,
       receiverName,
       receiverPhoneNumber,
@@ -54,8 +52,6 @@ orderRouter.post("/complete", loginRequired, async (req, res, next) => {
     // 위 데이터를 주문 db에 추가하기
     const newOrder = await orderService.addOrder({
       userId,
-      fullName,
-      phoneNumber,
       address,
       request,
       orderList: wholeorderList,
