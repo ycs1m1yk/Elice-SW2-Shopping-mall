@@ -6,7 +6,7 @@ import {
   orderRouter,
   productRouter,
   adminRouter,
-  categoryRouter
+  categoryRouter,
 } from "./routers";
 import { errorHandler } from "./middlewares";
 import dotenv from "dotenv";

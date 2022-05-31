@@ -11,13 +11,13 @@ categoryRouter.post(
   upload.single("image-file"),
   async function (req, res, next) {
     try {
+      console.log(req.file);
       const { location: img } = req.file;
-      const { name, description, theme } = req.body;
+      const { name, description } = req.body;
 
       const newCategory = await categoryService.addCategory({
         name,
         description,
-        theme,
         img,
       });
 

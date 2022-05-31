@@ -5,7 +5,7 @@ class CategoryService {
     this.categoryModel = categoryModel;
   }
   async addCategory(categoryInfo) {
-    const { name, description, theme, img } = categoryInfo;
+    const name = categoryInfo.name;
     const category = await this.categoryModel.findByName(name);
     if (category) {
       throw new Error(
