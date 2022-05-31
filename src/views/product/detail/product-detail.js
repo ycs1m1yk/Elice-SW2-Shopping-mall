@@ -26,7 +26,6 @@ TODO
 
 document.body.insertAdjacentElement("afterbegin", header);
 const addToCartButton = document.getElementById("addToCartButton"); // 장바구니 추가 버튼
-const purchaseButton = document.getElementById("purchaseButton"); // 구매하기 버튼
 
 const url = new URL(location.href);
 const productId = url.searchParams.get("id"); // 현재 상품의 아이디
@@ -64,17 +63,11 @@ const handleAddCart = () => {
   localStorage.setItem("cart", JSON.stringify(cartItem));
 };
 
-// 주문하기 클릭 -> Order 페이지 라우팅
-const handlePurchase = (e) => {
-  window.location.href = "/order";
-};
-
 const getDataFromApi = async () => {
   const product = await Api.get("/api/product", productId);
   paintProduct(product);
 };
 
 addToCartButton.addEventListener("click", handleAddCart);
-purchaseButton.addEventListener("click", handlePurchase);
 
 getDataFromApi();

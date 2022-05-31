@@ -37,8 +37,14 @@ const handlePartialDeleteLabelClick = () => {
   });
 };
 
-const handlePurchase = (e) => {
-  location.href = "../order";
+const handlePurchase = () => {
+  const isEmptyOrder =
+    JSON.parse(localStorage.getItem("order")).selectedIds.length === 0;
+  if (isEmptyOrder) {
+    alert("구매할 제품이 없습니다. 장바구니에서 선택해 주세요.");
+    return;
+  }
+  location.href = "../login";
 };
 
 // live nodes 이벤트핸들러
@@ -173,6 +179,7 @@ const insertProductsToCartProductsContainer = async () => {
     };
     products.push(product);
 
+    cart[_id].name = data.name;
     cart[_id].price = data.price;
   }
 
@@ -325,9 +332,8 @@ const updateOrderData = () => {
 const updateOrderInfo = () => {
   const order = JSON.parse(localStorage.getItem("order"));
 
-  // TODO
-  // [] 배송비 받아오기
-  const fee = 3000;
+  const isEmptyOrder = order.selectedIds.length === 0;
+  const fee = isEmptyOrder ? 0 : 3000;
   productsCount.textContent = addCommas(order.productsCount) + "개";
   productsTotal.textContent = addCommas(order.productsTotal) + "원";
   deliveryFee.textContent = addCommas(fee) + "원";
