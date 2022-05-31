@@ -30,21 +30,7 @@ productRouter.get("/:id", async function (req, res, next) {
   }
 });
 
-//유저별 판매 목록 api
-productRouter.get(
-  "/sellinglist/user",
-  loginRequired,
-  async (req, res, next) => {
-    try {
-      const userId = req.currentUserId;
-      const products = await productService.getProductsByUserId(userId);
-      // 상품 목록(배열)을 JSON 형태로 프론트에 보냄
-      res.status(200).json(products);
-    } catch (error) {
-      next(error);
-    }
-  }
-);
+
 
 //상품 수정 위해 상품 데이터 보내기
 productRouter.get(
@@ -125,7 +111,7 @@ productRouter.patch(
 productRouter.post(
   "/add",
   upload.single("image-file"),
-
+  loginRequired,
   async (req, res, next) => {
     try {
       if (is.emptyObject(req.body)) {
