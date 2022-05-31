@@ -92,14 +92,13 @@ adminRouter.get("/orders", loginRequired, async (req, res, next) => {
 
 adminRouter.patch(
   "/order/:orderId/:productId",
-
+  loginRequired,
   async (req, res, next) => {
     try {
       // 관리자 계정 검증
 
       const { orderId, productId } = req.params;
-      // const userId = req.currentUserId;
-      const userId = "6294a87e94ed1f9043ff02ce";
+      const userId = req.currentUserId;
       const { status } = req.body;
 
       await adminService.adminVerify(userId);
