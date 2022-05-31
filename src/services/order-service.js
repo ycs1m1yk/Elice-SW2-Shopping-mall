@@ -17,7 +17,7 @@ class OrderService {
       fullName,
       phoneNumber,
       address,
-      requirement,
+      request,
       orderList,
       totalPrice,
       shippingFee,
@@ -28,7 +28,7 @@ class OrderService {
       fullName,
       phoneNumber,
       address,
-      requirement,
+      request,
       orderList,
       totalPrice,
       shippingFee,
@@ -73,3 +73,10 @@ class OrderService {
 }
 
 export const orderService = new OrderService(orderModel);
+
+// const orderInfo = await orderModel.findById({id});
+// orderInfo.map(e => {
+//   if (e.productId === "adfasfsadf") {
+//     orderModel.findByIdAndUpdate({e.productId}, {$set: orderList};)
+//   }
+// });

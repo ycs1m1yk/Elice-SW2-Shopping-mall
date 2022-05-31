@@ -61,8 +61,9 @@ userRouter.post("/login", async function (req, res, next) {
 userRouter.get("/my", loginRequired, async (req, res, next) => {
   try {
     const userId = req.currentUserId;
-    const myInfo = await userService.getMyInfo(userId);
-    res.status(200).json(myInfo);
+    let myInfo = await userService.getMyInfo(userId);
+    const myInfoWithoutPwd = (({ password, ...o }) => o)(myInfo._doc);
+    res.status(200).json(myInfoWithoutPwd);
   } catch (error) {
     next(error);
   }
@@ -115,9 +116,11 @@ userRouter.patch("/user", loginRequired, async function (req, res, next) {
       userInfoRequired,
       toUpdate
     );
-
+    const userInfoWithoutPwd = (({ password, ...o }) => o)(
+      updatedUserInfo._doc
+    );
     // 업데이트 이후의 유저 데이터를 프론트에 보내 줌
-    res.status(200).json(updatedUserInfo);
+    res.status(200).json(userInfoWithoutPwd);
   } catch (error) {
     next(error);
   }
@@ -144,10 +147,9 @@ userRouter.delete("/user", loginRequired, async function (req, res, next) {
     const userInfoRequired = { userId, currentPassword };
     // 사용자 정보를 업데이트함.
     const deleteUserInfo = await userService.deleteUser(userInfoRequired);
-    console.log(deleteUserInfo);
-    console.log("삭제 완료");
+    const userInfoWithoutPwd = (({ password, ...o }) => o)(deleteUserInfo._doc);
     // 업데이트 이후의 유저 데이터를 프론트에 보내 줌
-    res.status(200).json(deleteUserInfo);
+    res.status(200).json(userInfoWithoutPwd);
   } catch (error) {
     next(error);
   }
