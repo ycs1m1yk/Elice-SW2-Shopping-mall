@@ -27,21 +27,16 @@ class AdminService {
   async setOrderStatus(orderInfoRequired, toUpdate) {
     const { orderId, productId } = orderInfoRequired;
     const { status } = toUpdate;
-    const findCondition = { orderId, "orderList.productId": productId };
-    const update = {
-      $set: {
-        "orderList.$.status": status,
-      },
-    };
-    // Order.findOneAndUpdate(
-    //   { orderId, "orderList.productId": productId },
-    //   {
-    //     $set: {
-    //       "orderList.$.status": status,
-    //     },
-    //   }
-    // );
-    return await this.orderModel.update({ findCondition, update });
+    const updateOrderList = await this.orderModel.findById(orderId);
+    const newUpdate = await updateOrderList.orderList.map((e) => {
+      if (e.productId === productId) {
+        e.status = status;
+      }
+      return e;
+    });
+
+    const update = { $set: { orderList: newUpdate } };
+    return await this.orderModel.update({ orderId, update });
   }
 
   async deleteOrder(orderInfoRequired) {
