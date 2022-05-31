@@ -46,7 +46,19 @@ commentRouter.get("/:productId", async function (req, res, next) {
   }
 });
 
-//후기글 작성(미완)
+//후기글 상세 조회
+commentRouter.get("/:id", async function (req, res, next) {
+  try {
+    const commentId = req.params.id;
+    const comment = await commentService.getCommentByCommentId(commentId);
+
+    res.status(200).json(comment);
+  } catch (error) {
+    next(error);
+  }
+});
+
+//후기글 작성
 commentRouter.post(
   "/:productId/add",
   loginRequired,
@@ -58,7 +70,7 @@ commentRouter.post(
 
       // 1인당 1개의 후기 확인 절차 생각중
       const { location: img } = req.file;
-      const { text, starRating, parentComment } = req.body;
+      const { text, starRating } = req.body;
 
       const newComment = await commentService.addComment({
         productId,
@@ -66,7 +78,6 @@ commentRouter.post(
         text,
         img,
         starRating,
-        parentComment,
       });
 
       res.json(201).json(newComment);
@@ -127,7 +138,7 @@ commentRouter.delete("/delete", loginRequired, async function (req, res, next) {
 
     CommentList.map((commentInfo) => {
       if (userId !== commentInfo.userId) {
-        throw new Error("본인의 상품 판매 내역만 취소할 수 있습니다.");
+        throw new Error("본인의 후기 작성 내역만 취소할 수 있습니다.");
       }
     });
 
