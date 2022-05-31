@@ -7,7 +7,7 @@ import { orderService } from "../services";
 const orderRouter = Router();
 
 // 주문하기 api (아래는 /complete이지만, 실제로는 /api/order/complete로 요청해야 함.)
-orderRouter.post("/complete", async (req, res, next) => {
+orderRouter.post("/complete", loginRequired, async (req, res, next) => {
   try {
     // Content-Type: application/json 설정을 안 한 경우, 에러를 만들도록 함.
     // application/json 설정을 프론트에서 안 하면, body가 비어 있게 됨.
@@ -17,18 +17,18 @@ orderRouter.post("/complete", async (req, res, next) => {
       );
     }
 
-    // const userId = req.currentUserId;
-    const userId = "6292812379c87d3f39dbfb13";
+    const userId = req.currentUserId;
     // req (request)의 body 에서 데이터 가져오기
 
     const {
       fullName,
       phoneNumber,
+      addressName,
+      receiverName,
+      receiverPhoneNumber,
       postalCode,
       address1,
       address2,
-      receiverName,
-      receiverPhoneNumber,
       request,
       orderList,
       totalPrice,
@@ -36,15 +36,16 @@ orderRouter.post("/complete", async (req, res, next) => {
     } = req.body;
 
     const address = {
+      addressName,
+      receiverName,
+      receiverPhoneNumber,
       postalCode,
       address1,
       address2,
-      receiverName,
-      receiverPhoneNumber,
     };
-    // const orderListArr = Object.values(orderList);
     const wholeorderList = Object.values(orderList).map((e) => ({
       productId: e.productId,
+      title: e.title,
       quantity: e.quantity,
       price: e.price,
       status: e.status,
