@@ -42,4 +42,3 @@ export class ProductModel {
 }
 
 export const productModel = new ProductModel();
-

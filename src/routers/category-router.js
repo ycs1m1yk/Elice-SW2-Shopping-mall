@@ -1,23 +1,28 @@
 import { Router } from "express";
 // 폴더에서 import하면, 자동으로 폴더의 index.js에서 가져옴
 import { categoryService } from "../services";
-import { upload } from "../middlewares";
+import { adminService } from "../services";
+import { loginRequired, upload } from "../middlewares";
 
 const categoryRouter = Router();
 
 //카테고리 추가
 categoryRouter.post(
   "/add",
+  loginRequired,
   upload.single("image-file"),
   async function (req, res, next) {
     try {
+      //admin 확인 작업
+      const userId = req.currentUserId;
+      await adminService.adminVerify(userId);
+
       const { location: img } = req.file;
-      const { name, description, theme } = req.body;
+      const { name, description } = req.body;
 
       const newCategory = await categoryService.addCategory({
         name,
         description,
-        theme,
         img,
       });
 
