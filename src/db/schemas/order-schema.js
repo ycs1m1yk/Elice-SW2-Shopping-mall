@@ -17,11 +17,12 @@ const OrderSchema = new Schema(
     address: {
       type: new Schema(
         {
+          addressName: String,
+          receiverName: String,
+          receiverPhoneNumber: Number,
           postalCode: String,
           address1: String,
           address2: String,
-          receiverName: String,
-          receiverPhoneNumber: Number,
         },
         {
           _id: false,
@@ -29,7 +30,7 @@ const OrderSchema = new Schema(
       ),
       required: true,
     },
-    requirement: {
+    request: {
       type: String,
       required: false,
       default: "요청사항 없음",
@@ -37,6 +38,7 @@ const OrderSchema = new Schema(
     orderList: [
       new Schema({
         productId: String,
+        title: String,
         quantity: Number,
         price: Number,
         status: {
