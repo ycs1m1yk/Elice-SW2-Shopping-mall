@@ -5,8 +5,9 @@ import jwt from "jsonwebtoken";
 
 class AdminService {
   // 본 파일의 맨 아래에서, new UserService(userModel) 하면, 이 함수의 인자로 전달됨
-  constructor(userModel) {
+  constructor(userModel, orderModel) {
     this.userModel = userModel;
+    this.orderModel = orderModel;
   }
 
   // 사용자 목록을 받음.
@@ -19,13 +20,23 @@ class AdminService {
     return await this.userModel.deleteByEmail(email);
   }
 
-  async getOrder() {
+  async getOrders() {
     return await this.orderModel.findAll();
   }
 
   async setOrderStatus(orderInfoRequired, toUpdate) {
-    const { orderId, index } = orderInfoRequired;
-    return await this.orderModel.update({ orderId, update: toUpdate });
+    const { orderId, productId } = orderInfoRequired;
+    const { status } = toUpdate;
+    const updateOrderList = await this.orderModel.findById(orderId);
+    const newUpdate = await updateOrderList.orderList.map((e) => {
+      if (e.productId === productId) {
+        e.status = status;
+      }
+      return e;
+    });
+
+    const update = { $set: { orderList: newUpdate } };
+    return await this.orderModel.update({ orderId, update });
   }
 
   async deleteOrder(orderInfoRequired) {
@@ -46,7 +57,6 @@ class AdminService {
     }
   }
 
-  // 미완성
   async setUserRole(userInfoRequired, toUpdate) {
     const { email } = userInfoRequired;
     const userInfo = await this.userModel.findByEmail(email);
@@ -78,6 +88,11 @@ class AdminService {
       );
     }
   }
+
+  exceptPwd(object) {
+    const { password, ...otherKeys } = object;
+    return otherKeys;
+  }
 }
 
-export const adminService = new AdminService(userModel);
+export const adminService = new AdminService(userModel, orderModel);

@@ -18,6 +18,7 @@ class UserService {
 
     // 이메일 중복 확인
     const user = await this.userModel.findByEmail(email);
+
     if (user) {
       throw new Error(
         "이 이메일은 현재 사용중입니다. 다른 이메일을 입력해 주세요."
@@ -145,6 +146,10 @@ class UserService {
   //유저별 판매 목록 조회
   async getProductsByUserId(userId) {
     return await this.productModel.findByUserId(userId);
+  }
+  async exceptPwd(userInfo, exceptKey) {
+    const { [exceptKey]: deletedKey, ...otherKeys } = userInfo;
+    return otherKeys;
   }
 }
 

@@ -13,10 +13,11 @@ adminRouter.get("/users", loginRequired, async (req, res, next) => {
     // 관리자 계정 검증
     const userId = req.currentUserId;
     await adminService.adminVerify(userId);
-
     const users = await adminService.getUsers();
-
-    res.status(200).json(users);
+    const usersWithoutPwd = await users.map((e) => {
+      return (({ password, ...o }) => o)(e._doc);
+    });
+    res.status(200).json(usersWithoutPwd);
   } catch (error) {
     next(error);
   }
@@ -25,14 +26,18 @@ adminRouter.get("/users", loginRequired, async (req, res, next) => {
 adminRouter.patch("/user/:email", loginRequired, async (req, res, next) => {
   try {
     // 관리자 계정 검증
-
+    if (is.emptyObject(req.body)) {
+      throw new Error(
+        "headers의 Content-Type을 application/json으로 설정해주세요"
+      );
+    }
     const { email } = req.params;
-    const userId = req.currentUserId;
     const { role } = req.body;
+    const userId = req.currentUserId;
 
     await adminService.adminVerify(userId);
 
-    const userInfoRequired = { userId };
+    const userInfoRequired = { email };
     // 위 데이터가 undefined가 아니라면, 즉, 프론트에서 업데이트를 위해
     // 보내주었다면, 업데이트용 객체에 삽입함.
     const toUpdate = {
@@ -44,9 +49,10 @@ adminRouter.patch("/user/:email", loginRequired, async (req, res, next) => {
       toUpdate
     );
 
+    const userWithoutPwd = (({ password, ...o }) => o)(updateduserRole._doc);
     // 업데이트 이후의 유저 데이터를 프론트에 보내 줌
 
-    res.status(200).json(updateduserRole);
+    res.status(200).json(userWithoutPwd);
   } catch (error) {
     next(error);
   }
@@ -56,13 +62,15 @@ adminRouter.delete("/user/:email", loginRequired, async (req, res, next) => {
   try {
     const userEmail = req.params.email;
     const userId = req.currentUserId;
+
     // 관리자 계정 검증
     await adminService.adminVerify(userId);
 
     const userInfoRequired = { email: userEmail };
 
     const deleteUserInfo = await adminService.deleteUser(userInfoRequired);
-    res.status(200).json(deleteUserInfo);
+    const userWithoutPwd = (({ password, ...o }) => o)(deleteUserInfo._doc);
+    res.status(200).json(userWithoutPwd);
   } catch (error) {
     next(error);
   }
@@ -83,19 +91,19 @@ adminRouter.get("/orders", loginRequired, async (req, res, next) => {
 });
 
 adminRouter.patch(
-  "/order/:orderId/:index",
+  "/order/:orderId/:productId",
   loginRequired,
   async (req, res, next) => {
     try {
       // 관리자 계정 검증
 
-      const { orderId, index } = req.params;
+      const { orderId, productId } = req.params;
       const userId = req.currentUserId;
       const { status } = req.body;
 
       await adminService.adminVerify(userId);
 
-      const orderInfoRequired = { orderId, index };
+      const orderInfoRequired = { orderId, productId };
       // 위 데이터가 undefined가 아니라면, 즉, 프론트에서 업데이트를 위해
       // 보내주었다면, 업데이트용 객체에 삽입함.
       const toUpdate = {
@@ -120,6 +128,8 @@ adminRouter.delete("/order/:orderId", loginRequired, async (req, res, next) => {
   try {
     const { orderId } = req.params;
     const userId = req.currentUserId;
+    // const userId = "6294a87e94ed1f9043ff02ce"; // admin 계정
+    // const userId = "6292812379c87d3f39dbfb13"; // user 계정
 
     await adminService.adminVerify(userId);
     const orderInfoRequired = { orderId };

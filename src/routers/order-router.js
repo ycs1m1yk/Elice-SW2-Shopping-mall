@@ -18,43 +18,42 @@ orderRouter.post("/complete", loginRequired, async (req, res, next) => {
     }
 
     const userId = req.currentUserId;
-
     // req (request)의 body 에서 데이터 가져오기
 
     const {
-      fullName,
-      phoneNumber,
+      addressName,
+      receiverName,
+      receiverPhoneNumber,
       postalCode,
       address1,
       address2,
-      receiverName,
-      receiverPhoneNumber,
-      requirement,
+      request,
       orderList,
       totalPrice,
       shippingFee,
     } = req.body;
 
     const address = {
+      addressName,
+      receiverName,
+      receiverPhoneNumber,
       postalCode,
       address1,
       address2,
-      receiverName,
-      receiverPhoneNumber,
     };
-    const wholeorderList = orderList.map((e) => ({
+    const wholeorderList = Object.values(orderList).map((e) => ({
       productId: e.productId,
+      title: e.title,
       quantity: e.quantity,
       price: e.price,
+      status: e.status,
     }));
 
     // 위 데이터를 주문 db에 추가하기
     const newOrder = await orderService.addOrder({
       userId,
-      fullName,
-      phoneNumber,
       address,
-      requirement,
+      request,
       orderList: wholeorderList,
       totalPrice,
       shippingFee,
