@@ -31,16 +31,20 @@ productRouter.get("/:id", async function (req, res, next) {
 });
 
 //유저별 판매 목록 api
-productRouter.get("/sellinglist/user", loginRequired, async (req, res, next) => {
-  try {
-    const userId = req.currentUserId;
-    const products = await productService.getProductsByUserId(userId);
-    // 상품 목록(배열)을 JSON 형태로 프론트에 보냄
-    res.status(200).json(products);
-  } catch (error) {
-    next(error);
+productRouter.get(
+  "/sellinglist/user",
+  loginRequired,
+  async (req, res, next) => {
+    try {
+      const userId = req.currentUserId;
+      const products = await productService.getProductsByUserId(userId);
+      // 상품 목록(배열)을 JSON 형태로 프론트에 보냄
+      res.status(200).json(products);
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 //상품 수정 위해 상품 데이터 보내기
 productRouter.get(
@@ -153,7 +157,7 @@ productRouter.post(
         keyword,
         shortDescription,
         detailDescription,
-        userId
+        userId,
       });
 
       // 추가된 유저의 db 데이터를 프론트에 다시 보내줌
@@ -175,7 +179,6 @@ productRouter.delete("/delete", loginRequired, async function (req, res, next) {
       productIdList
     );
 
-
     ProductList.map((productInfo) => {
       if (userId !== productInfo.userId) {
         throw new Error("본인의 상품 판매 내역만 취소할 수 있습니다.");
@@ -194,7 +197,7 @@ productRouter.delete("/delete", loginRequired, async function (req, res, next) {
 productRouter.get("/category/:category", async (req, res, next) => {
   try {
     const category = req.params.category;
-    
+
     // 특정 카테고리에 맞는 상품 목록을 얻음
     const products = await productService.getProductsByCategory(category);
     // 상품 목록(배열)을 JSON 형태로 프론트에 보냄
@@ -204,7 +207,7 @@ productRouter.get("/category/:category", async (req, res, next) => {
   }
 });
 
-// 카테고리 추가 기능 
+// 카테고리 추가 기능
 productRouter.get("/category/update", async (req, res, next) => {
   try {
     const category = req.body.category;

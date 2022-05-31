@@ -19,7 +19,7 @@ class ProductService {
       keyword,
       shortDescription,
       detailDescription,
-      userId
+      userId,
     } = productInfo;
 
     // 상품명 중복 확인
@@ -39,7 +39,7 @@ class ProductService {
       keyword,
       shortDescription,
       detailDescription,
-      userId
+      userId,
     };
     // 상품명 중복은 이제 아니므로, 상품 등록을 진행함
     return await this.productModel.create(newProductInfo);
@@ -97,4 +97,3 @@ class ProductService {
 }
 
 export const productService = new ProductService(productModel);
-

@@ -1,6 +1,12 @@
 import cors from "cors";
 import express from "express";
-import { viewsRouter, userRouter, orderRouter, productRouter, commentRouter } from "./routers";
+import {
+  viewsRouter,
+  userRouter,
+  orderRouter,
+  productRouter,
+  commentRouter,
+} from "./routers";
 import { errorHandler } from "./middlewares";
 import dotenv from "dotenv";
 import morgan from "morgan";
