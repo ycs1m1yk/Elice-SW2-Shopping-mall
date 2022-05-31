@@ -34,6 +34,14 @@ const OrderSchema = new Schema(
       required: false,
       default: "요청사항 없음",
     },
+    orderList: [
+      new Schema({
+        productId: String,
+        quantity: Number,
+        price: Number,
+        status: String,
+      }),
+    ],
     totalPrice: {
       type: Number,
       required: true,
