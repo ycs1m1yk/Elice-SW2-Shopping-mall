@@ -22,17 +22,6 @@ const CommentSchema = new Schema(
       type: Number,
       require: true,
     },
-    parentComment: {
-      type: String,
-      required: false,
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now
-    },
-    updatedAt: {
-      type: Date,
-    }
   },
   {
     collation: "comments",

@@ -18,7 +18,7 @@ commentRouter.get("/", async function (req, res, next) {
   }
 });
 
-//특정 유저 상품 후기 목록 조회
+//특정 유저 상품 후기 목록 조회-- > 넣을 필요 있을까 고민
 commentRouter.get(
   "/commentlist/user",
   loginRequired,
