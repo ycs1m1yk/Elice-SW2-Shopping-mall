@@ -5,7 +5,7 @@ function loginRequired(req, res, next) {
   // token format 확인
   const wholeToken = req.headers["authorization"]?.split(" ");
   const tokenFormat = wholeToken[0];
-  if (tokenFormat !== "bearer") {
+  if (tokenFormat !== "Bearer") {
     console.log("bearer 토큰이 아닙니다.");
     res.status(403).json({
       result: "forbidden-approach",

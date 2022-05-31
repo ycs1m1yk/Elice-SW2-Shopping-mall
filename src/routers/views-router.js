@@ -21,6 +21,10 @@ viewsRouter.use("/product/add", serveStatic("product/add", "product-add"));
 viewsRouter.use("/product/list", serveStatic("product/list", "product-list"));
 viewsRouter.use("/order", serveStatic("order"));
 viewsRouter.use(
+  "/order/complete",
+  serveStatic("order/complete", "order-complete")
+);
+viewsRouter.use(
   "/product/detail",
   serveStatic("product/detail", "product-detail")
 );

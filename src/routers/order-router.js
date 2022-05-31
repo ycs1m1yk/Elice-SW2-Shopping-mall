@@ -27,6 +27,8 @@ orderRouter.post("/complete", loginRequired, async (req, res, next) => {
       postalCode,
       address1,
       address2,
+      receiverName,
+      receiverPhoneNumber,
       requirement,
       orderList,
       totalPrice,
@@ -37,6 +39,8 @@ orderRouter.post("/complete", loginRequired, async (req, res, next) => {
       postalCode,
       address1,
       address2,
+      receiverName,
+      receiverPhoneNumber,
     };
     const wholeorderList = orderList.map((e) => ({
       productId: e.productId,
@@ -65,12 +69,9 @@ orderRouter.post("/complete", loginRequired, async (req, res, next) => {
 });
 
 // 내 주문 목록 보기 api (아래는 /:userId 이지만, 실제로는 /api/order/:userId로 요청해야 함.)
-orderRouter.get("/:userId", loginRequired, async function (req, res, next) {
+orderRouter.get("/orderList", loginRequired, async function (req, res, next) {
   try {
-    const userId = req.params.userId;
-    if (userId !== req.currentUserId) {
-      throw new Error("본인의 주문 목록만 조회할 수 있습니다.");
-    }
+    const userId = req.currentUserId;
 
     const orderInfo = await orderService.getOrders(userId);
 
