@@ -7,6 +7,7 @@ import { transPort } from "../config/email";
 
 const userRouter = Router();
 
+// 회원가입 할때 작성한 이메일로 인증코드가 담긴 메일 전송
 userRouter.post("/mail", async (req, res, next) => {
   let authNum = Math.random().toString().substr(2, 6);
   const mailOptions = {
