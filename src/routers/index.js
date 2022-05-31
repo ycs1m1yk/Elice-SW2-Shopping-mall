@@ -8,3 +8,4 @@ export * from "./order-router";
 export * from "./product-router";
 export * from "./comment-router";
 export * from "./qna-router";
+export * from "./category-router";

@@ -30,8 +30,6 @@ productRouter.get("/:id", async function (req, res, next) {
   }
 });
 
-
-
 //상품 수정 위해 상품 데이터 보내기
 productRouter.get(
   "/:id/update",
