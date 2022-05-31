@@ -23,7 +23,7 @@
 	font-weight: 700
 }
 
-.register-category-form-box .input:focus,.register-category-form-box .textarea:focus,.register-category-form-box select:focus {
+.register-category-form-box .input:focus,.register-category-form-box .textarea:focus {
 	border-color: #00d1b2;
 	box-shadow: 0 0 0 .125em rgba(0,209,178,.25)
 }
