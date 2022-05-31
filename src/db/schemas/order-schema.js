@@ -6,14 +6,6 @@ const OrderSchema = new Schema(
       type: String,
       required: true,
     },
-    fullName: {
-      type: String,
-      required: true,
-    },
-    phoneNumber: {
-      type: String,
-      required: true,
-    },
     address: {
       type: new Schema(
         {
