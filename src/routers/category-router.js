@@ -106,12 +106,12 @@ categoryRouter.patch(
 //카테고리 삭제 기능
 categoryRouter.delete(
   "/delete",
-  //loginRequired,
+  loginRequired,
   async function (req, res, next) {
     try {
       //admin 확인 작업
-      // const userId = req.currentUserId;
-      // await adminService.adminVerify(userId);
+      const userId = req.currentUserId;
+      await adminService.adminVerify(userId);
 
       const categoryIdList = req.body.categoryIdList;
       const deleteCategoryInfo = await categoryService.deleteCategory(
