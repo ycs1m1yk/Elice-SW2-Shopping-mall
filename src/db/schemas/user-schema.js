@@ -36,6 +36,11 @@ const UserSchema = new Schema(
       required: false,
       default: "user",
     },
+    provider: {
+      type: String,
+      required: false,
+      default: "local",
+    },
   },
   {
     collection: "users",

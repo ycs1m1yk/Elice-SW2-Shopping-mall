@@ -6,3 +6,4 @@ export * from "./admin-router";
 export * from "./user-router";
 export * from "./order-router";
 export * from "./product-router";
+export * from "./kakao-router";

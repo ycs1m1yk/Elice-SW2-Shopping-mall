@@ -8,6 +8,10 @@ class UserService {
   constructor(userModel) {
     this.userModel = userModel;
   }
+  // 카카오 회원가입
+  async addUserKakao(newUserInfo) {
+    return await this.userModel.create(newUserInfo);
+  }
 
   // 회원가입
   async addUser(userInfo) {
