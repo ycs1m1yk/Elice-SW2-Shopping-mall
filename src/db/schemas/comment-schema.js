@@ -3,11 +3,12 @@ import { Schema } from "mongoose";
 const CommentSchema = new Schema(
   {
     productId: {
-      type: String,
+      type: Schema.Types.ObjectId,
       required: true,
     },
-    userId: {
-      type: String,
+    author: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
       required: true,
     },
     text: {
