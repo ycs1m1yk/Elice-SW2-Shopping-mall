@@ -2,32 +2,34 @@ import { Router } from "express";
 import is from "@sindresorhus/is";
 // 폴더에서 import하면, 자동으로 폴더의 index.js에서 가져옴
 import { loginRequired } from "../middlewares";
-import { commentService } from "../services";
+import { reviewService } from "../services";
 import { upload } from "../middlewares";
 
-const commentRouter = Router();
+const reviewRouter = Router();
 
 //전체 후기글 조회
-commentRouter.get("/", async function (req, res, next) {
+reviewRouter.get("/", async function (req, res, next) {
   try {
-    const comments = await commentService.getComments();
-
-    res.status(200).json(comments);
+    const reviews = await reviewService.getReviews();
+    // if (comments.length < 1) {
+    //   throw new Error("후기가 없습니다.")
+    // }
+    res.status(200).json(reviews);
   } catch (error) {
     next(error);
   }
 });
 
 //특정 유저 상품 후기 목록 조회-- > 넣을 필요 있을까 고민
-commentRouter.get(
-  "/commentlist/user",
+reviewRouter.get(
+  "/reviewlist/user",
   loginRequired,
   async function (req, res, next) {
     try {
       const userId = req.currentUserId;
-      const comments = await this.commentService.getCommentsByUserId(userId);
+      const reviews = await this.reviewService.getReviewsByUserId(userId);
 
-      res.status(200).json(comments);
+      res.status(200).json(reviews);
     } catch (error) {
       next(error);
     }
@@ -35,32 +37,20 @@ commentRouter.get(
 );
 
 // 특정 상품 후기 목록 조회
-commentRouter.get("/:productId", async function (req, res, next) {
+reviewRouter.get("/:productId", async function (req, res, next) {
   try {
     const productId = req.params.productId;
-    const comments = await commentService.getCommentsByProductId(productId);
+    const reviews = await reviewService.getReviewsByProductId(productId);
 
-    res.status(200).json(comments);
-  } catch (error) {
-    next(error);
-  }
-});
-
-//후기글 상세 조회
-commentRouter.get("/:id", async function (req, res, next) {
-  try {
-    const commentId = req.params.id;
-    const comment = await commentService.getCommentByCommentId(commentId);
-
-    res.status(200).json(comment);
+    res.status(200).json(reviews);
   } catch (error) {
     next(error);
   }
 });
 
 //후기글 작성
-commentRouter.post(
-  "/:productId/add",
+reviewRouter.post(
+  "/:productId",
   loginRequired,
   upload.single("image-file"),
   async function (req, res, next) {
@@ -72,7 +62,7 @@ commentRouter.post(
       const { location: img } = req.file;
       const { text, starRating } = req.body;
 
-      const newComment = await commentService.addComment({
+      const newReview = await reviewService.addReview({
         productId,
         userId,
         text,
@@ -80,16 +70,28 @@ commentRouter.post(
         starRating,
       });
 
-      res.json(201).json(newComment);
+      res.json(201).json(newReview);
     } catch (error) {
       next(error);
     }
   }
 );
 
+//후기글 상세 조회
+reviewRouter.get("/:id", async function (req, res, next) {
+  try {
+    const reviewId = req.params.id;
+    const review = await reviewService.getReviewByReviewId(reviewId);
+
+    res.status(200).json(review);
+  } catch (error) {
+    next(error);
+  }
+});
+
 //후기 글 업데이트
-commentRouter.put(
-  "/:id/update",
+reviewRouter.put(
+  "/:id/edit",
   loginRequired,
   upload.single("image-file"),
   async function (req, res, next) {
@@ -100,9 +102,9 @@ commentRouter.put(
         );
       }
       const userId = req.currentUserId;
-      const commentId = req.params.id;
-      const commentInfo = await commentService.getCommentByCommentId(commentId);
-      if (userId !== commentInfo.userId) {
+      const reviewId = req.params.id;
+      const reviewInfo = await reviewService.getReviewByReviewId(reviewId);
+      if (userId !== reviewInfo.userId) {
         throw new Error("본인의 후기 내역만 수정할 수 있습니다.");
       }
 
@@ -116,38 +118,36 @@ commentRouter.put(
       };
 
       // 사용자 정보를 업데이트함.
-      const updatedCommentInfo = await commentService.setComment(
-        commentId,
+      const updatedReviewInfo = await reviewService.setReview(
+        reviewId,
         toUpdate
       );
-      res.status(200).json(updatedCommentInfo);
+      res.status(200).json(updatedReviewInfo);
     } catch (error) {
       next(error);
     }
   }
 );
 
-commentRouter.delete("/delete", loginRequired, async function (req, res, next) {
+reviewRouter.delete("/delete", loginRequired, async function (req, res, next) {
   try {
-    const commentIdList = req.body.commentIdList;
+    const reviewIdList = req.body.reviewIdList;
     const userId = req.currentUserId;
 
-    const CommentList = await commentService.getCommentsForDelete(
-      commentIdList
-    );
+    const ReviewList = await reviewService.getReviewsForDelete(reviewIdList);
 
-    CommentList.map((commentInfo) => {
-      if (userId !== commentInfo.userId) {
+    ReviewList.map((reviewInfo) => {
+      if (userId !== reviewInfo.userId) {
         throw new Error("본인의 후기 작성 내역만 취소할 수 있습니다.");
       }
     });
 
-    const deleteCommentInfo = await commentService.deleteComment(commentIdList);
+    const deleteReviewInfo = await reviewService.deleteReview(reviewIdList);
 
-    res.status(200).json(deleteCommentInfo);
+    res.status(200).json(deleteReviewInfo);
   } catch (error) {
     next(error);
   }
 });
 
-export { commentRouter };
+export { reviewRouter };

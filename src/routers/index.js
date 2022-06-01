@@ -6,5 +6,4 @@ export * from "./admin-router";
 export * from "./user-router";
 export * from "./order-router";
 export * from "./product-router";
-export * from "./comment-router";
-export * from "./qna-router";
+export * from "./review-router";

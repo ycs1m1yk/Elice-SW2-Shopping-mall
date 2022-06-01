@@ -1,6 +1,6 @@
 import { Schema } from "mongoose";
 
-const CommentSchema = new Schema(
+const ReviewSchema = new Schema(
   {
     productId: {
       type: Schema.Types.ObjectId,
@@ -25,9 +25,9 @@ const CommentSchema = new Schema(
     },
   },
   {
-    collation: "comments",
+    collation: "reviews",
     timestamps: true,
   }
 );
 
-export { CommentSchema };
+export { ReviewSchema };
