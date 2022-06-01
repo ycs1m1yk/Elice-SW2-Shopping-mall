@@ -71,7 +71,15 @@ class OrderService {
       (e) => e.productId !== productId
     );
     const deleteUpdate = { $set: { orderList: newDelete } };
-    return await this.orderModel.update({ orderId, update: deleteUpdate });
+    const newOrder = await this.orderModel.update({
+      orderId,
+      update: deleteUpdate,
+    });
+    if (newOrder.orderList.length < 1) {
+      return await this.orderModel.deleteById(orderId);
+    }
+
+    return await newOrder;
   }
 }
 
