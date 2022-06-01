@@ -55,6 +55,18 @@ class ReviewService {
     );
     return review;
   }
+
+  async getReviewTotalNumber() {
+    return await reviewModel.countReview();
+  }
+
+  async getReviewsByPage(productId, page, perPage) {
+    return await this.reviewModel.findByProductIdByPage(
+      productId,
+      page,
+      perPage
+    );
+  }
 }
 
 export const reviewService = new ReviewService(reviewModel);

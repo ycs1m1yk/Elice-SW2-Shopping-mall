@@ -10,17 +10,17 @@ const reviewRouter = Router();
 //전체 후기글 조회
 reviewRouter.get("/", async function (req, res, next) {
   try {
-    const reviews = await reviewService.getReviews();
-    // if (comments.length < 1) {
+    // if (reviews.length < 1) {
     //   throw new Error("후기가 없습니다.")
     // }
+    
     res.status(200).json(reviews);
   } catch (error) {
     next(error);
   }
 });
 
-//특정 유저 상품 후기 목록 조회-- > 넣을 필요 있을까 고민
+//특정 유저 상품 후기 목록 조회-- >  userRouter에 넣을가 고민
 reviewRouter.get(
   "/reviewlist/user",
   loginRequired,
@@ -36,12 +36,20 @@ reviewRouter.get(
   }
 );
 
-// 특정 상품 후기 목록 조회
+// 특정 상품 후기 목록 조회 pagenation
 reviewRouter.get("/:productId", async function (req, res, next) {
   try {
     const productId = req.params.productId;
-    const reviews = await reviewService.getReviewsByProductId(productId);
-
+    const page = Number(req.query.page || 1);
+    const perPage = Number(req.query.perPage || 10);
+    const total = await reviewService.getReviewTotalNumber(productId); // 총 리뷰 수 세기
+    const reviews = await reviewService.getReviewsByPage(
+      productId,
+      page,
+      perPage
+    ); //review 데이터를 최근 순으로 정렬
+    const totalPage = Math.ceil(total / perPage);
+    let reviewList = [];
     res.status(200).json(reviews);
   } catch (error) {
     next(error);

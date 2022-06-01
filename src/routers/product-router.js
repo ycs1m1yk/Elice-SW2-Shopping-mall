@@ -52,7 +52,7 @@ productRouter.get(
 
 //상품 정보 수정
 productRouter.patch(
-  "/:id/edit",
+  "/:id/update",
   loginRequired,
   upload.single("image-file"),
   async function (req, res, next) {

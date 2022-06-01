@@ -7,6 +7,12 @@ export class ReviewModel {
   async findAll() {
     return await Review.find({});
   }
+  async findAllByPage(page, perPage) {
+    return await Review.find({})
+      .sort({ createdAt: -1 })
+      .skip(perPage * (page - 1))
+      .limit(perPage);
+  }
   async findById(_id) {
     return await Review.findOne({ _id });
   }
@@ -17,6 +23,13 @@ export class ReviewModel {
 
   async findByProductId(productId) {
     return await Review.find({ productId });
+  }
+
+  async findByProductIdByPage(productId, page, perPage) {
+    return await Review.find({ productId })
+      .sort({ createdAt: -1 })
+      .skip(perPage * (page - 1))
+      .limit(perPage);
   }
 
   async create(reviewInfo) {
@@ -32,6 +45,9 @@ export class ReviewModel {
   async deleteById({ reviewId }) {
     const filter = { _id: reviewId };
     return await Review.findOneAndDelete(filter);
+  }
+  async countReview(productId) {
+    return await Review.countDocuments({ productId });
   }
 }
 
