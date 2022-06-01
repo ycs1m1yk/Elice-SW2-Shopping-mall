@@ -44,25 +44,22 @@ categoryRouter.post(
   }
 );
 
-//카테고리 업데이트를 위한 카테고리 정보 보내기
-categoryRouter.get(
-  "/:id/update",
-  loginRequired,
-  async function (req, res, next) {
-    try {
-      //admin 확인 작업
-      const userId = req.currentUserId;
-      await adminService.adminVerify(userId);
+//카테고리id를 통해 특정 카테고리 정보 보내기
+categoryRouter.get("/:id", loginRequired, async function (req, res, next) {
+  try {
+    //admin 확인 작업
+    const userId = req.currentUserId;
+    await adminService.adminVerify(userId);
 
-      const categoryId = req.params.id;
-      const categoryInfo = await categoryService.getCategoryById(categoryId);
-      // 상품 스키마를 JSON 형태로 프론트에 보냄
-      res.status(200).json(categoryInfo);
-    } catch (error) {
-      next(error);
-    }
+    const categoryId = req.params.id;
+    const categoryInfo = await categoryService.getCategoryById(categoryId);
+    // 상품 스키마를 JSON 형태로 프론트에 보냄
+    res.status(200).json(categoryInfo);
+  } catch (error) {
+    next(error);
   }
-);
+});
+
 //카테고리 업데이트
 categoryRouter.patch(
   "/:id/update",
