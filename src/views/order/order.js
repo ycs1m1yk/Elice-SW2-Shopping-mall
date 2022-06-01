@@ -161,8 +161,10 @@ const updateOrderData = () => {
 
 const updateCartData = () => {
   const cart = JSON.parse(localStorage.getItem("cart"));
-  const newIds = JSON.parse(localStorage.getItem("order")).ids;
-  newIds.forEach((id) => delete cart[id]);
+  const remainIds = JSON.parse(localStorage.getItem("order")).ids;
+  Object.keys(cart)
+    .filter((id) => !remainIds.includes(id))
+    .forEach((id) => delete cart[id]);
 
   localStorage.removeItem("cart");
   localStorage.setItem("cart", JSON.stringify(cart));
