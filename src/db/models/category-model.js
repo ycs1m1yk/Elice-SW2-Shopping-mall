@@ -11,5 +11,8 @@ export class CategoryModel {
   async findByName(name) {
     return await Category.findOne({ name });
   }
+  async findAll() {
+    return await Category.find({});
+  }
 }
 export const categoryModel = new CategoryModel();

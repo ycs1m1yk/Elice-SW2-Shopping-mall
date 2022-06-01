@@ -14,6 +14,10 @@ class CategoryService {
     }
     return await this.categoryModel.create(categoryInfo);
   }
+
+  async getCategories() {
+    return await this.categoryModel.findAll();
+  }
 }
 
 export const categoryService = new CategoryService(categoryModel);
