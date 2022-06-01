@@ -49,7 +49,6 @@ reviewRouter.get("/:productId", async function (req, res, next) {
       perPage
     ); //review 데이터를 최근 순으로 정렬
     const totalPage = Math.ceil(total / perPage);
-    let reviewList = [];
     res.status(200).json(reviews);
   } catch (error) {
     next(error);
