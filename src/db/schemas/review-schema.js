@@ -3,12 +3,11 @@ import { Schema } from "mongoose";
 const ReviewSchema = new Schema(
   {
     productId: {
-      type: Schema.Types.ObjectId,
+      type: String,
       required: true,
     },
-    author: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
+    userId: {
+      type: String,
       required: true,
     },
     text: {
@@ -25,7 +24,7 @@ const ReviewSchema = new Schema(
     },
   },
   {
-    collation: "reviews",
+    collection: "reviews",
     timestamps: true,
   }
 );

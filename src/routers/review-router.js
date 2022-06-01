@@ -13,7 +13,7 @@ reviewRouter.get("/", async function (req, res, next) {
     // if (reviews.length < 1) {
     //   throw new Error("후기가 없습니다.")
     // }
-    
+    const reviews = await reviewService.getReviews();
     res.status(200).json(reviews);
   } catch (error) {
     next(error);
@@ -43,12 +43,13 @@ reviewRouter.get("/:productId", async function (req, res, next) {
     const page = Number(req.query.page || 1);
     const perPage = Number(req.query.perPage || 10);
     const total = await reviewService.getReviewTotalNumber(productId); // 총 리뷰 수 세기
+    const totalPage = Math.ceil(total / perPage); // 총 페이지 
+    // page에 맞는 review 리스트 가져오기
     const reviews = await reviewService.getReviewsByPage(
       productId,
       page,
       perPage
-    ); //review 데이터를 최근 순으로 정렬
-    const totalPage = Math.ceil(total / perPage);
+    );
     res.status(200).json(reviews);
   } catch (error) {
     next(error);
@@ -58,12 +59,12 @@ reviewRouter.get("/:productId", async function (req, res, next) {
 //후기글 작성
 reviewRouter.post(
   "/:productId",
-  loginRequired,
+  //loginRequired,
   upload.single("image-file"),
   async function (req, res, next) {
     try {
       const productId = req.params.productId;
-      const userId = req.currentUserId;
+      const userId = "1234";
 
       // 1인당 1개의 후기 확인 절차 생각중
       const { location: img } = req.file;
@@ -77,7 +78,7 @@ reviewRouter.post(
         starRating,
       });
 
-      res.json(201).json(newReview);
+      res.status(201).json(newReview);
     } catch (error) {
       next(error);
     }

@@ -39,7 +39,7 @@ export class ReviewModel {
     const filter = { _id: reviewId };
     const option = { returnOriginal: false };
 
-    return await Comment.findOneAndUpdate(filter, update, option);
+    return await Review.findOneAndUpdate(filter, update, option);
   }
 
   async deleteById({ reviewId }) {
