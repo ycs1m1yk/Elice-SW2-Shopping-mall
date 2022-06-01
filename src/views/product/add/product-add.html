@@ -41,6 +41,7 @@
                   class="input"
                   id="titleInput"
                   type="text"
+                  name="name"
                   placeholder="아이보리 티셔츠"
                   autocomplete="on"
                 />
@@ -51,22 +52,7 @@
               <label class="label" for="categorySelectBox">카테고리</label>
               <div class="control">
                 <div class="select is-fullwidth">
-                  <select id="categorySelectBox">
-                    <option value="">카테고리를 선택해 주세요.</option>
-
-                    <option
-                      value="6278acb0927a0d0520ff6260"
-                      class="notification is-primary is-light"
-                    >
-                      Men Clothes
-                    </option>
-                    <option
-                      value="6278acd0927a0d0520ff6263"
-                      class="notification is-warning is-light"
-                    >
-                      Women Clothes
-                    </option>
-                  </select>
+                  <select id="categorySelectBox" name="category"></select>
                 </div>
               </div>
             </div>
@@ -78,6 +64,7 @@
                   class="input"
                   id="manufacturerInput"
                   type="text"
+                  name="brandName"
                   placeholder="OO의류제조(주)"
                   autocomplete="on"
                 />
@@ -91,6 +78,7 @@
                   class="textarea"
                   id="shortDescriptionInput"
                   rows="3"
+                  name="shortDescription"
                   placeholder="제품에 대한 1~2문장의 설명을 적어 주세요."
                   autocomplete="on"
                 ></textarea>
@@ -106,6 +94,7 @@
                   class="textarea"
                   id="detailDescriptionInput"
                   rows="8"
+                  name="detailDescription"
                   placeholder="제품에 대한 상세 설명을 적어 주세요."
                   autocomplete="on"
                 ></textarea>
@@ -143,6 +132,7 @@
                   class="input"
                   id="inventoryInput"
                   type="number"
+                  name="quantity"
                   placeholder="10"
                   autocomplete="on"
                 />
@@ -157,6 +147,7 @@
                     class="input"
                     id="priceInput"
                     type="number"
+                    name="price"
                     placeholder="10000"
                     autocomplete="on"
                   />
