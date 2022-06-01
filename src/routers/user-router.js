@@ -69,6 +69,17 @@ userRouter.get("/my", loginRequired, async (req, res, next) => {
   }
 });
 
+// 내 판매 목록 보기 api
+userRouter.get("/user/sellinglist", loginRequired, async (req, res, next) => {
+  try {
+    const userId = req.currentUserId;
+    const mySellingInfo = await userService.getProductsByUserId(userId);
+    res.status(200).json(mySellingInfo);
+  } catch (error) {
+    next(error);
+  }
+});
+
 // 사용자 정보 수정
 // (예를 들어 /api/users/abc12345 로 요청하면 req.params.userId는 'abc12345' 문자열로 됨)
 userRouter.patch("/user", loginRequired, async function (req, res, next) {

@@ -1,12 +1,14 @@
 import { userModel } from "../db";
+import { productModel } from "../db";
 
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 class UserService {
   // 본 파일의 맨 아래에서, new UserService(userModel) 하면, 이 함수의 인자로 전달됨
-  constructor(userModel) {
+  constructor(userModel, productModel) {
     this.userModel = userModel;
+    this.productModel = productModel;
   }
 
   // 회원가입
@@ -141,10 +143,14 @@ class UserService {
     }
   }
 
+  //유저별 판매 목록 조회
+  async getProductsByUserId(userId) {
+    return await this.productModel.findByUserId(userId);
+  }
   async exceptPwd(userInfo, exceptKey) {
     const { [exceptKey]: deletedKey, ...otherKeys } = userInfo;
     return otherKeys;
   }
 }
 
-export const userService = new UserService(userModel);
+export const userService = new UserService(userModel, productModel);
