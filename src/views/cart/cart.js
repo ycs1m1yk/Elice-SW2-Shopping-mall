@@ -44,7 +44,7 @@ const handlePurchase = () => {
     alert("구매할 제품이 없습니다. 장바구니에서 선택해 주세요.");
     return;
   }
-  location.href = "../login";
+  location.href = "../order";
 };
 
 // live nodes 이벤트핸들러
@@ -57,6 +57,7 @@ const handleDeleteClick = (e, id) => {
 const handleCheckboxChange = (e, id) => {
   const isChecked = e.currentTarget.checked;
   updatedProductById(id, { isSelected: isChecked });
+  updateAllSelectCheckbox();
   disableControlById(id);
 };
 
@@ -105,6 +106,12 @@ const handleQuantityInputChange = (e, id) => {
 };
 
 // callee 함수들
+const updateAllSelectCheckbox = () => {
+  const order = JSON.parse(localStorage.getItem("order"));
+  const isAllSelected = order.ids.length === order.selectedIds.length;
+  allSelectCheckbox.checked = isAllSelected;
+};
+
 const disableControlById = (id) => {
   const minusButton = document.querySelector(`#minus-${id}`);
   const plusButton = document.querySelector(`#plus-${id}`);
@@ -159,11 +166,10 @@ const updateProductInfoById = (id) => {
 
 // html에 요소를 추가하는 함수들을 묶어주어서 코드를 깔끔하게 하는 역할임.
 const addAllElements = () => {
-  insertProductsToCartProductsContainer();
-  updateOrderInfo();
+  paintCartProducts();
 };
 
-const insertProductsToCartProductsContainer = async () => {
+const paintCartProducts = async () => {
   const cart = JSON.parse(localStorage.getItem("cart"));
   const cartValues = Object.values(cart);
   const products = [];
@@ -304,18 +310,20 @@ const updateOrderData = () => {
   const {
     i: selectedIds,
     c: productsCount,
+    titles: productsTitles,
     t: productsTotal,
   } = Object.values(cart).reduce(
     (acc, curr) => {
-      const { _id, quantity, isSelected, price } = curr;
+      const { _id, name, quantity, isSelected, price } = curr;
       if (isSelected) {
         acc.i.push(_id);
         acc.c += quantity;
+        acc.titles.push(`${name} / ${quantity}개`);
         acc.t += price * quantity;
       }
       return acc;
     },
-    { i: [], c: 0, t: 0 }
+    { i: [], c: 0, titles: [], t: 0 }
   );
 
   localStorage.setItem(
@@ -323,6 +331,7 @@ const updateOrderData = () => {
     JSON.stringify({
       ids,
       productsCount,
+      productsTitles,
       productsTotal,
       selectedIds,
     })
@@ -340,7 +349,6 @@ const updateOrderInfo = () => {
   orderTotal.textContent = addCommas(order.productsTotal + fee) + "원";
 };
 
-// 여러 개의 addEventListener들을 묶어주어서 코드를 깔끔하게 하는 역할임.
 const addAllEvents = () => {
   allSelectCheckbox.addEventListener("change", handleAllSelectCheckboxChange);
   partialDeleteLabel.addEventListener("click", handlePartialDeleteLabelClick);
@@ -349,3 +357,4 @@ const addAllEvents = () => {
 
 addAllElements();
 addAllEvents();
+updateAllSelectCheckbox();

@@ -56,6 +56,46 @@ const adminHomePageHeader = `
 </li>
 `;
 
+const adminPageMenuHeader = `
+<li><a href="/account">계정관리</a></li>
+<li><a class="logout-button" href="">로그아웃</a></li>
+<li>
+  <a href="/cart" aria-current="page">
+    <span class="icon">
+      <i class="fas fa-cart-shopping"></i>
+    </span>
+    <span>카트</span>
+  </a>
+</li>
+`;
+
+const adminAccountMenuHeader = `
+<li><a href="/admin">페이지관리</a></li>
+<li><a class="logout-button" href="">로그아웃</a></li>
+<li>
+  <a href="/cart" aria-current="page">
+    <span class="icon">
+      <i class="fas fa-cart-shopping"></i>
+    </span>
+    <span>카트</span>
+  </a>
+</li>
+`;
+
+const adminInsideMenuHeader = `
+<li><a href="/admin">페이지관리</a></li>
+<li><a href="/account">계정관리</a></li>
+<li><a class="logout-button" href="">로그아웃</a></li>
+<li>
+  <a href="/cart" aria-current="page">
+    <span class="icon">
+      <i class="fas fa-cart-shopping"></i>
+    </span>
+    <span>카트</span>
+  </a>
+</li>
+`;
+
 // 유저가 Account Page에 접속했을 때의 헤더
 const accoutPageHeader = `
 <li><a class="logout-button" href="/">로그아웃</a></li>
@@ -111,7 +151,7 @@ const accountPageMenuHeader = `
 
 const token = getToken();
 const isLogin = token ? true : false; // 토큰이 있으면 true 없으면 false
-const isAdmin = token && decodeJWT(token).role === "admin-user" ? true : false; // 토큰이 있고(로그인이 되어 있고) 권한이 관리자이면 true 일반 유저면 false
+const isAdmin = token && decodeJWT(token).role === "admin" ? true : false; // 토큰이 있고(로그인이 되어 있고) 권한이 관리자이면 true 일반 유저면 false
 const url = new URL(location.href); // 현재 페이지의 url
 const pathname = url.pathname; // 현재 url의 pathname, ex) https://example.com/post -> /post
 
@@ -147,6 +187,16 @@ if (pathname.split("/")[1] == "register") {
 // 로그인 페이지이지 검증
 if (pathname.split("/")[1] == "login") {
   targetHeader = loginPageHeader;
+}
+
+if (isAdmin) {
+  if (pathname.split("/")[1] === "account") {
+    targetHeader = adminAccountMenuHeader;
+  } else if (pathname.split("/")[1] === "admin") {
+    targetHeader = adminPageMenuHeader;
+  } else {
+    targetHeader = adminInsideMenuHeader;
+  }
 }
 
 const header = document.createElement("header");

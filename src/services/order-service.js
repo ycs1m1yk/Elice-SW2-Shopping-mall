@@ -12,23 +12,13 @@ class OrderService {
   // 주문하기
   async addOrder(orderInfo) {
     // 객체 destructuring, address는 타입 객체, orderList는 타입 배열
-    const {
-      userId,
-      fullName,
-      phoneNumber,
-      address,
-      requirement,
-      orderList,
-      totalPrice,
-      shippingFee,
-    } = orderInfo;
+    const { userId, address, request, orderList, totalPrice, shippingFee } =
+      orderInfo;
 
     const newOrderInfo = {
       userId,
-      fullName,
-      phoneNumber,
       address,
-      requirement,
+      request,
       orderList,
       totalPrice,
       shippingFee,
@@ -73,3 +63,10 @@ class OrderService {
 }
 
 export const orderService = new OrderService(orderModel);
+
+// const orderInfo = await orderModel.findById({id});
+// orderInfo.map(e => {
+//   if (e.productId === "adfasfsadf") {
+//     orderModel.findByIdAndUpdate({e.productId}, {$set: orderList};)
+//   }
+// });
