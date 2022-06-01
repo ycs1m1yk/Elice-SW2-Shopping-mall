@@ -18,7 +18,7 @@ let keywords = [];
 // 카테고리 동적 생성
 const paintCategoryList = async () => {
   const categoryList = await Api.get("/api/category");
-  let categoryOptions = `<option value="">카테고리를 선택해 주세요.</option>`;
+  let categoryOptions = '<option value="">카테고리를 선택해 주세요.</option>';
 
   categoryList.forEach((category) => {
     categoryOptions += `
