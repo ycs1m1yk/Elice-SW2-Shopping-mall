@@ -80,7 +80,6 @@ categoryRouter.patch(
       await adminService.adminVerify(userId);
 
       const categoryId = req.params.id;
-      // const categoryInfo = await categoryService.getCategoryById(categoryId);
 
       const { location: img } = req.file;
       const { name, description } = req.body;
