@@ -33,7 +33,7 @@ if (categoryId) {
 const request = async (req, formData) => {
   let apiUrl;
   req === "POST"
-    ? (apiUrl = `/api/category/add`)
+    ? (apiUrl = "/api/category/add")
     : (apiUrl = `/api/category/${categoryId}/update`);
 
   // 카테고리 추가 또는 수정 요청

@@ -23,7 +23,7 @@ const handleModalButtonClick = async (e) => {
   e.preventDefault();
   const token = localStorage.getItem("token");
 
-  await fetch(`/api/user`, {
+  await fetch("/api/user", {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",

@@ -92,7 +92,7 @@ const request = async (req, formData) => {
   }
 
   req === "POST"
-    ? (apiUrl = `/api/product/add`)
+    ? (apiUrl = "/api/product/add")
     : (apiUrl = `/api/product/${productId}/update`);
 
   // 상품 추가 또는 수정 요청

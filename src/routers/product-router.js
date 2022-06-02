@@ -58,7 +58,7 @@ productRouter.put(
   async function (req, res, next) {
     try {
       contentTypeChecker(req.body);
-      const userId = req.currentUserId
+      const userId = req.currentUserId;
       const productId = req.params.id;
       const { location: img } = req.file;
       const {
@@ -105,7 +105,7 @@ productRouter.post(
   async (req, res, next) => {
     try {
       contentTypeChecker(req.body);
-      const userId = req.currentUserId
+      const userId = req.currentUserId;
       const { location: img } = req.file;
       const {
         name,
