@@ -137,7 +137,7 @@ class AdminService {
     const user = await this.productModel.findByName(name);
     if (user) {
       throw new Error(
-        // "이 상품명은 현재 사용중입니다. 다른 상품명을 입력해 주세요."
+        "이 상품명은 현재 사용중입니다. 다른 상품명을 입력해 주세요."
       );
     }
     const newProductInfo = {

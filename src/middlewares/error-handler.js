@@ -12,7 +12,7 @@ function errorHandler(error, req, res, next) {
     case "Forbidden":
       res.status(404).json({ result: "error", reason: error.message });
       break;
-    // case "No Acceptable":
+    
     case "headers의 Content-Type을 application/json으로 설정해주세요":
       res.status(406).json({ result: "error", reason: error.message });
     
