@@ -30,26 +30,6 @@ productRouter.get("/:id", async function (req, res, next) {
   }
 });
 
-//유저별 판매 목록 api
-productRouter.get(
-  "/sellinglist/user",
-  loginRequired,
-  async (req, res, next) => {
-    try {
-      const userId = req.params.userId;
-      const currentUserId = req.currentUserId;
-      if (userId !== currentUserId) {
-        throw new Error("본인의 판매 목록만 볼 수 있습니다.");
-      }
-      const products = await productService.getProductsByUserId(userId);
-      // 상품 목록(배열)을 JSON 형태로 프론트에 보냄
-      res.status(200).json(products);
-    } catch (error) {
-      next(error);
-    }
-  }
-);
-
 //상품 수정 위해 상품 데이터 보내기
 productRouter.get(
   "/:id/update",
@@ -57,6 +37,7 @@ productRouter.get(
   async function (req, res, next) {
     try {
       const userId = req.currentUserId;
+      // seller인지 확인
       const productId = req.params.id;
       const productInfo = await productService.getProductByProductId(productId);
       if (userId !== productInfo.userId) {
@@ -83,6 +64,11 @@ productRouter.patch(
         );
       }
       const userId = req.currentUserId;
+      //seller 인지 확인
+      const userRole = await productService.getUserRole(userId);
+      if (userRole !== "seller") {
+        throw new Error("판매자로 등록해야만 상품 등록이 가능합니다.");
+      }
       const productId = req.params.id;
       const productInfo = await productService.getProductByProductId(productId);
       if (userId !== productInfo.userId) {
@@ -95,7 +81,6 @@ productRouter.patch(
         price,
         category,
         quantity,
-        size,
         brandName,
         keyword,
         shortDescription,
@@ -108,7 +93,6 @@ productRouter.patch(
         ...(price && { price }),
         ...(category && { category }),
         ...(quantity && { quantity }),
-        ...(size && { size }),
         ...(brandName && { brandName }),
         ...(keyword && { keyword }),
         ...(shortDescription && { shortDescription }),
@@ -139,7 +123,12 @@ productRouter.post(
           "headers의 Content-Type을 application/json으로 설정해주세요"
         );
       }
-      console.log(req.file);
+      const userId = req.currentUserId;
+      //seller인지 확인
+      const userRole = await productService.getUserRole(userId);
+      if (userRole !== "seller") {
+        throw new Error("판매자로 등록해야만 상품 수정이 가능합니다.");
+      }
       const { location: img } = req.file;
       const {
         name,
@@ -151,7 +140,6 @@ productRouter.post(
         shortDescription,
         detailDescription,
       } = req.body;
-      const userId = req.currentUserId;
 
       // 위 데이터를 유저 db에 추가하기
       const newProduct = await productService.addProduct({
@@ -181,7 +169,10 @@ productRouter.delete("/delete", loginRequired, async function (req, res, next) {
   try {
     const productIdList = req.body.productIdList;
     const userId = req.currentUserId;
-
+    const userRole = await productService.getUserRole(userId);
+    if (userRole !== "seller") {
+      throw new Error("판매자로 등록해야만 상품 삭제가 가능합니다.");
+    }
     const ProductList = await productService.getProductsForDelete(
       productIdList
     );
@@ -204,6 +195,7 @@ productRouter.delete("/delete", loginRequired, async function (req, res, next) {
 productRouter.get("/category/:category", async (req, res, next) => {
   try {
     const category = req.params.category;
+
     // 특정 카테고리에 맞는 상품 목록을 얻음
     const products = await productService.getProductsByCategory(category);
     // 상품 목록(배열)을 JSON 형태로 프론트에 보냄
@@ -216,11 +208,8 @@ productRouter.get("/category/:category", async (req, res, next) => {
 // 카테고리 추가 기능
 productRouter.get("/category/update", async (req, res, next) => {
   try {
-    const category = req.params.category;
-    // 특정 카테고리에 맞는 상품 목록을 얻음
-    const products = await productService.getProductsByCategory(category);
-    // 상품 목록(배열)을 JSON 형태로 프론트에 보냄
-    res.status(200).json(products);
+    const category = req.body.category;
+    res.status(200).json(category);
   } catch (error) {
     next(error);
   }

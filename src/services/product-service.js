@@ -1,9 +1,11 @@
 import { productModel } from "../db";
+import { userModel } from "../db";
 
 class ProductService {
   // 본 파일의 맨 아래에서, new UserService(userModel) 하면, 이 함수의 인자로 전달됨
-  constructor(productModel) {
+  constructor(productModel, userModel) {
     this.productModel = productModel;
+    this.userModel = userModel;
   }
 
   // product-add
@@ -94,6 +96,11 @@ class ProductService {
     );
     return product;
   }
+
+  async getUserRole(userId) {
+    const userInfo = await this.userModel.findById(userId);
+    return userInfo.role;
+  }
 }
 
-export const productService = new ProductService(productModel);
+export const productService = new ProductService(productModel, userModel);
