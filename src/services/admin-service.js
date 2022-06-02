@@ -1,13 +1,14 @@
-import { userModel, orderModel } from "../db";
+import { userModel, orderModel, productModel } from "../db";
 
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 class AdminService {
   // 본 파일의 맨 아래에서, new UserService(userModel) 하면, 이 함수의 인자로 전달됨
-  constructor(userModel, orderModel) {
+  constructor(userModel, orderModel, productModel) {
     this.userModel = userModel;
     this.orderModel = orderModel;
+    this.productModel = productModel;
   }
 
   // 사용자 목록을 받음.
@@ -93,6 +94,70 @@ class AdminService {
     const { password, ...otherKeys } = object;
     return otherKeys;
   }
+
+  async setProduct(productId, toUpdate) {
+    //우선 해당 id의 상품이 db에 있는지 확인
+    let product = await this.productModel.findById(productId);
+
+    //db에서 찾지 못한 경우, 에러 메시지 반환
+    if (!product) {
+      throw new Error("상품 내역이 없습니다. 다시 한 번 확인해 주세요.");
+    }
+    //업데이트 진행
+    return await this.productModel.update({
+      productId,
+      update: toUpdate,
+    });
+  }
+
+  async deleteProduct(productIdArray) {
+    let product = await productIdArray.map((productId) =>
+      this.productModel.deleteById({ productId })
+    );
+    return product;
+  }
+
+  async addProduct(productInfo) {
+    // 객체 destructuring
+    const {
+      name,
+      price,
+      category,
+      quantity,
+      img,
+      brandName,
+      keyword,
+      shortDescription,
+      detailDescription,
+      userId,
+    } = productInfo;
+
+    // 상품명 중복 확인
+    const user = await this.productModel.findByName(name);
+    if (user) {
+      throw new Error(
+        "이 상품명은 현재 사용중입니다. 다른 상품명을 입력해 주세요."
+      );
+    }
+    const newProductInfo = {
+      name,
+      price,
+      category,
+      quantity,
+      img,
+      brandName,
+      keyword,
+      shortDescription,
+      detailDescription,
+      userId,
+    };
+    // 상품명 중복은 이제 아니므로, 상품 등록을 진행함
+    return await this.productModel.create(newProductInfo);
+  }
 }
 
-export const adminService = new AdminService(userModel, orderModel);
+export const adminService = new AdminService(
+  userModel,
+  orderModel,
+  productModel
+);
