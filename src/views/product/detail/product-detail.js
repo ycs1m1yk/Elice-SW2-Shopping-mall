@@ -25,7 +25,9 @@ TODO
  */
 
 document.body.insertAdjacentElement("afterbegin", header);
-const addToCartButton = document.getElementById("addToCartButton"); // 장바구니 추가 버튼
+
+const addToCartButton = document.getElementById("addToCartButton");
+const purchaseButton = document.getElementById("purchaseButton");
 
 const url = new URL(location.href);
 const productId = url.searchParams.get("id"); // 현재 상품의 아이디
@@ -49,7 +51,7 @@ const handleAddCart = () => {
 
   // 장바구니에 있는지 체크
   if (cartItem[productId]) {
-    alert("이미 장바구니에 추가되었습니다.");
+    alert("이미 장바구니에 추가되어 있습니다.");
     return;
   }
 
@@ -61,6 +63,47 @@ const handleAddCart = () => {
   };
 
   localStorage.setItem("cart", JSON.stringify(cartItem));
+  alert("장바구니에 추가되었습니다.");
+};
+
+const handlePurchase = async () => {
+  const cartItem = JSON.parse(localStorage.getItem("cart")) || {};
+
+  // 장바구니에 있는지 체크
+  if (cartItem[productId]) {
+    alert("이미 장바구니에 있는 상품입니다.");
+    return;
+  }
+
+  // 장바구니에 추가
+  cartItem[productId] = {
+    _id: productId,
+    quantity: 1,
+    isSelected: true,
+  };
+
+  let orderItem = JSON.parse(localStorage.getItem("order")) || {};
+  const product = await Api.get("/api/product", productId);
+  if (Object.prototype.hasOwnProperty.call(orderItem, "ids")) {
+    orderItem.ids.push(productId);
+    orderItem.productsCount += 1;
+    orderItem.productsTitles.push(`${product.name} / 1개`);
+    orderItem.productsTotal += product.price;
+    orderItem.selectedIds.push(productId);
+  } else {
+    orderItem = {
+      ids: [productId],
+      productsCount: 1,
+      productsTitles: [`${product.name} / 1개`],
+      productsTotal: product.price,
+      selectedIds: [productId],
+    };
+  }
+
+  localStorage.setItem("cart", JSON.stringify(cartItem));
+  localStorage.setItem("order", JSON.stringify(orderItem));
+
+  location.href = "/order";
 };
 
 const getDataFromApi = async () => {
@@ -69,5 +112,6 @@ const getDataFromApi = async () => {
 };
 
 addToCartButton.addEventListener("click", handleAddCart);
+purchaseButton.addEventListener("click", handlePurchase);
 
 getDataFromApi();
