@@ -54,18 +54,18 @@ async function post(endpoint, data) {
   return result;
 }
 
-// api 로 PATCH 요청 (/endpoint/params 로, JSON 데이터 형태로 요청함)
-async function patch(endpoint, data) {
+// api 로 PUT 요청 (/endpoint/params 로, JSON 데이터 형태로 요청함)
+async function put(endpoint, data) {
   const apiUrl = `${endpoint}`;
 
   // JSON.stringify 함수: Javascript 객체를 JSON 형태로 변환함.
   // 예시: {name: "Kim"} => {"name": "Kim"}
   const bodyData = JSON.stringify(data);
-  console.log(`%cPATCH 요청: ${apiUrl}`, "color: #059c4b;");
-  console.log(`%cPATCH 요청 데이터: ${bodyData}`, "color: #059c4b;");
+  console.log(`%cPUT 요청: ${apiUrl}`, "color: #059c4b;");
+  console.log(`%cPUT 요청 데이터: ${bodyData}`, "color: #059c4b;");
 
   const res = await fetch(apiUrl, {
-    method: "PATCH",
+    method: "PUT",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -115,4 +115,4 @@ async function del(endpoint, params = "", data = {}) {
 }
 
 // 아래처럼 export하면, import * as Api 로 할 시 Api.get, Api.post 등으로 쓸 수 있음.
-export { get, post, patch, del as delete };
+export { get, post, put, del as delete };
