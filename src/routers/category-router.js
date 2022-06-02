@@ -49,6 +49,7 @@ categoryRouter.get("/:id", loginRequired, async function (req, res, next) {
   try {
     //admin 확인 작업
     const userId = req.currentUserId;
+    console.log(userId);
     await adminService.adminVerify(userId);
 
     const categoryId = req.params.id;
