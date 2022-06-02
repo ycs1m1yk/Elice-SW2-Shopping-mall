@@ -1,8 +1,5 @@
 import { orderModel } from "../db";
 
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-
 class OrderService {
   // 본 파일의 맨 아래에서, new OrderService(orderModel) 하면, 이 함수의 인자로 전달됨
   constructor(orderModel) {
@@ -14,7 +11,9 @@ class OrderService {
     // 객체 destructuring, address는 타입 객체, orderList는 타입 배열
     const { userId, address, request, orderList, totalPrice, shippingFee } =
       orderInfo;
-
+    if (!userId || !address || !orderList || !totalPrice) {
+      throw new Error("모든 정보를 입력해 주세요.");
+    }
     const newOrderInfo = {
       userId,
       address,
@@ -26,10 +25,7 @@ class OrderService {
 
     // db에 저장
     const createdNewOrder = await this.orderModel.create(newOrderInfo);
-    const checkNewOrder = await this.orderModel.findById({
-      _id: createdNewOrder._id,
-    });
-    if (createdNewOrder.id !== checkNewOrder.id) {
+    if (!createdNewOrder) {
       throw new Error("주문이 정상적으로 완료되지 않았습니다.");
     }
     return createdNewOrder;
@@ -37,35 +33,27 @@ class OrderService {
 
   // 개인의 주문 목록을 받음.
   async getOrders(userId) {
-    return await this.orderModel.findByUserId(userId);
+    const orders = await this.orderModel.findByUserId(userId);
+    if (!orders) {
+      throw new Error("주문 목록을 불러올 수 없습니다.");
+    }
+    return orders;
   }
 
   async getOrdersByOrderId(orderId) {
-    return await this.orderModel.findById(orderId);
-  }
-
-  async getOrdersForDelete(orderIdList) {
-    const orderList = [];
-    for await (const orderId of orderIdList) {
-      const order = await this.orderModel.findById(orderId);
-      orderList.push(order);
+    const orders = await this.orderModel.findById(orderId);
+    if (!orders) {
+      throw new Error("주문 목록을 불러올 수 없습니다.");
     }
-    return orderList;
+    return orders;
   }
 
-  // 주문 목록 전체를 받음.
-  async getOrdersAll() {
-    return await this.orderModel.findByUserId();
-  }
+  async deleteProduct({ orderId, productId, userId }) {
+    const orderInfo = await this.getOrdersByOrderId(orderId);
+    if (userId !== orderInfo.userId) {
+      throw new Error("Forbidden");
+    }
 
-  // 주문 취소
-  async deleteOrder(orderIdArray) {
-    return await orderIdArray.map((orderId) =>
-      this.orderModel.deleteById(orderId)
-    );
-  }
-
-  async deleteProduct({ orderId, productId }) {
     const deleteOrderList = await this.orderModel.findById(orderId);
     const newDelete = await deleteOrderList.orderList.filter(
       (e) => e.productId !== productId
@@ -75,11 +63,20 @@ class OrderService {
       orderId,
       update: deleteUpdate,
     });
-    if (newOrder.orderList.length < 1) {
-      return await this.orderModel.deleteById(orderId);
+
+    if (!newOrder) {
+      throw new Error("주문 상품을 삭제하지 못했습니다.");
     }
 
-    return await newOrder;
+    if (newOrder.orderList.length < 1) {
+      const deletedOrder = await this.orderModel.deleteById(orderId);
+      if (!deletedOrder) {
+        throw new Error("주문 정보를 삭제하지 못했습니다.");
+      }
+      return deletedOrder;
+    }
+
+    return newOrder;
   }
 }
 
