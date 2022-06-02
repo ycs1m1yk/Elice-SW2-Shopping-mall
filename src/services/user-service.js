@@ -91,7 +91,17 @@ class UserService {
     }
     return await userModel.findById(userId);
   }
-
+  async setUserAddress(userId, address) {
+    if (!userId || !address) {
+      throw new Error("Need to All");
+    }
+    const toUpdate = { address };
+    const user = await this.userModel.update({
+      userId,
+      update: toUpdate,
+    });
+    return user;
+  }
   // 유저정보 수정, 현재 비밀번호가 있어야 수정 가능함.
   async setUser(userInfoRequired, toUpdate) {
     // 객체 destructuring
@@ -113,7 +123,7 @@ class UserService {
     }
 
     // 업데이트 진행
-    let user = await this.userModel.update({
+    const user = await this.userModel.update({
       userId,
       update: toUpdate,
     });

@@ -146,6 +146,24 @@ userRouter.put("/user", loginRequired, async function (req, res, next) {
   }
 });
 
+// 사용자 배송정보 수정 (주문할때)
+userRouter.put("/user/address", loginRequired, async (req, res, next) => {
+  try {
+    contentTypeChecker(req.body);
+    const userId = req.currentUserId;
+    const address = req.body.address;
+    // 사용자 정보를 업데이트함.
+    const updatedUserInfo = await userService.setUserAddress(userId, address);
+    const userInfoWithoutPwd = await userService.exceptPwd(
+      updatedUserInfo._doc
+    );
+    // 업데이트 이후의 유저 데이터를 프론트에 보내 줌
+    res.status(200).json(userInfoWithoutPwd);
+  } catch (error) {
+    next(error);
+  }
+});
+
 userRouter.delete("/user", loginRequired, async function (req, res, next) {
   try {
     // content-type 을 application/json 로 프론트에서
