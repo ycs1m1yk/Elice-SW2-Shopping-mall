@@ -12,7 +12,7 @@ class CategoryService {
     const category = await this.categoryModel.findByName(name);
     if (category) {
       throw new Error(
-        "이 카테고리명은 현재 사용중입니다. 다른 카테고리명을 입력해 주세요."
+        //"이 카테고리명은 현재 사용중입니다. 다른 카테고리명을 입력해 주세요."
       );
     }
     return await this.categoryModel.create(categoryInfo);
@@ -54,7 +54,7 @@ class CategoryService {
 
   async deleteCategory(categoryIdArray) {
     if (categoryIdArray.length < 1) {
-      throw new Error("카테고리 선택을 올바를게 해주세요.");
+      throw new Error("삭제할 카테고리가 없습니다.");
     }
     let category = await categoryIdArray.map((categoryId) =>
       this.categoryModel.deleteById({ categoryId })

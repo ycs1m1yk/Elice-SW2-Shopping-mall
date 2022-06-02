@@ -70,10 +70,7 @@ class ProductService {
     }
     return products;
   }
-  //유저별 상품 목록 확인
-  async getProductsByUserId(userId) {
-    return await this.productModel.findByUserId(userId);
-  }
+  
 
   //상품 id로 상세 조회
   async getProductByProductId(productId) {
@@ -90,11 +87,11 @@ class ProductService {
       throw new Error("상품 내역이 없습니다. 다시 한 번 확인해 주세요.");
     }
     if (product.userId !== userId) {
-      throw new Error("본인의 상품 내역만 수정이 가능합니다.");
+      throw new Error("Forbidden");
     }
     const userInfo = await this.userModel.findById(userId);
     if (userInfo.role !== "seller") {
-      throw new Error("판매자로 등록해야만 상품 수정이 가능합니다.");
+      throw new Error("Forbidden");
     }
     return product;
   }
@@ -107,11 +104,11 @@ class ProductService {
       throw new Error("상품 내역이 없습니다. 다시 한 번 확인해 주세요.");
     }
     if (product.userId !== userId) {
-      throw new Error("본인의 상품 내역만 수정이 가능합니다.");
+      throw new Error("Forbidden");
     }
     const userInfo = await this.userModel.findById(userId);
     if (userInfo.role !== "seller") {
-      throw new Error("판매자로 등록해야만 상품 수정이 가능합니다.");
+      throw new Error("Forbidden");
     }
     //업데이트 진행
     return await this.productModel.update({
@@ -123,7 +120,7 @@ class ProductService {
   async checkProductsForDelete(userId, productIdList) {
     const userInfo = await this.userModel.findById(userId);
     if (userInfo.role !== "seller") {
-      throw new Error("판매자로 등록해야만 상품 삭제가 가능합니다.");
+      throw new Error("Forbidden");
     }
     let productList = [];
     for (const productId of productIdList) {
@@ -132,7 +129,7 @@ class ProductService {
     }
     productList.map((productInfo) => {
       if (userId !== productInfo.userId) {
-        throw new Error("본인의 상품 판매 내역만 삭제할 수 있습니다.");
+        throw new Error("Forbidden");
       }
     });
   }
@@ -144,10 +141,6 @@ class ProductService {
     return product;
   }
 
-  async getUserRole(userId) {
-    const userInfo = await this.userModel.findById(userId);
-    return userInfo.role;
-  }
 }
 
 export const productService = new ProductService(productModel, userModel);
