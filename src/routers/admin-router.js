@@ -123,7 +123,7 @@ adminRouter.put(
 
 adminRouter.delete(
   "/order/delete",
-
+  loginRequired,
   async function (req, res, next) {
     try {
       contentTypeChecker(req.body);

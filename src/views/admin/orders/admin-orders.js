@@ -20,7 +20,7 @@ const handleChange = async (e) => {
     const status = options[selectedIndex].text;
     const columns = target.closest(".columns");
     const { orderId, productId } = columns.dataset;
-    await Api.patch(`/api/admin/order/${orderId}/${productId}`, {
+    await Api.put(`/api/admin/order/${orderId}/${productId}`, {
       status,
     });
   }
@@ -46,7 +46,7 @@ const handleConfirm = async (e) => {
   if (action === "delete") {
     const { targetOrderId: orderId, targetProductId: productId } =
       modal.dataset;
-    await Api.delete("/api/order/delete", "", {
+    await Api.delete("/api/admin/order/delete", "", {
       orderId,
       productId,
     });
@@ -63,7 +63,8 @@ const handleConfirm = async (e) => {
 const addAllElements = async () => {
   const orders = await Api.get("/api/admin/orders");
   paintNav(orders);
-  paintOrders(orders);
+  await paintOrders(orders);
+  updateOptionByStatus();
 };
 
 const paintNav = (orders) => {
@@ -125,13 +126,15 @@ const paintOrders = async (orders) => {
     }
   }
 
+  const docFragment = document.createDocumentFragment();
   orderInfos.forEach((orderInfo) => {
-    const orderItem = makeOrderItem(orderInfo);
-    ordersContainer.insertAdjacentHTML("beforeend", orderItem);
-
-    const { _id: orderId, productId } = orderInfo;
-    updateOptionByStatus({ orderId, productId });
+    const html = makeOrderItem(orderInfo);
+    docFragment.append(
+      ...new DOMParser().parseFromString(html, "text/html").body.childNodes
+    );
   });
+
+  ordersContainer.appendChild(docFragment);
 };
 
 const makeOrderItem = ({
@@ -187,30 +190,29 @@ const makeOrderItem = ({
   `;
 };
 
-const updateOptionByStatus = ({ orderId, productId }) => {
-  const targetSelectBox = document.querySelector(
-    `.columns[data-order-id="${orderId}"][data-product-id="${productId}"] select`
-  );
-
+const updateOptionByStatus = () => {
   const statusTexts = ["상품 준비중", "상품 배송중", "배송완료"];
-  const { status } = targetSelectBox.closest(".columns").dataset;
-  const index = statusTexts.indexOf(status);
-  const options = targetSelectBox.options;
-  options[index].setAttribute("selected", "");
+  const selectBoxes = [...document.querySelectorAll(".columns select")];
 
-  const classList = [...options[index].classList];
-  targetSelectBox.classList = [];
-  classList.forEach((className) => targetSelectBox.classList.add(className));
+  selectBoxes.forEach((el) => {
+    const { status } = el.closest(".columns").dataset;
+    const index = statusTexts.indexOf(status);
+    const options = el.options;
+    options[index].setAttribute("selected", "");
 
-  // 배송이 완료된 상품은 상태변경 불가, 완료버튼 표시
-  if (status === "배송완료") {
-    targetSelectBox.setAttribute("disabled", "");
+    const classList = [...options[index].classList];
+    el.classList = [];
+    classList.forEach((className) => el.classList.add(className));
 
-    const targetButton = document.querySelector(
-      `.columns[data-order-id="${orderId}"][data-product-id="${productId}"] button`
-    );
-    targetButton.textContent = "완료";
-  }
+    // 배송이 완료된 상품은 상태변경 불가, 완료버튼 표시
+    if (status === "배송완료") {
+      el.setAttribute("disabled", "");
+
+      const targetButton =
+        el.parentElement.parentElement.nextElementSibling.firstElementChild;
+      targetButton.textContent = "완료";
+    }
+  });
 };
 
 const addAllEvents = () => {
