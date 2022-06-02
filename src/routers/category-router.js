@@ -1,5 +1,4 @@
 import { Router } from "express";
-import is from "@sindresorhus/is";
 // 폴더에서 import하면, 자동으로 폴더의 index.js에서 가져옴
 import { categoryService } from "../services";
 import { adminService } from "../services";
@@ -25,9 +24,8 @@ categoryRouter.post(
   async function (req, res, next) {
     try {
       contentTypeChecker(req.body);
-      //admin 확인 작업
       const userId = req.currentUserId;
-      await adminService.adminVerify(userId);
+      await adminService.adminVerify(userId); //admin 확인 작업
 
       const { location: img } = req.file;
       const { name, description } = req.body;
@@ -48,9 +46,8 @@ categoryRouter.post(
 //카테고리id를 통해 특정 카테고리 정보 보내기
 categoryRouter.get("/:id", loginRequired, async function (req, res, next) {
   try {
-    //admin 확인 작업
     const userId = req.currentUserId;
-    await adminService.adminVerify(userId);
+    await adminService.adminVerify(userId); //admin 확인 작업
 
     const categoryId = req.params.id;
     const categoryInfo = await categoryService.getCategoryById(categoryId);

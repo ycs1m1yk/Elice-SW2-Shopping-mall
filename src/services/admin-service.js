@@ -196,15 +196,8 @@ class AdminService {
       detailDescription,
       userId,
     } = productInfo;
-    if (
-      !name ||
-      !price ||
-      !category ||
-      !img ||
-      !shortDescription ||
-      !detailDescription
-    ) {
-      throw new Error("Need to All Elements in body");
+    if (!name || !price || !category || !quantity || !img || !shortDescription || !detailDescription || !userId) {
+      throw new Error("상품 정보를 모두 입력해주세요.")
     }
     // 상품명 중복 확인
     const user = await this.productModel.findByName(name);
