@@ -26,7 +26,7 @@ const ProductSchema = new Schema(
     brandName: {
       type: String,
       required: false,
-      default: null,
+      default: true,
     },
     keyword: {
       type: [String],

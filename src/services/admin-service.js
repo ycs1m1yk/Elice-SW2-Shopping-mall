@@ -130,7 +130,7 @@ class AdminService {
       detailDescription,
       userId,
     } = productInfo;
-    if (!name || !price || !category || !quantity || !img || !shortDescription || !detailDescription || !userId) {
+    if (!name || !price || !category || !brandName || !img || !shortDescription || !detailDescription || !userId) {
       throw new Error("상품 정보를 모두 입력해주세요.")
     }
     // 상품명 중복 확인
