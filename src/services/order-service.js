@@ -11,7 +11,9 @@ class OrderService {
     // 객체 destructuring, address는 타입 객체, orderList는 타입 배열
     const { userId, address, request, orderList, totalPrice, shippingFee } =
       orderInfo;
-
+    if (!userId || !address || !orderList || !totalPrice) {
+      throw new Error("Need to All Elements in body");
+    }
     const newOrderInfo = {
       userId,
       address,
