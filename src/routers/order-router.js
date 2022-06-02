@@ -82,18 +82,18 @@ orderRouter.get("/orderList", loginRequired, async function (req, res, next) {
 
 orderRouter.delete("/delete", loginRequired, async function (req, res, next) {
   try {
-    const { orderIdList } = req.body; // 배열
+    const { orderId, productId } = req.body; // 배열
     const userId = req.currentUserId;
 
-    const orderList = await orderService.getOrdersForDelete(orderIdList);
-    orderList.map((orderInfo) => {
-      if (userId !== orderInfo.userId) {
-        throw new Error("본인의 주문 내역만 취소할 수 있습니다.");
-      }
-    });
-    const orderDeleteRequired = orderIdList;
+    const orderInfo = await orderService.getOrdersByOrderId(orderId);
+    if (userId !== orderInfo.userId) {
+      throw new Error("본인의 주문 내역만 취소할 수 있습니다.");
+    }
 
-    const deleteOrderInfo = await orderService.deleteOrder(orderDeleteRequired);
+    const deleteOrderInfo = await orderService.deleteProduct({
+      orderId,
+      productId,
+    });
     console.log("삭제 완료");
 
     res.status(200).json(deleteOrderInfo);

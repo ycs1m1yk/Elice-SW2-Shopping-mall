@@ -1,9 +1,11 @@
 import { productModel } from "../db";
+import { userModel } from "../db";
 
 class ProductService {
   // 본 파일의 맨 아래에서, new UserService(userModel) 하면, 이 함수의 인자로 전달됨
-  constructor(productModel) {
+  constructor(productModel, userModel) {
     this.productModel = productModel;
+    this.userModel = userModel;
   }
 
   // product-add
@@ -15,11 +17,11 @@ class ProductService {
       category,
       quantity,
       img,
-      size,
       brandName,
       keyword,
       shortDescription,
       detailDescription,
+      userId,
     } = productInfo;
 
     // 상품명 중복 확인
@@ -35,11 +37,11 @@ class ProductService {
       category,
       quantity,
       img,
-      size,
       brandName,
       keyword,
       shortDescription,
       detailDescription,
+      userId,
     };
     // 상품명 중복은 이제 아니므로, 상품 등록을 진행함
     return await this.productModel.create(newProductInfo);
@@ -81,8 +83,8 @@ class ProductService {
 
   async getProductsForDelete(productIdList) {
     let productList = [];
-    for await (const productId of productIdList) {
-      const product = this.productModel.findById(productId);
+    for (const productId of productIdList) {
+      const product = await this.productModel.findById(productId);
       productList.push(product);
     }
     return productList;
@@ -94,7 +96,11 @@ class ProductService {
     );
     return product;
   }
+
+  async getUserRole(userId) {
+    const userInfo = await this.userModel.findById(userId);
+    return userInfo.role;
+  }
 }
 
-export const productService = new ProductService(productModel);
-
+export const productService = new ProductService(productModel, userModel);

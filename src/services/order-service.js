@@ -40,6 +40,10 @@ class OrderService {
     return await this.orderModel.findByUserId(userId);
   }
 
+  async getOrdersByOrderId(orderId) {
+    return await this.orderModel.findById(orderId);
+  }
+
   async getOrdersForDelete(orderIdList) {
     const orderList = [];
     for await (const orderId of orderIdList) {
@@ -60,13 +64,23 @@ class OrderService {
       this.orderModel.deleteById(orderId)
     );
   }
+
+  async deleteProduct({ orderId, productId }) {
+    const deleteOrderList = await this.orderModel.findById(orderId);
+    const newDelete = await deleteOrderList.orderList.filter(
+      (e) => e.productId !== productId
+    );
+    const deleteUpdate = { $set: { orderList: newDelete } };
+    const newOrder = await this.orderModel.update({
+      orderId,
+      update: deleteUpdate,
+    });
+    if (newOrder.orderList.length < 1) {
+      return await this.orderModel.deleteById(orderId);
+    }
+
+    return await newOrder;
+  }
 }
 
 export const orderService = new OrderService(orderModel);
-
-// const orderInfo = await orderModel.findById({id});
-// orderInfo.map(e => {
-//   if (e.productId === "adfasfsadf") {
-//     orderModel.findByIdAndUpdate({e.productId}, {$set: orderList};)
-//   }
-// });

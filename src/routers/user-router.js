@@ -92,6 +92,17 @@ userRouter.get("/my", loginRequired, async (req, res, next) => {
   }
 });
 
+// 내 판매 목록 보기 api
+userRouter.get("/user/sellinglist", loginRequired, async (req, res, next) => {
+  try {
+    const userId = req.currentUserId;
+    const mySellingInfo = await userService.getProductsByUserId(userId);
+    res.status(200).json(mySellingInfo);
+  } catch (error) {
+    next(error);
+  }
+});
+
 // 사용자 정보 수정
 // (예를 들어 /api/users/abc12345 로 요청하면 req.params.userId는 'abc12345' 문자열로 됨)
 userRouter.patch("/user", loginRequired, async function (req, res, next) {
@@ -158,7 +169,7 @@ userRouter.delete("/user", loginRequired, async function (req, res, next) {
         "headers의 Content-Type을 application/json으로 설정해주세요"
       );
     }
-    const userId = req.currentPassword;
+    const userId = req.currentUserId;
     console.log(userId);
     // body data로부터, 확인용으로 사용할 현재 비밀번호를 추출함.
     const { currentPassword } = req.body;
