@@ -143,7 +143,7 @@ adminRouter.put(
   async function (req, res, next) {
     try {
       contentTypeChecker(req.body);
-      const userId = "1234";
+      const userId = req.currentUserId;
       //admin인지 확인
       await adminService.adminVerify(userId);
 
