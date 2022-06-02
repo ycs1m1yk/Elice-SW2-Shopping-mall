@@ -83,8 +83,8 @@ class ProductService {
 
   async getProductsForDelete(productIdList) {
     let productList = [];
-    for await (const productId of productIdList) {
-      const product = this.productModel.findById(productId);
+    for (const productId of productIdList) {
+      const product = await this.productModel.findById(productId);
       productList.push(product);
     }
     return productList;

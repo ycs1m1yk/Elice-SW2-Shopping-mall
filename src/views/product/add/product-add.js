@@ -9,11 +9,112 @@ const keywordContainer = document.getElementById("keywordContainer");
 const categorySelectBox = document.getElementById("categorySelectBox");
 
 const imageInput = document.getElementById("imageInput");
-const searchKeywordInput = document.getElementById("searchKeywordInput");
 const addKeywordButton = document.getElementById("addKeywordButton");
+const searchKeywordInput = document.getElementById("searchKeywordInput");
+const titleInput = document.getElementById("titleInput");
+const manufacturerInput = document.getElementById("manufacturerInput");
+const shortDescriptionInput = document.getElementById("shortDescriptionInput");
+const detailDescriptionInput = document.getElementById(
+  "detailDescriptionInput"
+);
+const inventoryInput = document.getElementById("inventoryInput");
+const priceInput = document.getElementById("priceInput");
+const contentTitle = document.getElementById("content-title");
+const contentSubtitle = document.getElementById("content-subtitle");
+const submitButton = document.getElementById("submitButton");
 
+const url = new URL(location.href).searchParams;
+const productId = url.get("product");
 // 키워드를 담을 배열
 let keywords = [];
+
+// 제품 수정일 경우 화면 구성
+
+const showPastKeyword = (pastKeywords) => {
+  // 기존의 키워드 화면에 보여주기
+  pastKeywords.forEach((userTag) => {
+    const keywordBox = document.createElement("div");
+    keywordBox.classList.add("control");
+    keywordBox.innerHTML = `
+    <div class="tags has-addons">
+      <span class="tag is-link is-light">${userTag}</span>
+      <a id="deleteButton" class="tag is-link is-light is-delete"></a>
+    </div>
+  `;
+
+    keywordContainer.append(keywordBox);
+
+    const tags = document.querySelectorAll(".tags");
+
+    for (const tag of tags) {
+      tag.addEventListener("click", (e) => {
+        // 키워드 삭제 시 배열에서 제거하고 태그도 제거
+        keywords = pastKeywords.filter(
+          (keyword) => keyword !== e.target.previousElementSibling.textContent
+        );
+        tag.closest(".control").remove();
+      });
+    }
+  });
+
+  // 키워드를 배열에 추가
+};
+const editProduct = async () => {
+  const productInfo = await Api.get(`/api/product/${productId}`);
+
+  // 상품 수정하기 화면 처리
+  titleInput.value = productInfo.name;
+  manufacturerInput.value = productInfo.brandName;
+  shortDescriptionInput.value = productInfo.shortDescription;
+  detailDescriptionInput.value = productInfo.detailDescription;
+  inventoryInput.value = productInfo.quantity;
+  priceInput.value = productInfo.price;
+
+  contentTitle.innerText = "제품 수정";
+  contentSubtitle.innerText = "제품을 수정해보세요";
+  submitButton.innerText = "제품 수정하기";
+
+  keywords = productInfo.keyword;
+  showPastKeyword(keywords);
+};
+
+// 상품 아이디가 URL에 존재하면 상품 수정 프로세스 없다면 상품 추가 프로세스
+if (productId) {
+  editProduct();
+}
+
+// API 요청 함수화
+const request = async (req, formData) => {
+  let apiUrl;
+
+  for (const a of formData) {
+    console.log(a);
+  }
+
+  req === "POST"
+    ? (apiUrl = `/api/product/add`)
+    : (apiUrl = `/api/product/${productId}/update`);
+
+  // 상품 추가 또는 수정 요청
+  await fetch(`${apiUrl}`, {
+    method: req,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+    body: formData,
+  }).then(async (res) => {
+    if (!res.ok) {
+      const errorContent = await res.json();
+      const { reason } = errorContent;
+
+      alert(reason);
+      location.reload();
+      return;
+    }
+    alert("상품 등록이 정상적으로 이루어졌습니다.");
+    location.reload();
+  });
+};
 
 // 카테고리 동적 생성
 const paintCategoryList = async () => {
@@ -23,7 +124,7 @@ const paintCategoryList = async () => {
   categoryList.forEach((category) => {
     categoryOptions += `
       <option
-        value=${category.name}
+        value="${category.name}"
         class="notification is-primary is-light"
       >
         ${category.name}
@@ -34,7 +135,6 @@ const paintCategoryList = async () => {
 };
 
 // 키워드 추가 함수
-// TODO: 키워드 삭제하면 CSS 무너지는 버그 해결 필요
 const handleAddKeyword = (e) => {
   e.preventDefault();
 
@@ -72,29 +172,6 @@ const handleAddKeyword = (e) => {
   }
 };
 
-// 제품 등록 요청, /api/product/add
-const handleSubmit = async (e) => {
-  e.preventDefault();
-
-  const bodyForm = new FormData(registerProductForm);
-  bodyForm.append("keyword", keywords);
-
-  await fetch("/api/product/add", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${getToken()}`,
-    },
-    body: bodyForm,
-  }).then((res) => {
-    if (res.ok) {
-      location.reload();
-      return alert("상품이 정상적으로 등록되었습니다.");
-    }
-    location.reload();
-    alert("상품 등록에 문제가 발생하였습니다. 다시 시도해주세요.");
-  });
-};
-
 // 이미지 파일 이름 설정
 const handleImageFileName = (e) => {
   const {
@@ -102,6 +179,16 @@ const handleImageFileName = (e) => {
   } = e;
 
   fileNameSpan.innerText = files[0].name;
+};
+
+// 제품 등록 또는 수정 요청, /api/product/add or /api/product/:id/update
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  const bodyForm = new FormData(registerProductForm);
+  bodyForm.append("keyword", keywords);
+
+  productId ? request("PATCH", bodyForm) : request("POST", bodyForm);
 };
 
 addKeywordButton.addEventListener("click", handleAddKeyword);
