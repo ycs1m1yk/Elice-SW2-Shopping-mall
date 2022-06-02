@@ -2,6 +2,7 @@ import { Router } from "express";
 import is from "@sindresorhus/is";
 // 폴더에서 import하면, 자동으로 폴더의 index.js에서 가져옴
 import { loginRequired } from "../middlewares";
+import { upload } from "../middlewares";
 import { adminService } from "../services";
 
 const adminRouter = Router();
@@ -140,6 +141,124 @@ adminRouter.delete("/order/:orderId", loginRequired, async (req, res, next) => {
   }
 });
 
-adminRouter.get("/category/add", loginRequired, async (req, res) => {});
+//상품 정보 수정
+adminRouter.put(
+  "/product/:productId",
+  loginRequired,
+  upload.single("image-file"),
+  async function (req, res, next) {
+    try {
+      if (is.emptyObject(req.body)) {
+        throw new Error(
+          "headers의 Content-Type을 application/json으로 설정해주세요"
+        );
+      }
+      const userId = "1234";
+      //admin인지 확인
+      await adminService.adminVerify(userId);
+
+      const productId = req.params.productId;
+      const { location: img } = req.file;
+      const {
+        name,
+        price,
+        category,
+        quantity,
+        brandName,
+        keyword,
+        shortDescription,
+        detailDescription,
+      } = req.body;
+
+      const toUpdate = {
+        ...(img && { img }),
+        ...(name && { name }),
+        ...(price && { price }),
+        ...(category && { category }),
+        ...(quantity && { quantity }),
+        ...(brandName && { brandName }),
+        ...(keyword && { keyword }),
+        ...(shortDescription && { shortDescription }),
+        ...(detailDescription && { detailDescription }),
+      };
+
+      // 상품 정보를 업데이트함.
+      const updatedProductInfo = await adminService.setProduct(
+        productId,
+        toUpdate
+      );
+      res.status(200).json(updatedProductInfo);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+// 상품 삭제
+adminRouter.delete(
+  "/product/delete",
+  loginRequired,
+  async function (req, res, next) {
+    try {
+      const { productIdList } = req.body;
+      const userId = req.currentUserId;
+      await adminService.adminVerify(userId); //admin인지 확인
+
+      const deleteProductInfo = await adminService.deleteProduct(productIdList);
+
+      res.status(200).json(deleteProductInfo);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+adminRouter.post(
+  "/product/add",
+  upload.single("image-file"),
+  loginRequired,
+  async (req, res, next) => {
+    try {
+      if (is.emptyObject(req.body)) {
+        throw new Error(
+          "headers의 Content-Type을 application/json으로 설정해주세요"
+        );
+      }
+      const userId = req.currentUserId;
+      await adminService.adminVerify(userId); //admin인지 확인
+
+      const { location: img } = req.file;
+      const {
+        name,
+        price,
+        category,
+        quantity,
+        brandName,
+        keyword,
+        shortDescription,
+        detailDescription,
+      } = req.body;
+
+      // 위 데이터를 유저 db에 추가하기
+      const newProduct = await adminService.addProduct({
+        name,
+        price,
+        img,
+        category,
+        quantity,
+        brandName,
+        keyword,
+        shortDescription,
+        detailDescription,
+        userId,
+      });
+
+      // 추가된 유저의 db 데이터를 프론트에 다시 보내줌
+      // 물론 프론트에서 안 쓸 수도 있지만, 편의상 일단 보내 줌
+      res.status(201).json(newProduct);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 export { adminRouter };
