@@ -23,7 +23,6 @@ userRouter.post("/mail", async (req, res, next) => {
     if (error) {
       console.log(error);
     }
-    console.log(info);
     // console.log("Finish sending email : " + info.response);
     res.send(authNum);
     transPort.close();
@@ -78,7 +77,8 @@ userRouter.get("/my", loginRequired, async (req, res, next) => {
   try {
     const userId = req.currentUserId;
     let myInfo = await userService.getMyInfo(userId);
-    const myInfoWithoutPwd = (({ password, ...o }) => o)(myInfo._doc);
+
+    const myInfoWithoutPwd = await userService.exceptPwd(myInfo._doc);
     res.status(200).json(myInfoWithoutPwd);
   } catch (error) {
     next(error);
@@ -138,7 +138,7 @@ userRouter.put("/user", loginRequired, async function (req, res, next) {
       userInfoRequired,
       toUpdate
     );
-    const userInfoWithoutPwd = (({ password, ...o }) => o)(
+    const userInfoWithoutPwd = await userService.exceptPwd(
       updatedUserInfo._doc
     );
     // 업데이트 이후의 유저 데이터를 프론트에 보내 줌
@@ -166,7 +166,7 @@ userRouter.delete("/user", loginRequired, async function (req, res, next) {
     const userInfoRequired = { userId, currentPassword };
     // 사용자 정보를 업데이트함.
     const deleteUserInfo = await userService.deleteUser(userInfoRequired);
-    const userInfoWithoutPwd = (({ password, ...o }) => o)(deleteUserInfo._doc);
+    const userInfoWithoutPwd = await userService.exceptPwd(deleteUserInfo._doc);
     // 업데이트 이후의 유저 데이터를 프론트에 보내 줌
     res.status(200).json(userInfoWithoutPwd);
   } catch (error) {
