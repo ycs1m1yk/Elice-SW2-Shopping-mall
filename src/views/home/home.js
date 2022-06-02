@@ -2,6 +2,7 @@ import header from "/components/Header.js";
 import * as Api from "/api.js";
 
 document.body.insertAdjacentElement("afterbegin", header);
+const productItemContainer = document.getElementById("productItemContainer");
 
 // 슬라이더 이미지 생성 함수
 const setSliderImage = (categoryList) => {
@@ -144,22 +145,83 @@ const paintCategoryMenu = (categoryList) => {
   const categoryMenu = document.querySelector(".categories");
 
   categoryList.forEach((category) => {
-    const categoryItem = document.createElement("li");
+    const categoryLi = document.createElement("li");
     const categoryLink = document.createElement("a");
 
+    categoryLink.classList.add("navbar-item");
     categoryLink.href = `/product/list?category=${category.name}`;
     categoryLink.innerText = `${category.name.replace(" Clothes", "")}`;
+    categoryLink.style = `font-size: 24px`;
 
-    categoryItem.appendChild(categoryLink);
-    categoryMenu.appendChild(categoryItem);
+    categoryLi.appendChild(categoryLink);
+    categoryMenu.appendChild(categoryLi);
   });
+};
+
+// 추천 상품 화면에 그리기
+const paintProduct = (product) => {
+  let itemCard = document.createElement("a");
+  let tags = document.createElement("div");
+
+  tags.id = "tagContainer";
+  itemCard.classList.add("card");
+
+  itemCard.href = `/product/detail/?id=${product._id}`;
+
+  itemCard.innerHTML = `
+    <div class="card-image">
+      <figure class="image is-4by3">
+        <img src="${product.img}" alt="Placeholder image">
+      </figure>
+    </div>
+    <div class="card-content">
+      <div class="media">
+        <div class="media-left">
+          
+        </div>
+        <div class="media-content">
+          <p class="title is-4">${product.name}</p>
+          <p class="subtitle is-6">${product.shortDescription}</p>
+        </div>
+      </div>
+
+      <div class="content${product._id}">
+        <div style="margin-bottom: 1rem" id="itemPrice"><b>가격: ${product.price.toLocaleString()}원</b></div>
+      </div>
+    </div>
+    `;
+
+  // 상품 키워드 태그 추가
+  product.keyword.forEach((keyword) => {
+    let tag = document.createElement("span");
+
+    tag.classList.add("tag");
+    tag.classList.add("is-sucess");
+    tag.innerText = keyword;
+
+    tags.append(tag);
+  });
+
+  productItemContainer.append(itemCard);
+  document.querySelector(`.content${product._id}`).append(tags);
+};
+
+// 랜덤 추천 상품 호출
+const todayRecommendation = (productList) => {
+  for (let i = 0; i < 3; i++) {
+    const randomeIdx = Math.floor(Math.random() * productList.length);
+    paintProduct(productList[randomeIdx]);
+  }
 };
 
 // 데이터 받아와서 화면 그리기
 const getDataFromApi = async () => {
   const categoryList = await Api.get("/api/category");
+  const productList = await Api.get("/api/product");
+
   paintCategoryMenu(categoryList);
   slider(categoryList);
+  todayRecommendation(productList);
 };
 
 getDataFromApi();
