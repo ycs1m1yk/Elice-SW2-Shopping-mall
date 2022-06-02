@@ -109,12 +109,33 @@ class UserService {
     }
 
     // 업데이트 진행
-    let user = await this.userModel.update({
+    const user = await this.userModel.update({
       userId,
       update: toUpdate,
     });
 
     return user;
+  }
+
+  async setUserAddress(userId, address) {
+    const { addressName, postalCode, address1, address2 } = address;
+    if (!addressName || !postalCode || !address1 || !address2) {
+      throw new Error("주소를 전부 입력해 주세요.");
+    }
+    const userInfo = await this.userModel.findById(userId);
+    if (!userInfo) {
+      throw new Error("없는 사용자 입니다.");
+    }
+    const newAddressArray = [{ addressName, postalCode, address1, address2 }];
+    const addressUpdate = { $push: { address: newAddressArray } };
+    const updatedUser = await this.userModel.update({
+      userId,
+      update: addressUpdate,
+    });
+    if (!updatedUser) {
+      throw new Error("배송지가 정상적으로 추가되지 않았습니다.");
+    }
+    return updatedUser;
   }
 
   async deleteUser(userInfoRequired) {
