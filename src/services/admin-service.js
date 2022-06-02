@@ -1,7 +1,6 @@
 import { userModel, orderModel, productModel } from "../db";
 
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 
 class AdminService {
   // 본 파일의 맨 아래에서, new UserService(userModel) 하면, 이 함수의 인자로 전달됨
@@ -18,6 +17,9 @@ class AdminService {
 
   async deleteUser(userInfoRequired) {
     const { email } = userInfoRequired;
+    if (!email) {
+      throw new Error("Need to Email");
+    }
     return await this.userModel.deleteByEmail(email);
   }
 
@@ -28,6 +30,9 @@ class AdminService {
   async setOrderStatus(orderInfoRequired, toUpdate) {
     const { orderId, productId } = orderInfoRequired;
     const { status } = toUpdate;
+    if (!orderId || !productId || !status) {
+      throw new Error("Nee to All Elements in body");
+    }
     const updateOrderList = await this.orderModel.findById(orderId);
     const newUpdate = await updateOrderList.orderList.map((e) => {
       if (e.productId === productId) {
@@ -42,11 +47,17 @@ class AdminService {
 
   async deleteOrder(orderInfoRequired) {
     const { orderId } = orderInfoRequired;
+    if (!orderId) {
+      throw new Error("Need to orderId");
+    }
     return await this.orderModel.deleteById(orderId);
   }
 
   // 관리자 계정 확인
   async adminVerify(userId) {
+    if (!userId) {
+      throw new Error("Need to userId");
+    }
     const user = await this.userModel.findById(userId);
     if (!user) {
       throw new Error("가입 내역이 없습니다. 다시 한 번 확인해 주세요.");
@@ -60,6 +71,9 @@ class AdminService {
 
   async setUserRole(userInfoRequired, toUpdate) {
     const { email } = userInfoRequired;
+    if (!email) {
+      throw new Error("Need to email");
+    }
     const userInfo = await this.userModel.findByEmail(email);
     const userId = userInfo._id;
     return await this.userModel.update({ userId, update: toUpdate });
@@ -68,6 +82,9 @@ class AdminService {
   // 비밀번호 일치 여부 확인
   async userVerify(userId, currentPassword) {
     // 우선 해당 id의 유저가 db에 있는지 확인
+    if (!userId || !currentPassword) {
+      throw new Error("Need to All Elements");
+    }
     let user = await this.userModel.findById(userId);
     // db에서 찾지 못한 경우, 에러 메시지 반환
     if (!user) {
@@ -90,14 +107,36 @@ class AdminService {
     }
   }
 
-  exceptPwd(object) {
-    const { password, ...otherKeys } = object;
-    return otherKeys;
+  async exceptPwd(userInfo) {
+    return (({ password, ...o }) => o)(userInfo);
   }
 
   async setProduct(productId, toUpdate) {
+    const {
+      img,
+      name,
+      price,
+      category,
+      quantity,
+      brandName,
+      keyword,
+      shortDescription,
+      detailDescription,
+    } = toUpdate;
+
+    if (
+      !productId ||
+      !img ||
+      !name ||
+      !price ||
+      !category ||
+      !shortDescription ||
+      !detailDescription
+    ) {
+      throw new Error("Need to All Elements in body");
+    }
     //우선 해당 id의 상품이 db에 있는지 확인
-    let product = await this.productModel.findById(productId);
+    const product = await this.productModel.findById(productId);
 
     //db에서 찾지 못한 경우, 에러 메시지 반환
     if (!product) {
@@ -111,6 +150,9 @@ class AdminService {
   }
 
   async deleteProduct(productIdArray) {
+    if (!productIdArray) {
+      throw new Error("Need to productIdArray");
+    }
     let product = await productIdArray.map((productId) =>
       this.productModel.deleteById({ productId })
     );
@@ -131,7 +173,16 @@ class AdminService {
       detailDescription,
       userId,
     } = productInfo;
-
+    if (
+      !name ||
+      !price ||
+      !category ||
+      !img ||
+      !shortDescription ||
+      !detailDescription
+    ) {
+      throw new Error("Need to All Elements in body");
+    }
     // 상품명 중복 확인
     const user = await this.productModel.findByName(name);
     if (user) {

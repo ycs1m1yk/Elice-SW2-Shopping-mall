@@ -1,8 +1,5 @@
 import { orderModel } from "../db";
 
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-
 class OrderService {
   // 본 파일의 맨 아래에서, new OrderService(orderModel) 하면, 이 함수의 인자로 전달됨
   constructor(orderModel) {
@@ -65,7 +62,12 @@ class OrderService {
     );
   }
 
-  async deleteProduct({ orderId, productId }) {
+  async deleteProduct({ orderId, productId, userId }) {
+    const orderInfo = await this.getOrdersByOrderId(orderId);
+    if (userId !== orderInfo.userId) {
+      throw new Error("본인의 주문 내역만 취소할 수 있습니다.");
+    }
+
     const deleteOrderList = await this.orderModel.findById(orderId);
     const newDelete = await deleteOrderList.orderList.filter(
       (e) => e.productId !== productId

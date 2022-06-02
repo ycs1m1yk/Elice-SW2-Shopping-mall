@@ -17,7 +17,7 @@ adminRouter.get("/users", loginRequired, async (req, res, next) => {
     await adminService.adminVerify(userId);
     const users = await adminService.getUsers();
     const usersWithoutPwd = await users.map((e) => {
-      return (({ password, ...o }) => o)(e._doc);
+      return adminService.exceptPwd(e._doc);
     });
     res.status(200).json(usersWithoutPwd);
   } catch (error) {
@@ -47,7 +47,7 @@ adminRouter.put("/user/:email", loginRequired, async (req, res, next) => {
       toUpdate
     );
 
-    const userWithoutPwd = (({ password, ...o }) => o)(updateduserRole._doc);
+    const userWithoutPwd = adminService.exceptPwd(updateduserRole._doc);
     // 업데이트 이후의 유저 데이터를 프론트에 보내 줌
 
     res.status(200).json(userWithoutPwd);
@@ -67,7 +67,7 @@ adminRouter.delete("/user/:email", loginRequired, async (req, res, next) => {
     const userInfoRequired = { email: userEmail };
 
     const deleteUserInfo = await adminService.deleteUser(userInfoRequired);
-    const userWithoutPwd = (({ password, ...o }) => o)(deleteUserInfo._doc);
+    const userWithoutPwd = adminService.exceptPwd(deleteUserInfo._doc);
     res.status(200).json(userWithoutPwd);
   } catch (error) {
     next(error);
@@ -143,11 +143,7 @@ adminRouter.put(
   upload.single("image-file"),
   async function (req, res, next) {
     try {
-      if (is.emptyObject(req.body)) {
-        throw new Error(
-          "headers의 Content-Type을 application/json으로 설정해주세요"
-        );
-      }
+      contentTypeChecker(req.body);
       const userId = "1234";
       //admin인지 확인
       await adminService.adminVerify(userId);
@@ -213,11 +209,7 @@ adminRouter.post(
   loginRequired,
   async (req, res, next) => {
     try {
-      if (is.emptyObject(req.body)) {
-        throw new Error(
-          "headers의 Content-Type을 application/json으로 설정해주세요"
-        );
-      }
+      contentTypeChecker(req.body);
       const userId = req.currentUserId;
       await adminService.adminVerify(userId); //admin인지 확인
 
