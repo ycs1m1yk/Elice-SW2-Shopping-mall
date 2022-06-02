@@ -199,6 +199,9 @@ const paintCartProducts = async () => {
     cartProductsContainer.insertAdjacentHTML("beforeend", productElem);
 
     const id = product._id;
+    const isSelected = JSON.parse(localStorage.getItem("cart"))[id].isSelected;
+    document.querySelector(`#checkbox-${id}`).checked = isSelected;
+
     document
       .querySelector(`#delete-${id}`)
       .addEventListener("click", (e) => handleDeleteClick(e, id));
