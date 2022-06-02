@@ -3,7 +3,7 @@ import is from "@sindresorhus/is";
 // 폴더에서 import하면, 자동으로 폴더의 index.js에서 가져옴
 import { loginRequired } from "../middlewares";
 import { orderService } from "../services";
-
+import { contentTypeChecker } from "../utils/content-type-checker";
 const orderRouter = Router();
 
 // 주문하기 api (아래는 /complete이지만, 실제로는 /api/order/complete로 요청해야 함.)
@@ -11,11 +11,7 @@ orderRouter.post("/complete", loginRequired, async (req, res, next) => {
   try {
     // Content-Type: application/json 설정을 안 한 경우, 에러를 만들도록 함.
     // application/json 설정을 프론트에서 안 하면, body가 비어 있게 됨.
-    if (is.emptyObject(req.body)) {
-      throw new Error(
-        "headers의 Content-Type을 application/json으로 설정해주세요"
-      );
-    }
+    contentTypeChecker(req.body);
 
     const userId = req.currentUserId;
     // req (request)의 body 에서 데이터 가져오기
@@ -82,6 +78,7 @@ orderRouter.get("/orderList", loginRequired, async function (req, res, next) {
 
 orderRouter.delete("/delete", loginRequired, async function (req, res, next) {
   try {
+    contentTypeChecker(req.body);
     const { orderId, productId } = req.body; // 배열
     const userId = req.currentUserId;
 

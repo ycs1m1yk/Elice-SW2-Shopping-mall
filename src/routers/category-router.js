@@ -4,7 +4,7 @@ import is from "@sindresorhus/is";
 import { categoryService } from "../services";
 import { adminService } from "../services";
 import { loginRequired, upload } from "../middlewares";
-
+import { contentTypeChecker } from "../utils/content-type-checker";
 const categoryRouter = Router();
 
 //카테고리 목록 조회
@@ -24,6 +24,7 @@ categoryRouter.post(
   upload.single("image-file"),
   async function (req, res, next) {
     try {
+      contentTypeChecker(req.body);
       //admin 확인 작업
       const userId = req.currentUserId;
       await adminService.adminVerify(userId);
@@ -67,11 +68,7 @@ categoryRouter.put(
   upload.single("image-file"),
   async function (req, res, next) {
     try {
-      if (is.emptyObject(req.body)) {
-        throw new Error(
-          "headers의 Content-Type을 application/json으로 설정해주세요"
-        );
-      }
+      contentTypeChecker(req.body);
       //admin 확인 작업
       const userId = req.currentUserId;
       await adminService.adminVerify(userId);

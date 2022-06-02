@@ -4,6 +4,7 @@ import is from "@sindresorhus/is";
 import { loginRequired } from "../middlewares";
 import { productService } from "../services";
 import { upload } from "../middlewares";
+import { contentTypeChecker } from "../utils/content-type-checker";
 const productRouter = Router();
 
 // 전체 상품 가져오기
@@ -78,11 +79,7 @@ productRouter.put(
   upload.single("image-file"),
   async function (req, res, next) {
     try {
-      if (is.emptyObject(req.body)) {
-        throw new Error(
-          "headers의 Content-Type을 application/json으로 설정해주세요"
-        );
-      }
+      contentTypeChecker(req.body);
       const userId = req.currentUserId;
       //seller 인지 확인
       const userRole = await productService.getUserRole(userId);
@@ -138,11 +135,7 @@ productRouter.post(
   loginRequired,
   async (req, res, next) => {
     try {
-      if (is.emptyObject(req.body)) {
-        throw new Error(
-          "headers의 Content-Type을 application/json으로 설정해주세요"
-        );
-      }
+      contentTypeChecker(req.body);
       const userId = req.currentUserId;
       //seller인지 확인
       const userRole = await productService.getUserRole(userId);
@@ -187,6 +180,7 @@ productRouter.post(
 //상품 판매 삭제 기능
 productRouter.delete("/delete", loginRequired, async function (req, res, next) {
   try {
+    contentTypeChecker(req.body);
     const productIdList = req.body.productIdList;
     const userId = req.currentUserId;
     const userRole = await productService.getUserRole(userId);

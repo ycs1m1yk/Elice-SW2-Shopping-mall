@@ -4,6 +4,7 @@ import is from "@sindresorhus/is";
 import { loginRequired } from "../middlewares";
 import { userService } from "../services";
 import { transPort } from "../config/email";
+import { contentTypeChecker } from "../utils/content-type-checker";
 
 const userRouter = Router();
 
@@ -34,11 +35,7 @@ userRouter.post("/register", async (req, res, next) => {
   try {
     // Content-Type: application/json 설정을 안 한 경우, 에러를 만들도록 함.
     // application/json 설정을 프론트에서 안 하면, body가 비어 있게 됨.
-    if (is.emptyObject(req.body)) {
-      throw new Error(
-        "headers의 Content-Type을 application/json으로 설정해주세요"
-      );
-    }
+    contentTypeChecker(req.body);
 
     // req (request)의 body 에서 데이터 가져오기
     const { fullName, email, password } = req.body;
@@ -62,11 +59,7 @@ userRouter.post("/register", async (req, res, next) => {
 userRouter.post("/login", async function (req, res, next) {
   try {
     // application/json 설정을 프론트에서 안 하면, body가 비어 있게 됨.
-    if (is.emptyObject(req.body)) {
-      throw new Error(
-        "headers의 Content-Type을 application/json으로 설정해주세요"
-      );
-    }
+    contentTypeChecker(req.body);
 
     // req (request) 에서 데이터 가져오기
     const { email, password } = req.body;
@@ -109,11 +102,7 @@ userRouter.put("/user", loginRequired, async function (req, res, next) {
   try {
     // content-type 을 application/json 로 프론트에서
     // 설정 안 하고 요청하면, body가 비어 있게 됨.
-    if (is.emptyObject(req.body)) {
-      throw new Error(
-        "headers의 Content-Type을 application/json으로 설정해주세요"
-      );
-    }
+    contentTypeChecker(req.body);
 
     // token으로부터 id를 가져옴
     const userId = req.currentUserId;
@@ -163,11 +152,8 @@ userRouter.delete("/user", loginRequired, async function (req, res, next) {
   try {
     // content-type 을 application/json 로 프론트에서
     // 설정 안 하고 요청하면, body가 비어 있게 됨.
-    if (is.emptyObject(req.body)) {
-      throw new Error(
-        "headers의 Content-Type을 application/json으로 설정해주세요"
-      );
-    }
+    contentTypeChecker(req.body);
+
     const userId = req.currentPassword;
     console.log(userId);
     // body data로부터, 확인용으로 사용할 현재 비밀번호를 추출함.
