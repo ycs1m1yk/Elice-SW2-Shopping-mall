@@ -157,7 +157,7 @@ class UserService {
   }
 
   async exceptPwd(userInfo) {
-    return (({ password, ...o }) => o)(userInfo);
+    return await (({ password, ...o }) => o)(userInfo);
   }
 
   //유저별 판매 목록 조회
