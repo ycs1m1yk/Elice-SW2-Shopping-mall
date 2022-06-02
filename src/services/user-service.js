@@ -10,17 +10,13 @@ class UserService {
     this.userModel = userModel;
     this.productModel = productModel;
   }
-  // 카카오 회원가입
-  async addUserKakao(newUserInfo) {
-    return await this.userModel.create(newUserInfo);
-  }
 
   // 회원가입
   async addUser(userInfo) {
     // 객체 destructuring
     const { email, fullName, password } = userInfo;
     if (!email || !fullName || !password) {
-      throw new Error("Need All Elements in body");
+      throw new Error("모든 정보를 입력해 주세요.");
     }
     // 이메일 중복 확인
     const user = await this.userModel.findByEmail(email);
@@ -39,7 +35,11 @@ class UserService {
     const newUserInfo = { fullName, email, password: hashedPassword };
 
     // db에 저장
-    return await this.userModel.create(newUserInfo);
+    const newUser = await this.userModel.create(newUserInfo);
+    if (!newUser) {
+      throw new Error("회원가입이 정상적으로 이루어지지 않았습니다.");
+    }
+    return newUser;
   }
 
   // 로그인
@@ -47,7 +47,7 @@ class UserService {
     // 객체 destructuring
     const { email, password } = loginInfo;
     if (!email || !password) {
-      throw new Error("Need All Elements in body");
+      throw new Error("이메일과 비밀번호를 입력해 주세요.");
     }
     // 우선 해당 이메일의 사용자 정보가  db에 존재하는지 확인
     const user = await this.userModel.findByEmail(email);
@@ -87,20 +87,28 @@ class UserService {
 
   async getMyInfo(userId) {
     if (!userId) {
-      throw new Error("Need to login");
+      throw new Error("로그인이 필요합니다.");
     }
-    return await userModel.findById(userId);
+    const myInfo = await userModel.findById(userId);
+    if (!myInfo) {
+      throw new Error("내 정보를 불러오지 못했습니다.");
+    }
+    return myInfo;
   }
   async setUserAddress(userId, address) {
     if (!userId || !address) {
-      throw new Error("Need to All");
+      throw new Error("주소를 입력해 주세요.");
     }
     const toUpdate = { address };
-    const user = await this.userModel.update({
+    const updatedUser = await this.userModel.update({
       userId,
       update: toUpdate,
     });
-    return user;
+
+    if (!updatedUser) {
+      throw new Error("배송지 정보를 업데이트하지 못했습니다.");
+    }
+    return updatedUser;
   }
   // 유저정보 수정, 현재 비밀번호가 있어야 수정 가능함.
   async setUser(userInfoRequired, toUpdate) {
@@ -108,7 +116,7 @@ class UserService {
     const { userId, currentPassword } = userInfoRequired;
     const { fullName, password, address, phoneNumber, role } = toUpdate;
     if (!fullName || !password || !address || !phoneNumber || !role) {
-      throw new Error("Need All Elements in body");
+      throw new Error("수정할 정보를 입력해 주세요.");
     }
     // 기본 코드 수정. 유저 정보 존재 확인 및 비밀번호 검증 메소드
     await this.userVerify(userId, currentPassword);
@@ -123,12 +131,14 @@ class UserService {
     }
 
     // 업데이트 진행
-    const user = await this.userModel.update({
+    const updatedUser = await this.userModel.update({
       userId,
       update: toUpdate,
     });
-
-    return user;
+    if (!updatedUser) {
+      throw new Error("사용자 정보를 업데이트하지 못했습니다.");
+    }
+    return updatedUser;
   }
 
   async deleteUser(userInfoRequired) {
@@ -137,23 +147,27 @@ class UserService {
     // 기본 코드 수정. 유저 정보 존재 확인 및 비밀번호 검증 메소드
     await this.userVerify(userId, currentPassword);
 
-    return await this.userModel.deleteById(userId);
+    const deletedUser = await this.userModel.deleteById(userId);
+    if (!deletedUser) {
+      throw new Error("계정이 삭제되지 않았습니다.");
+    }
+    return deletedUser;
   }
 
   async userVerify(userId, currentPassword) {
-    // 우선 해당 id의 유저가 db에 있는지 확인
+    if (!userId || !currentPassword) {
+      throw new Error("아이디가 존재하지 않거나 잘못된 비밀번호 입니다.");
+    }
     let user = await this.userModel.findById(userId);
-
     // db에서 찾지 못한 경우, 에러 메시지 반환
     if (!user) {
-      throw new Error("가입 내역이 없습니다. 다시 한 번 확인해 주세요.");
+      throw new Error("Unauthorized");
     }
 
     // 이제, 정보 수정을 위해 사용자가 입력한 비밀번호가 올바른 값인지 확인해야 함
 
     // 비밀번호 일치 여부 확인
     const correctPasswordHash = user.password;
-
     const isPasswordCorrect = await bcrypt.compare(
       currentPassword,
       correctPasswordHash

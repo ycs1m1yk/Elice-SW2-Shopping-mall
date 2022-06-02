@@ -12,7 +12,7 @@ class OrderService {
     const { userId, address, request, orderList, totalPrice, shippingFee } =
       orderInfo;
     if (!userId || !address || !orderList || !totalPrice) {
-      throw new Error("Need to All Elements in body");
+      throw new Error("모든 정보를 입력해 주세요.");
     }
     const newOrderInfo = {
       userId,
@@ -25,10 +25,7 @@ class OrderService {
 
     // db에 저장
     const createdNewOrder = await this.orderModel.create(newOrderInfo);
-    const checkNewOrder = await this.orderModel.findById({
-      _id: createdNewOrder._id,
-    });
-    if (createdNewOrder.id !== checkNewOrder.id) {
+    if (!createdNewOrder) {
       throw new Error("주문이 정상적으로 완료되지 않았습니다.");
     }
     return createdNewOrder;
@@ -36,38 +33,25 @@ class OrderService {
 
   // 개인의 주문 목록을 받음.
   async getOrders(userId) {
-    return await this.orderModel.findByUserId(userId);
+    const orders = await this.orderModel.findByUserId(userId);
+    if (!orders) {
+      throw new Error("주문 목록을 불러올 수 없습니다.");
+    }
+    return orders;
   }
 
   async getOrdersByOrderId(orderId) {
-    return await this.orderModel.findById(orderId);
-  }
-
-  async getOrdersForDelete(orderIdList) {
-    const orderList = [];
-    for (const orderId of orderIdList) {
-      const order = await this.orderModel.findById(orderId);
-      orderList.push(order);
+    const orders = await this.orderModel.findById(orderId);
+    if (!orders) {
+      throw new Error("주문 목록을 불러올 수 없습니다.");
     }
-    return orderList;
-  }
-
-  // 주문 목록 전체를 받음.
-  async getOrdersAll() {
-    return await this.orderModel.findByUserId();
-  }
-
-  // 주문 취소
-  async deleteOrder(orderIdArray) {
-    return await orderIdArray.map((orderId) =>
-      this.orderModel.deleteById(orderId)
-    );
+    return orders;
   }
 
   async deleteProduct({ orderId, productId, userId }) {
     const orderInfo = await this.getOrdersByOrderId(orderId);
     if (userId !== orderInfo.userId) {
-      throw new Error("본인의 주문 내역만 취소할 수 있습니다.");
+      throw new Error("Forbidden");
     }
 
     const deleteOrderList = await this.orderModel.findById(orderId);
@@ -79,11 +63,20 @@ class OrderService {
       orderId,
       update: deleteUpdate,
     });
-    if (newOrder.orderList.length < 1) {
-      return await this.orderModel.deleteById(orderId);
+
+    if (!newOrder) {
+      throw new Error("주문 상품을 삭제하지 못했습니다.");
     }
 
-    return await newOrder;
+    if (newOrder.orderList.length < 1) {
+      const deletedOrder = await this.orderModel.deleteById(orderId);
+      if (!deletedOrder) {
+        throw new Error("주문 정보를 삭제하지 못했습니다.");
+      }
+      return deletedOrder;
+    }
+
+    return newOrder;
   }
 }
 

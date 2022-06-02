@@ -107,7 +107,7 @@ adminRouter.put(
       const toUpdate = {
         ...(status && { status }),
       };
-      // 사용자 정보를 업데이트함.
+      // 배송 정보를 업데이트함.
       const updateduserRole = await adminService.setOrderStatus(
         orderInfoRequired,
         toUpdate
