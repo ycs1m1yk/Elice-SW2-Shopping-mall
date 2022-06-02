@@ -17,36 +17,34 @@ passport.use(
       callbackURL: process.env.KAKAO_CALLBACKURL, // 카카오에서 설정한 Redirect URI
     },
     async (accessToken, refreshToken, profile, done) => {
+      console.log(profile);
       //console.log(profile);
-      try {
-        const { provider, id, username } = profile;
-        const convertedId = "aaaaaaaaaaaaaa" + id;
-
-        const exUser = await userService.getMyInfo(convertedId);
-        if (exUser) {
-          done(null, exUser);
-        } else {
-          // const email = profile._json && profile._json.kakao_account_email;
-          const email = "test50@test.com";
-          if (!email) {
-            done("이메일 동의를 해주세요");
-          }
-
-          const newUserInfo = {
-            provider,
-            _id: convertedId,
-            fullName: username,
-            email,
-            password: "kakao",
-          };
-          console.log(newUserInfo);
-          const newUser = await userService.addUserKakao(newUserInfo);
-          localStorage.setItem("token", accessToken);
-          done(null, newUser);
-        }
-      } catch (error) {
-        done(error);
-      }
+      // try {
+      //   const { provider, id, username } = profile;
+      //   const convertedId = "aaaaaaaaaaaaaa" + id;
+      //   const exUser = await userService.getMyInfo(convertedId);
+      //   if (exUser) {
+      //     done(null, exUser);
+      //   } else {
+      //     // const email = profile._json && profile._json.kakao_account_email;
+      //     const email = "test50@test.com";
+      //     if (!email) {
+      //       done("이메일 동의를 해주세요");
+      //     }
+      //     const newUserInfo = {
+      //       provider,
+      //       _id: convertedId,
+      //       fullName: username,
+      //       email,
+      //       password: "kakao",
+      //     };
+      //     console.log(newUserInfo);
+      //     const newUser = await userService.addUserKakao(newUserInfo);
+      //     done(null, newUser);
+      //   }
+      // } catch (error) {
+      //   done(error);
+      // }
     }
   )
 );
