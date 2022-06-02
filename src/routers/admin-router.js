@@ -1,9 +1,9 @@
 import { Router } from "express";
-import is from "@sindresorhus/is";
 // 폴더에서 import하면, 자동으로 폴더의 index.js에서 가져옴
 import { loginRequired } from "../middlewares";
 import { upload } from "../middlewares";
 import { adminService } from "../services";
+import { contentTypeChecker } from "../utils/content-type-checker";
 
 const adminRouter = Router();
 
@@ -24,14 +24,10 @@ adminRouter.get("/users", loginRequired, async (req, res, next) => {
   }
 });
 
-adminRouter.patch("/user/:email", loginRequired, async (req, res, next) => {
+adminRouter.put("/user/:email", loginRequired, async (req, res, next) => {
   try {
     // 관리자 계정 검증
-    if (is.emptyObject(req.body)) {
-      throw new Error(
-        "headers의 Content-Type을 application/json으로 설정해주세요"
-      );
-    }
+    contentTypeChecker(req.body);
     const { email } = req.params;
     const { role } = req.body;
     const userId = req.currentUserId;
@@ -91,13 +87,13 @@ adminRouter.get("/orders", loginRequired, async (req, res, next) => {
   }
 });
 
-adminRouter.patch(
+adminRouter.put(
   "/order/:orderId/:productId",
   loginRequired,
   async (req, res, next) => {
     try {
       // 관리자 계정 검증
-
+      contentTypeChecker(req.body);
       const { orderId, productId } = req.params;
       const userId = req.currentUserId;
       const { status } = req.body;
@@ -129,8 +125,6 @@ adminRouter.delete("/order/:orderId", loginRequired, async (req, res, next) => {
   try {
     const { orderId } = req.params;
     const userId = req.currentUserId;
-    // const userId = "6294a87e94ed1f9043ff02ce"; // admin 계정
-    // const userId = "6292812379c87d3f39dbfb13"; // user 계정
 
     await adminService.adminVerify(userId);
     const orderInfoRequired = { orderId };
@@ -148,11 +142,7 @@ adminRouter.put(
   upload.single("image-file"),
   async function (req, res, next) {
     try {
-      if (is.emptyObject(req.body)) {
-        throw new Error(
-          "headers의 Content-Type을 application/json으로 설정해주세요"
-        );
-      }
+      contentTypeChecker(req.body);
       const userId = "1234";
       //admin인지 확인
       await adminService.adminVerify(userId);
@@ -218,11 +208,7 @@ adminRouter.post(
   loginRequired,
   async (req, res, next) => {
     try {
-      if (is.emptyObject(req.body)) {
-        throw new Error(
-          "headers의 Content-Type을 application/json으로 설정해주세요"
-        );
-      }
+      contentTypeChecker(req.body);
       const userId = req.currentUserId;
       await adminService.adminVerify(userId); //admin인지 확인
 

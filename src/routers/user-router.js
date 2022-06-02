@@ -1,9 +1,9 @@
 import { Router } from "express";
-import is from "@sindresorhus/is";
 // 폴더에서 import하면, 자동으로 폴더의 index.js에서 가져옴
 import { loginRequired } from "../middlewares";
 import { userService } from "../services";
 import { transPort } from "../config/email";
+import { contentTypeChecker } from "../utils/content-type-checker";
 
 const userRouter = Router();
 
@@ -22,7 +22,6 @@ userRouter.post("/mail", async (req, res, next) => {
     if (error) {
       console.log(error);
     }
-    console.log(info);
     // console.log("Finish sending email : " + info.response);
     res.send(authNum);
     transPort.close();
@@ -34,11 +33,7 @@ userRouter.post("/register", async (req, res, next) => {
   try {
     // Content-Type: application/json 설정을 안 한 경우, 에러를 만들도록 함.
     // application/json 설정을 프론트에서 안 하면, body가 비어 있게 됨.
-    if (is.emptyObject(req.body)) {
-      throw new Error(
-        "headers의 Content-Type을 application/json으로 설정해주세요"
-      );
-    }
+    contentTypeChecker(req.body);
 
     // req (request)의 body 에서 데이터 가져오기
     const { fullName, email, password } = req.body;
@@ -62,11 +57,7 @@ userRouter.post("/register", async (req, res, next) => {
 userRouter.post("/login", async function (req, res, next) {
   try {
     // application/json 설정을 프론트에서 안 하면, body가 비어 있게 됨.
-    if (is.emptyObject(req.body)) {
-      throw new Error(
-        "headers의 Content-Type을 application/json으로 설정해주세요"
-      );
-    }
+    contentTypeChecker(req.body);
 
     // req (request) 에서 데이터 가져오기
     const { email, password } = req.body;
@@ -85,7 +76,8 @@ userRouter.get("/my", loginRequired, async (req, res, next) => {
   try {
     const userId = req.currentUserId;
     let myInfo = await userService.getMyInfo(userId);
-    const myInfoWithoutPwd = (({ password, ...o }) => o)(myInfo._doc);
+
+    const myInfoWithoutPwd = await userService.exceptPwd(myInfo._doc);
     res.status(200).json(myInfoWithoutPwd);
   } catch (error) {
     next(error);
@@ -105,19 +97,14 @@ userRouter.get("/user/sellinglist", loginRequired, async (req, res, next) => {
 
 // 사용자 정보 수정
 // (예를 들어 /api/users/abc12345 로 요청하면 req.params.userId는 'abc12345' 문자열로 됨)
-userRouter.patch("/user", loginRequired, async function (req, res, next) {
+userRouter.put("/user", loginRequired, async function (req, res, next) {
   try {
     // content-type 을 application/json 로 프론트에서
     // 설정 안 하고 요청하면, body가 비어 있게 됨.
-    if (is.emptyObject(req.body)) {
-      throw new Error(
-        "headers의 Content-Type을 application/json으로 설정해주세요"
-      );
-    }
+    contentTypeChecker(req.body);
 
     // token으로부터 id를 가져옴
     const userId = req.currentUserId;
-
     // body data 로부터 업데이트할 사용자 정보를 추출함.
     const fullName = req.body.fullName;
     const password = req.body.password;
@@ -150,7 +137,7 @@ userRouter.patch("/user", loginRequired, async function (req, res, next) {
       userInfoRequired,
       toUpdate
     );
-    const userInfoWithoutPwd = (({ password, ...o }) => o)(
+    const userInfoWithoutPwd = await userService.exceptPwd(
       updatedUserInfo._doc
     );
     // 업데이트 이후의 유저 데이터를 프론트에 보내 줌
@@ -164,11 +151,8 @@ userRouter.delete("/user", loginRequired, async function (req, res, next) {
   try {
     // content-type 을 application/json 로 프론트에서
     // 설정 안 하고 요청하면, body가 비어 있게 됨.
-    if (is.emptyObject(req.body)) {
-      throw new Error(
-        "headers의 Content-Type을 application/json으로 설정해주세요"
-      );
-    }
+    contentTypeChecker(req.body);
+
     const userId = req.currentUserId;
     console.log(userId);
     // body data로부터, 확인용으로 사용할 현재 비밀번호를 추출함.
@@ -181,7 +165,7 @@ userRouter.delete("/user", loginRequired, async function (req, res, next) {
     const userInfoRequired = { userId, currentPassword };
     // 사용자 정보를 업데이트함.
     const deleteUserInfo = await userService.deleteUser(userInfoRequired);
-    const userInfoWithoutPwd = (({ password, ...o }) => o)(deleteUserInfo._doc);
+    const userInfoWithoutPwd = await userService.exceptPwd(deleteUserInfo._doc);
     // 업데이트 이후의 유저 데이터를 프론트에 보내 줌
     res.status(200).json(userInfoWithoutPwd);
   } catch (error) {

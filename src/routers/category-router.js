@@ -1,10 +1,9 @@
 import { Router } from "express";
-import is from "@sindresorhus/is";
 // 폴더에서 import하면, 자동으로 폴더의 index.js에서 가져옴
 import { categoryService } from "../services";
 import { adminService } from "../services";
 import { loginRequired, upload } from "../middlewares";
-
+import { contentTypeChecker } from "../utils/content-type-checker";
 const categoryRouter = Router();
 
 //카테고리 목록 조회
@@ -24,9 +23,9 @@ categoryRouter.post(
   upload.single("image-file"),
   async function (req, res, next) {
     try {
-      //admin 확인 작업
+      contentTypeChecker(req.body);
       const userId = req.currentUserId;
-      await adminService.adminVerify(userId);
+      await adminService.adminVerify(userId); //admin 확인 작업
 
       const { location: img } = req.file;
       const { name, description } = req.body;
@@ -47,10 +46,8 @@ categoryRouter.post(
 //카테고리id를 통해 특정 카테고리 정보 보내기
 categoryRouter.get("/:id", loginRequired, async function (req, res, next) {
   try {
-    //admin 확인 작업
     const userId = req.currentUserId;
-    console.log(userId);
-    await adminService.adminVerify(userId);
+    await adminService.adminVerify(userId); //admin 확인 작업
 
     const categoryId = req.params.id;
     const categoryInfo = await categoryService.getCategoryById(categoryId);
@@ -62,17 +59,13 @@ categoryRouter.get("/:id", loginRequired, async function (req, res, next) {
 });
 
 //카테고리 업데이트
-categoryRouter.patch(
+categoryRouter.put(
   "/:id/update",
   loginRequired,
   upload.single("image-file"),
   async function (req, res, next) {
     try {
-      if (is.emptyObject(req.body)) {
-        throw new Error(
-          "headers의 Content-Type을 application/json으로 설정해주세요"
-        );
-      }
+      contentTypeChecker(req.body);
       //admin 확인 작업
       const userId = req.currentUserId;
       await adminService.adminVerify(userId);

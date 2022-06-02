@@ -15,7 +15,9 @@ class UserService {
   async addUser(userInfo) {
     // 객체 destructuring
     const { email, fullName, password } = userInfo;
-
+    if (!email || !fullName || !password) {
+      throw new Error("Need All Elements in body");
+    }
     // 이메일 중복 확인
     const user = await this.userModel.findByEmail(email);
 
@@ -40,7 +42,9 @@ class UserService {
   async getUserToken(loginInfo) {
     // 객체 destructuring
     const { email, password } = loginInfo;
-
+    if (!email || !password) {
+      throw new Error("Need All Elements in body");
+    }
     // 우선 해당 이메일의 사용자 정보가  db에 존재하는지 확인
     const user = await this.userModel.findByEmail(email);
     if (!user) {
@@ -78,6 +82,9 @@ class UserService {
   }
 
   async getMyInfo(userId) {
+    if (!userId) {
+      throw new Error("Need to login");
+    }
     return await userModel.findById(userId);
   }
 
@@ -85,14 +92,16 @@ class UserService {
   async setUser(userInfoRequired, toUpdate) {
     // 객체 destructuring
     const { userId, currentPassword } = userInfoRequired;
-
+    const { fullName, password, address, phoneNumber, role } = toUpdate;
+    if (!fullName || !password || !address || !phoneNumber || !role) {
+      throw new Error("Need All Elements in body");
+    }
     // 기본 코드 수정. 유저 정보 존재 확인 및 비밀번호 검증 메소드
     await this.userVerify(userId, currentPassword);
 
     // 이제 드디어 업데이트 시작
 
     // 비밀번호도 변경하는 경우에는, 회원가입 때처럼 해쉬화 해주어야 함.
-    const { password } = toUpdate;
 
     if (password) {
       const newPasswordHash = await bcrypt.hash(password, 10);
@@ -143,13 +152,13 @@ class UserService {
     }
   }
 
+  async exceptPwd(userInfo) {
+    return await (({ password, ...o }) => o)(userInfo);
+  }
+
   //유저별 판매 목록 조회
   async getProductsByUserId(userId) {
     return await this.productModel.findByUserId(userId);
-  }
-  async exceptPwd(userInfo, exceptKey) {
-    const { [exceptKey]: deletedKey, ...otherKeys } = userInfo;
-    return otherKeys;
   }
 }
 

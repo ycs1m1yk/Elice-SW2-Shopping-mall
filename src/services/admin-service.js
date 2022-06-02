@@ -1,7 +1,6 @@
 import { userModel, orderModel, productModel } from "../db";
 
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 
 class AdminService {
   // 본 파일의 맨 아래에서, new UserService(userModel) 하면, 이 함수의 인자로 전달됨
@@ -131,7 +130,9 @@ class AdminService {
       detailDescription,
       userId,
     } = productInfo;
-
+    if (!name || !price || !category || !brandName || !img || !shortDescription || !detailDescription || !userId) {
+      throw new Error("상품 정보를 모두 입력해주세요.")
+    }
     // 상품명 중복 확인
     const user = await this.productModel.findByName(name);
     if (user) {
