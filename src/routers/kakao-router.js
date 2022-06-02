@@ -6,6 +6,7 @@ import passport from "passport";
 import { Strategy } from "passport-kakao";
 // const kakaoStrategy = passportKakao.Strategy;
 // const kakaoStrategy = require("passport-kakao").Strategy;
+
 const kakaoRouter = Router();
 
 passport.use(
@@ -18,23 +19,29 @@ passport.use(
     async (accessToken, refreshToken, profile, done) => {
       //console.log(profile);
       try {
-        const exUser = await userService.getMyInfo(profile.id);
+        const { provider, id, username } = profile;
+        const convertedId = "aaaaaaaaaaaaaa" + id;
+
+        const exUser = await userService.getMyInfo(convertedId);
         if (exUser) {
           done(null, exUser);
         } else {
-          const { provider, id, username } = profile;
-          const email = profile._json && profile._json.kakao_account_email;
+          // const email = profile._json && profile._json.kakao_account_email;
+          const email = "test50@test.com";
           if (!email) {
             done("이메일 동의를 해주세요");
           }
+
           const newUserInfo = {
             provider,
-            _id: id,
+            _id: convertedId,
             fullName: username,
             email,
             password: "kakao",
           };
+          console.log(newUserInfo);
           const newUser = await userService.addUserKakao(newUserInfo);
+          localStorage.setItem("token", accessToken);
           done(null, newUser);
         }
       } catch (error) {
