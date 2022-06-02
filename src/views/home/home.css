@@ -1,7 +1,6 @@
 .categories {
   display: flex;
-  align-items: center;
-  justify-content: space-around;
+  margin: 0 auto;
 }
 
 .categories li {
@@ -16,8 +15,7 @@
 
 .slide-wrappper {
   margin: 0 auto 60px;
-  padding: 20px;
-  background-color: #f5f6fa;
+  height: 500px;
 }
 
 .slide-list {
@@ -58,4 +56,20 @@
 
 .button-container :not(:first-child) {
   margin-left: 20px;
+}
+
+.section {
+  margin-top: 10rem;
+}
+
+#subtitle {
+  text-align: center;
+}
+
+.product-item-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 400px);
+  grid-gap: 10px;
+  margin-top: 2rem;
+  margin-left: 5rem;
 }

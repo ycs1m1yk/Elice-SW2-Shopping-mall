@@ -27,9 +27,16 @@
     <script src="home.js" type="module" defer></script>
   </head>
   <body>
-    <div class="category-menu">
-      <ul class="categories"></ul>
-    </div>
+    <nav
+      class="navbar"
+      role="navigation"
+      aria-label="main navigation"
+      style="margin: 0 auto"
+    >
+      <div id="navbarBasicExample" class="navbar-menu category-menu">
+        <ul class="navbar-start categories"></ul>
+      </div>
+    </nav>
     <div class="slide-wrappper">
       <div class="slide-container">
         <div class="slide-list"></div>
@@ -49,5 +56,12 @@
         </div>
       </div>
     </div>
+    <section class="section">
+      <div id="subtitle"><h1>오늘의 추천 상품</h1></div>
+      <div
+        class="container product-item-container"
+        id="productItemContainer"
+      ></div>
+    </section>
   </body>
 </html>
