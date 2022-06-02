@@ -3,8 +3,31 @@ import is from "@sindresorhus/is";
 // 폴더에서 import하면, 자동으로 폴더의 index.js에서 가져옴
 import { loginRequired } from "../middlewares";
 import { userService } from "../services";
+import { transPort } from "../config/email";
 
 const userRouter = Router();
+
+// 회원가입 할때 작성한 이메일로 인증코드가 담긴 메일 전송
+userRouter.post("/mail", async (req, res, next) => {
+  let authNum = Math.random().toString().substr(2, 6);
+  const mailOptions = {
+    from: "rhakdjfk@ajou.ac.kr",
+    to: req.body.email,
+    subject: "회원가입을 위해 인증번호를 입력해주세요.",
+    text: "인증 코드입니다. " + authNum,
+  };
+
+  await transPort.sendMail(mailOptions, function (error, info) {
+    console.log(mailOptions);
+    if (error) {
+      console.log(error);
+    }
+    console.log(info);
+    // console.log("Finish sending email : " + info.response);
+    res.send(authNum);
+    transPort.close();
+  });
+});
 
 // 회원가입 api (아래는 /register이지만, 실제로는 /api/register로 요청해야 함.)
 userRouter.post("/register", async (req, res, next) => {
