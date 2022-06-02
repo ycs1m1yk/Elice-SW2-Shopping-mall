@@ -23,11 +23,6 @@ const ProductSchema = new Schema(
       type: String,
       required: true,
     },
-    size: {
-      type: Number,
-      required: false,
-      default: 0,
-    },
     brandName: {
       type: String,
       required: false,

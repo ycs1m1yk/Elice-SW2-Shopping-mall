@@ -11,7 +11,7 @@ const OrderSchema = new Schema(
         {
           addressName: String,
           receiverName: String,
-          receiverPhoneNumber: Number,
+          receiverPhoneNumber: String,
           postalCode: String,
           address1: String,
           address2: String,
