@@ -152,7 +152,7 @@ userRouter.delete("/user", loginRequired, async function (req, res, next) {
     // 설정 안 하고 요청하면, body가 비어 있게 됨.
     contentTypeChecker(req.body);
 
-    const userId = req.currentPassword;
+    const userId = req.currentUserId;
     console.log(userId);
     // body data로부터, 확인용으로 사용할 현재 비밀번호를 추출함.
     const { currentPassword } = req.body;
