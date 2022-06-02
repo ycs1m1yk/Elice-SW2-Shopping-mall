@@ -58,7 +58,7 @@ productRouter.put(
   async function (req, res, next) {
     try {
       contentTypeChecker(req.body);
-      const userId = req.currentUserId;
+      const userId = req.currentUserId
       const productId = req.params.id;
       const { location: img } = req.file;
       const {
@@ -105,12 +105,7 @@ productRouter.post(
   async (req, res, next) => {
     try {
       contentTypeChecker(req.body);
-      const userId = req.currentUserId;
-      //seller인지 확인
-      const userRole = await productService.getUserRole(userId);
-      if (userRole !== "seller") {
-        throw new Error("판매자로 등록해야만 상품 수정이 가능합니다.");
-      }
+      const userId = req.currentUserId
       const { location: img } = req.file;
       const {
         name,

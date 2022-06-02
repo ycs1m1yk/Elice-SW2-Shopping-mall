@@ -5,9 +5,9 @@ class CategoryService {
     this.categoryModel = categoryModel;
   }
   async addCategory(categoryInfo) {
-    const { name, description } = categoryInfo;
-    if (!name || !description) {
-      throw new Error("Need All Elements in body");
+    const { name, description, img } = categoryInfo;
+    if (!name || !description || !img) {
+      throw new Error("카테고리 정보를 모두 입력해주세요.");
     }
     const category = await this.categoryModel.findByName(name);
     if (category) {
