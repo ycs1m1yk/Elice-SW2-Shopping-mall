@@ -7,16 +7,18 @@ import { contentTypeChecker } from "../utils/content-type-checker";
 
 const adminRouter = Router();
 
-// 전체 유저 목록을 가져옴 (배열 형태임)
-// 미들웨어로 loginRequired 를 썼음 (이로써, jwt 토큰이 없으면 사용 불가한 라우팅이 됨)
+// 전체 회원 목록 조회
 adminRouter.get("/users", loginRequired, async (req, res, next) => {
   try {
-    // 관리자 계정 검증
+    // 토큰에서 userId 추출
     const userId = req.currentUserId;
+    // 관리자 계정 검증
     await adminService.adminVerify(userId);
+    // db에서 전체 회원 목록 가져옴
     const users = await adminService.getUsers();
+    // 회원 정보에서 password를 제외하고 front에 전달
     const usersWithoutPwd = await users.map((e) => {
-      return (({ password, ...o }) => o)(e._doc);
+      return adminService.exceptPwd(e._doc);
     });
     res.status(200).json(usersWithoutPwd);
   } catch (error) {
@@ -24,136 +26,142 @@ adminRouter.get("/users", loginRequired, async (req, res, next) => {
   }
 });
 
-adminRouter.put("/user/:email", loginRequired, async (req, res, next) => {
-  try {
-    // 관리자 계정 검증
-    contentTypeChecker(req.body);
-    const { email } = req.params;
-    const { role } = req.body;
-    const userId = req.currentUserId;
-
-    await adminService.adminVerify(userId);
-
-    const userInfoRequired = { email };
-    // 위 데이터가 undefined가 아니라면, 즉, 프론트에서 업데이트를 위해
-    // 보내주었다면, 업데이트용 객체에 삽입함.
-    const toUpdate = {
-      ...(role && { role }),
-    };
-    // 사용자 정보를 업데이트함.
-    const updateduserRole = await adminService.setUserRole(
-      userInfoRequired,
-      toUpdate
-    );
-
-    const userWithoutPwd = (({ password, ...o }) => o)(updateduserRole._doc);
-    // 업데이트 이후의 유저 데이터를 프론트에 보내 줌
-
-    res.status(200).json(userWithoutPwd);
-  } catch (error) {
-    next(error);
-  }
-});
-
-adminRouter.delete("/user/:email", loginRequired, async (req, res, next) => {
-  try {
-    const userEmail = req.params.email;
-    const userId = req.currentUserId;
-
-    // 관리자 계정 검증
-    await adminService.adminVerify(userId);
-
-    const userInfoRequired = { email: userEmail };
-
-    const deleteUserInfo = await adminService.deleteUser(userInfoRequired);
-    const userWithoutPwd = (({ password, ...o }) => o)(deleteUserInfo._doc);
-    res.status(200).json(userWithoutPwd);
-  } catch (error) {
-    next(error);
-  }
-});
-
+// 전체 주문 목록 조회
 adminRouter.get("/orders", loginRequired, async (req, res, next) => {
   try {
-    // 관리자 계정 검증
     const userId = req.currentUserId;
+    // 관리자 계정 검증
     await adminService.adminVerify(userId);
-
+    // db에서 전체 주문 목록 가져옴
     const orders = await adminService.getOrders();
-
+    // front에 데이터 전달
     res.status(200).json(orders);
   } catch (error) {
     next(error);
   }
 });
 
+// 관리자가 상품 추가
+adminRouter.post(
+  "/product/add",
+  upload.single("image-file"),
+  loginRequired,
+  async (req, res, next) => {
+    try {
+      // Content-Type 체크
+      contentTypeChecker(req.body);
+      const userId = req.currentUserId;
+      // 관리자 계정 검증
+      await adminService.adminVerify(userId);
+
+      const { location: img } = req.file;
+      const {
+        name,
+        price,
+        category,
+        quantity,
+        brandName,
+        keyword,
+        shortDescription,
+        detailDescription,
+      } = req.body;
+
+      // db에 상품 추가
+      const newProduct = await adminService.addProduct({
+        name,
+        price,
+        img,
+        category,
+        quantity,
+        brandName,
+        keyword,
+        shortDescription,
+        detailDescription,
+        userId,
+      });
+      // front에 데이터 전달
+      res.status(201).json(newProduct);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+// 회원 권한 수정
+adminRouter.put("/user/:email", loginRequired, async (req, res, next) => {
+  try {
+    // Content-Type 체크
+    contentTypeChecker(req.body);
+    const { email } = req.params;
+    const { role } = req.body;
+    const userId = req.currentUserId;
+    // 관리자 계정 검증
+    await adminService.adminVerify(userId);
+
+    const userInfoRequired = { email };
+
+    const toUpdate = {
+      ...(role && { role }),
+    };
+    // db에 회원 정보 수정
+    const updateduserRole = await adminService.setUserRole(
+      userInfoRequired,
+      toUpdate
+    );
+    // 회원 정보에서 password를 제외하고 front에 전달
+    const userWithoutPwd = await adminService.exceptPwd(updateduserRole._doc);
+    // front에 데이터 전달
+    res.status(200).json(userWithoutPwd);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 배송 상태 수정
 adminRouter.put(
   "/order/:orderId/:productId",
   loginRequired,
   async (req, res, next) => {
     try {
-      // 관리자 계정 검증
+      // Content-Type 체크
       contentTypeChecker(req.body);
       const { orderId, productId } = req.params;
       const userId = req.currentUserId;
       const { status } = req.body;
-
+      // 관리자 계정 검증
       await adminService.adminVerify(userId);
 
       const orderInfoRequired = { orderId, productId };
-      // 위 데이터가 undefined가 아니라면, 즉, 프론트에서 업데이트를 위해
-      // 보내주었다면, 업데이트용 객체에 삽입함.
+
       const toUpdate = {
         ...(status && { status }),
       };
-      // 사용자 정보를 업데이트함.
-      const updateduserRole = await adminService.setOrderStatus(
+      // db에서 배송 상태 수정
+      const updatedOrderStatus = await adminService.setOrderStatus(
         orderInfoRequired,
         toUpdate
       );
 
-      // 업데이트 이후의 유저 데이터를 프론트에 보내 줌
+      // front에 데이터 전달
 
-      res.status(200).json(updateduserRole);
+      res.status(200).json(updatedOrderStatus);
     } catch (error) {
       next(error);
     }
   }
 );
 
-adminRouter.delete(
-  "/order/delete",
-  loginRequired,
-  async function (req, res, next) {
-    try {
-      contentTypeChecker(req.body);
-      const { orderId, productId } = req.body; // 배열
-      const userId = req.currentUserId;
-      adminService.adminVerify(userId);
-
-      const deleteOrderInfo = await adminService.deleteOrderProduct({
-        orderId,
-        productId,
-      });
-      console.log("삭제 완료");
-
-      res.status(200).json(deleteOrderInfo);
-    } catch (error) {
-      next(error);
-    }
-  }
-);
-
-//상품 정보 수정
+// 상품 정보 수정
 adminRouter.put(
   "/product/:productId",
   loginRequired,
   upload.single("image-file"),
   async function (req, res, next) {
     try {
+      // Content-Type 체크
       contentTypeChecker(req.body);
       const userId = req.currentUserId;
-      //admin인지 확인
+      // 관리자 계정 검증
       await adminService.adminVerify(userId);
 
       const productId = req.params.productId;
@@ -181,75 +189,81 @@ adminRouter.put(
         ...(detailDescription && { detailDescription }),
       };
 
-      // 상품 정보를 업데이트함.
+      // db에 상품 정보 수정
       const updatedProductInfo = await adminService.setProduct(
         productId,
         toUpdate
       );
+      // front에 데이터 전달
       res.status(200).json(updatedProductInfo);
     } catch (error) {
       next(error);
     }
   }
 );
-// 상품 삭제
+
+// 회원 정보 삭제
+adminRouter.delete("/user/:email", loginRequired, async (req, res, next) => {
+  try {
+    const userEmail = req.params.email;
+    const userId = req.currentUserId;
+
+    // 관리자 계정 검증
+    await adminService.adminVerify(userId);
+
+    const userInfoRequired = { email: userEmail };
+    // db에 회원 정보 삭제
+    const deleteUserInfo = await adminService.deleteUser(userInfoRequired);
+    // 회원 정보에서 password를 제외하고 front에 전달
+    const userWithoutPwd = await adminService.exceptPwd(deleteUserInfo._doc);
+    // front에 데이터 전달
+    res.status(200).json(userWithoutPwd);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 주문 정보 삭제
 adminRouter.delete(
-  "/product/delete",
+  "/order/delete",
   loginRequired,
   async function (req, res, next) {
     try {
-      const { productIdList } = req.body;
+      // Content-Type 체크
+      contentTypeChecker(req.body);
+      const { orderId, productId } = req.body; // 배열
       const userId = req.currentUserId;
-      await adminService.adminVerify(userId); //admin인지 확인
-
-      const deleteProductInfo = await adminService.deleteProduct(productIdList);
-
-      res.status(200).json(deleteProductInfo);
+      // 관리자 계정 검증
+      adminService.adminVerify(userId);
+      // db에 주문 정보 삭제
+      const deleteOrderInfo = await adminService.deleteOrderProduct({
+        orderId,
+        productId,
+      });
+      // front에 데이터 전달
+      res.status(200).json(deleteOrderInfo);
     } catch (error) {
       next(error);
     }
   }
 );
 
-adminRouter.post(
-  "/product/add",
-  upload.single("image-file"),
+// 상품 정보 삭제
+adminRouter.delete(
+  "/product/delete",
   loginRequired,
-  async (req, res, next) => {
+  async function (req, res, next) {
     try {
+      // Content-Type 체크
       contentTypeChecker(req.body);
+      const { productIdList } = req.body;
       const userId = req.currentUserId;
-      await adminService.adminVerify(userId); //admin인지 확인
-
-      const { location: img } = req.file;
-      const {
-        name,
-        price,
-        category,
-        quantity,
-        brandName,
-        keyword,
-        shortDescription,
-        detailDescription,
-      } = req.body;
-
-      // 위 데이터를 유저 db에 추가하기
-      const newProduct = await adminService.addProduct({
-        name,
-        price,
-        img,
-        category,
-        quantity,
-        brandName,
-        keyword,
-        shortDescription,
-        detailDescription,
-        userId,
-      });
-
-      // 추가된 유저의 db 데이터를 프론트에 다시 보내줌
-      // 물론 프론트에서 안 쓸 수도 있지만, 편의상 일단 보내 줌
-      res.status(201).json(newProduct);
+      // 관리자 계정 검증
+      await adminService.adminVerify(userId);
+      // db에 상품 정보 삭제
+      const deleteProductInfo = await adminService.deleteProduct(productIdList);
+      // front에 데이터 전달
+      res.status(200).json(deleteProductInfo);
     } catch (error) {
       next(error);
     }
