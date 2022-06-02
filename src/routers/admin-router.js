@@ -23,7 +23,7 @@ adminRouter.get("/users", loginRequired, async (req, res, next) => {
   }
 });
 
-adminRouter.patch("/user/:email", loginRequired, async (req, res, next) => {
+adminRouter.put("/user/:email", loginRequired, async (req, res, next) => {
   try {
     // 관리자 계정 검증
     if (is.emptyObject(req.body)) {
@@ -90,7 +90,7 @@ adminRouter.get("/orders", loginRequired, async (req, res, next) => {
   }
 });
 
-adminRouter.patch(
+adminRouter.put(
   "/order/:orderId/:productId",
   loginRequired,
   async (req, res, next) => {

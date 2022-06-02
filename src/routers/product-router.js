@@ -72,7 +72,7 @@ productRouter.get(
 );
 
 //상품 정보 수정
-productRouter.patch(
+productRouter.put(
   "/:id/update",
   loginRequired,
   upload.single("image-file"),

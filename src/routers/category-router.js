@@ -61,7 +61,7 @@ categoryRouter.get("/:id", loginRequired, async function (req, res, next) {
 });
 
 //카테고리 업데이트
-categoryRouter.patch(
+categoryRouter.put(
   "/:id/update",
   loginRequired,
   upload.single("image-file"),
