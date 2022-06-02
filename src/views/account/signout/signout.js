@@ -22,10 +22,8 @@ const handleSubmit = (e) => {
 const handleModalButtonClick = async (e) => {
   e.preventDefault();
   const token = localStorage.getItem("token");
-  const payload = decodeJWT(token);
-  const userId = payload.userId;
 
-  await fetch(`/api/users/${userId}`, {
+  await fetch(`/api/users`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
