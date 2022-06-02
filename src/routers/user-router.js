@@ -147,12 +147,11 @@ userRouter.put("/user", loginRequired, async function (req, res, next) {
   }
 });
 
-userRouter.post("/address", async (req, res, next) => {
+userRouter.post("/address", loginRequired, async (req, res, next) => {
   try {
     contentTypeChecker(req.body);
 
-    // const userId = req.currentUserId;
-    const userId = "62990efe6e3722951cfcbd91";
+    const userId = req.currentUserId;
     const { addressName, postalCode, address1, address2 } = req.body;
     const address = { addressName, postalCode, address1, address2 };
 
