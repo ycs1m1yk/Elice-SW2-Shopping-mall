@@ -43,7 +43,7 @@ class OrderService {
 
   async getOrdersForDelete(orderIdList) {
     const orderList = [];
-    for await (const orderId of orderIdList) {
+    for (const orderId of orderIdList) {
       const order = await this.orderModel.findById(orderId);
       orderList.push(order);
     }
