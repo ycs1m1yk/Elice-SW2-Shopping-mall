@@ -116,7 +116,7 @@ productRouter.put(
         ...(detailDescription && { detailDescription }),
       };
 
-      // 사용자 정보를 업데이트함.
+      // 상품 정보를 업데이트함.
       const updatedProductInfo = await productService.setProduct(
         productId,
         toUpdate
@@ -214,16 +214,6 @@ productRouter.get("/category/:category", async (req, res, next) => {
     const products = await productService.getProductsByCategory(category);
     // 상품 목록(배열)을 JSON 형태로 프론트에 보냄
     res.status(200).json(products);
-  } catch (error) {
-    next(error);
-  }
-});
-
-// 카테고리 추가 기능
-productRouter.get("/category/update", async (req, res, next) => {
-  try {
-    const category = req.body.category;
-    res.status(200).json(category);
   } catch (error) {
     next(error);
   }
