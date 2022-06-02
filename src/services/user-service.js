@@ -10,10 +10,6 @@ class UserService {
     this.userModel = userModel;
     this.productModel = productModel;
   }
-  // 카카오 회원가입
-  async addUserKakao(newUserInfo) {
-    return await this.userModel.create(newUserInfo);
-  }
 
   // 회원가입
   async addUser(userInfo) {
