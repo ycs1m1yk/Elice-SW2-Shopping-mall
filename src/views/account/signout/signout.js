@@ -21,31 +21,31 @@ const handleSubmit = (e) => {
 
 const handleModalButtonClick = async (e) => {
   e.preventDefault();
-  const token = localStorage.getItem("token");
-  const payload = decodeJWT(token);
-  const userId = payload.userId;
+  console.log(localStorage.getItem("token"));
 
-  await fetch(`/api/users/${userId}`, {
+  await fetch(`/api/user`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
-      Authorization: "Bearer " + token,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
     body: JSON.stringify({
       currentPassword: formData.get("password"),
     }),
-  }).then((res) => {
-    // 삭제 완료
-    if (res.ok) {
-      alert("회원 탈퇴가 정상적으로 이루어졌습니다.");
-      window.location.href = "/";
-      removeToken();
+  }).then(async (res) => {
+    if (!res.ok) {
+      const errorContent = await res.json();
+      const { reason } = errorContent;
+
+      alert(reason);
+      localStorage.removeItem("token");
+      location.href = "/";
+
       return;
     }
-
-    // 삭제가 안됐을 시 다시 입력할 수 있게끔
-    alert("비밀번호를 다시 입력해주세요.");
-    window.location.href = "/account/signout";
+    alert("회원 정보가 삭제되었습니다.");
+    localStorage.removeItem("token");
+    window.location.href = "/";
   });
 };
 

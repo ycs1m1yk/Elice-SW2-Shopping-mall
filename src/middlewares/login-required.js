@@ -31,6 +31,15 @@ function loginRequired(req, res, next) {
     const secretKey = process.env.JWT_SECRET_KEY || "secret-key";
     const jwtDecoded = jwt.verify(userToken, secretKey);
 
+    console.log(jwtDecoded.exp);
+    console.log(Date.now() / 1000 + 3570);
+
+    if (jwtDecoded.exp < Date.now() / 1000 + 3570) {
+      res
+        .status(403)
+        .json({ result: "Token Expired", reason: "토큰이 만료되었습니다." });
+      return;
+    }
     const userId = jwtDecoded.userId;
 
     // 라우터에서 req.currentUserId를 통해 유저의 id에 접근 가능하게 됨

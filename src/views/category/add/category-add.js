@@ -18,14 +18,19 @@ const handleSubmit = async (e) => {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
     body: formData,
-  }).then((res) => {
-    if (res.ok) {
-      location.reload();
-      return alert("카테고리가 정상적으로 추가되었습니다.");
-    } else {
-      location.reload();
-      return alert("카테고리 추가에 문제가 발생하였습니다. 다시 시도해주세요.");
+  }).then(async (res) => {
+    if (!res.ok) {
+      const errorContent = await res.json();
+      const { reason } = errorContent;
+
+      alert(reason);
+      localStorage.removeItem("token");
+      location.href = "/";
+
+      return;
     }
+    location.reload();
+    alert("카테고리가 정상적으로 추가되었습니다.");
   });
 };
 

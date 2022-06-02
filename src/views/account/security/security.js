@@ -44,8 +44,26 @@ const paintUserInfo = (userInfo) => {
 };
 
 const getDataFromApi = async () => {
-  prevUserInfo = await Api.get("/api/my");
-  paintUserInfo(prevUserInfo);
+  fetch("/api/my", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  }).then(async (res) => {
+    if (!res.ok) {
+      const errorContent = await res.json();
+      const { reason } = errorContent;
+
+      alert(reason);
+      localStorage.removeItem("token");
+      location.href = "/";
+
+      return;
+    }
+    const prevUserInfo = await res.json();
+    paintUserInfo(prevUserInfo);
+  });
 };
 
 // 다음 주소 찾기 API

@@ -82,16 +82,22 @@ const handleSubmit = async (e) => {
   await fetch("/api/product/add", {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${getToken()}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
     body: bodyForm,
-  }).then((res) => {
-    if (res.ok) {
-      location.reload();
-      return alert("상품이 정상적으로 등록되었습니다.");
+  }).then(async (res) => {
+    if (!res.ok) {
+      const errorContent = await res.json();
+      const { reason } = errorContent;
+
+      alert(reason);
+      localStorage.removeItem("token");
+      location.href = "/";
+
+      return;
     }
     location.reload();
-    alert("상품 등록에 문제가 발생하였습니다. 다시 시도해주세요.");
+    alert("상품이 정상적으로 추가되었습니다.");
   });
 };
 

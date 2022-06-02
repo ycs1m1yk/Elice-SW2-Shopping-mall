@@ -210,12 +210,50 @@ const handleAuthChange = async (e) => {
   });
 };
 
+fetch("/api/my", {
+  method: "GET",
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
+  },
+}).then(async (res) => {
+  if (!res.ok) {
+    const errorContent = await res.json();
+    const { reason } = errorContent;
+
+    alert(reason);
+    localStorage.removeItem("token");
+    location.href = "/";
+
+    return;
+  }
+  const prevUserInfo = await res.json();
+  paintUserInfo(prevUserInfo);
+});
+
 // 데이터 받아와서 화면에 그리기
 const getDataFromApi = async () => {
-  const users = await Api.get("/api/admin/users");
+  fetch("/api/admin/users", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  }).then(async (res) => {
+    if (!res.ok) {
+      const errorContent = await res.json();
+      const { reason } = errorContent;
 
-  paintNavBar(users);
-  paintUserList(users);
+      alert(reason);
+      localStorage.removeItem("token");
+      location.href = "/";
+
+      return;
+    }
+    const users = await res.json();
+    paintNavBar(users);
+    paintUserList(users);
+  });
 };
 
 getDataFromApi();

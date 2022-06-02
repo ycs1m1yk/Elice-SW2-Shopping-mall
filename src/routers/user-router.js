@@ -146,7 +146,7 @@ userRouter.delete("/user", loginRequired, async function (req, res, next) {
         "headers의 Content-Type을 application/json으로 설정해주세요"
       );
     }
-    const userId = req.currentPassword;
+    const userId = req.currentUserId;
     console.log(userId);
     // body data로부터, 확인용으로 사용할 현재 비밀번호를 추출함.
     const { currentPassword } = req.body;
