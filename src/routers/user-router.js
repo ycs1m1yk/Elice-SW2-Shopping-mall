@@ -147,6 +147,22 @@ userRouter.put("/user", loginRequired, async function (req, res, next) {
   }
 });
 
+userRouter.post("/address", async (req, res, next) => {
+  try {
+    contentTypeChecker(req.body);
+
+    // const userId = req.currentUserId;
+    const userId = "62990efe6e3722951cfcbd91";
+    const { addressName, postalCode, address1, address2 } = req.body;
+    const address = { addressName, postalCode, address1, address2 };
+
+    const newAddress = await userService.setUserAddress(userId, address);
+    res.status(200).json(newAddress);
+  } catch (error) {
+    next(error);
+  }
+});
+
 userRouter.delete("/user", loginRequired, async function (req, res, next) {
   try {
     // content-type 을 application/json 로 프론트에서
