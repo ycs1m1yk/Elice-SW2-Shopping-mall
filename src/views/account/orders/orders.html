@@ -34,14 +34,19 @@
       </div>
       <div class="container orders-container" id="ordersContainer">
         <div class="columns notification is-info is-light is-mobile orders-top">
-          <div class="column is-2">날짜</div>
-          <div class="column is-6">주문정보</div>
-          <div class="column is-2">상태</div>
-          <div class="column is-2">신청</div>
+          <div class="column is-4">상품정보</div>
+          <div class="column is-2">주문일자</div>
+          <div class="column is-3">주문정보</div>
+          <div class="column is-3">주문상태</div>
         </div>
       </div>
     </section>
-    <div id="modal" class="modal">
+    <div
+      id="modal"
+      class="modal"
+      data-target-order-id=""
+      data-target-product-id=""
+    >
       <div class="modal-background" id="modalBackground"></div>
       <div class="modal-content">
         <div class="box">
@@ -53,6 +58,7 @@
             <button
               class="button mt-5"
               id="deleteCompleteButton"
+              data-action="delete"
               aria-label="close"
             >
               네
@@ -60,6 +66,7 @@
             <button
               class="button is-primary mt-5"
               id="deleteCancelButton"
+              data-action="close"
               aria-label="close"
             >
               아니오
@@ -71,6 +78,7 @@
       <button
         class="modal-close is-large"
         id="modalCloseButton"
+        data-action="close"
         aria-label="close"
       ></button>
     </div>
