@@ -1,5 +1,4 @@
 import { Router } from "express";
-import is from "@sindresorhus/is";
 // 폴더에서 import하면, 자동으로 폴더의 index.js에서 가져옴
 import { loginRequired } from "../middlewares";
 import { productService } from "../services";
@@ -31,26 +30,6 @@ productRouter.get("/:id", async function (req, res, next) {
   }
 });
 
-//유저별 판매 목록 api
-productRouter.get(
-  "/sellinglist/user",
-  loginRequired,
-  async (req, res, next) => {
-    try {
-      const userId = req.params.userId;
-      const currentUserId = req.currentUserId;
-      if (userId !== currentUserId) {
-        throw new Error("본인의 판매 목록만 볼 수 있습니다.");
-      }
-      const products = await productService.getProductsByUserId(userId);
-      // 상품 목록(배열)을 JSON 형태로 프론트에 보냄
-      res.status(200).json(products);
-    } catch (error) {
-      next(error);
-    }
-  }
-);
-
 //상품 수정 위해 상품 데이터 보내기
 productRouter.get(
   "/:id/update",
@@ -58,12 +37,11 @@ productRouter.get(
   async function (req, res, next) {
     try {
       const userId = req.currentUserId;
-      // seller인지 확인
       const productId = req.params.id;
-      const productInfo = await productService.getProductByProductId(productId);
-      if (userId !== productInfo.userId) {
-        throw new Error("본인의 상품 내역만 수정할 수 있습니다.");
-      }
+      const productInfo = await productService.getProductForUpdate(
+        productId,
+        userId
+      );
       // 상품 스키마를 JSON 형태로 프론트에 보냄
       res.status(200).json(productInfo);
     } catch (error) {
@@ -81,17 +59,7 @@ productRouter.put(
     try {
       contentTypeChecker(req.body);
       const userId = req.currentUserId;
-      //seller 인지 확인
-      const userRole = await productService.getUserRole(userId);
-      if (userRole !== "seller") {
-        throw new Error("판매자로 등록해야만 상품 등록이 가능합니다.");
-      }
       const productId = req.params.id;
-      const productInfo = await productService.getProductByProductId(productId);
-      if (userId !== productInfo.userId) {
-        throw new Error("본인의 상품 내역만 수정할 수 있습니다.");
-      }
-
       const { location: img } = req.file;
       const {
         name,
@@ -118,6 +86,7 @@ productRouter.put(
 
       // 상품 정보를 업데이트함.
       const updatedProductInfo = await productService.setProduct(
+        userId,
         productId,
         toUpdate
       );
@@ -181,24 +150,13 @@ productRouter.post(
 productRouter.delete("/delete", loginRequired, async function (req, res, next) {
   try {
     contentTypeChecker(req.body);
+
     const productIdList = req.body.productIdList;
     const userId = req.currentUserId;
-    const userRole = await productService.getUserRole(userId);
-    if (userRole !== "seller") {
-      throw new Error("판매자로 등록해야만 상품 삭제가 가능합니다.");
-    }
-    const ProductList = await productService.getProductsForDelete(
-      productIdList
-    );
 
-    ProductList.map((productInfo) => {
-      if (userId !== productInfo.userId) {
-        throw new Error("본인의 상품 판매 내역만 취소할 수 있습니다.");
-      }
-    });
+    await productService.checkProductsForDelete(userId, productIdList);
 
     const deleteProductInfo = await productService.deleteProduct(productIdList);
-
     res.status(200).json(deleteProductInfo);
   } catch (error) {
     next(error);

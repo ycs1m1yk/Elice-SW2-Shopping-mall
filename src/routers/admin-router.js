@@ -1,5 +1,4 @@
 import { Router } from "express";
-import is from "@sindresorhus/is";
 // 폴더에서 import하면, 자동으로 폴더의 index.js에서 가져옴
 import { loginRequired } from "../middlewares";
 import { upload } from "../middlewares";
@@ -143,11 +142,7 @@ adminRouter.put(
   upload.single("image-file"),
   async function (req, res, next) {
     try {
-      if (is.emptyObject(req.body)) {
-        throw new Error(
-          "headers의 Content-Type을 application/json으로 설정해주세요"
-        );
-      }
+      contentTypeChecker(req.body);
       const userId = "1234";
       //admin인지 확인
       await adminService.adminVerify(userId);
@@ -213,11 +208,7 @@ adminRouter.post(
   loginRequired,
   async (req, res, next) => {
     try {
-      if (is.emptyObject(req.body)) {
-        throw new Error(
-          "headers의 Content-Type을 application/json으로 설정해주세요"
-        );
-      }
+      contentTypeChecker(req.body);
       const userId = req.currentUserId;
       await adminService.adminVerify(userId); //admin인지 확인
 

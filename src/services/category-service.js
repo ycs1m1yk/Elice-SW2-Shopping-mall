@@ -5,7 +5,10 @@ class CategoryService {
     this.categoryModel = categoryModel;
   }
   async addCategory(categoryInfo) {
-    const name = categoryInfo.name;
+    const { name, description } = categoryInfo;
+    if (!name || !description) {
+      throw new Error("Need All Elements in body");
+    }
     const category = await this.categoryModel.findByName(name);
     if (category) {
       throw new Error(
@@ -16,11 +19,22 @@ class CategoryService {
   }
 
   async getCategories() {
-    return await this.categoryModel.findAll();
+    const categorise = await this.categoryModel.findAll();
+    if (!categorise) {
+      throw new Error("카테고리가 존재하지 않습니다.");
+    }
+    return categorise;
   }
 
   async getCategoryById(categoryId) {
-    return await this.categoryModel.findById(categoryId);
+    if (!categoryId) {
+      throw new Error("카테고리 아이디가 존재하지 않습니다.");
+    }
+    const category = await this.categoryModel.findById(categoryId);
+    if (!category) {
+      throw new Error("해당 아이디의 카테고리가 존재하지 않습니다.");
+    }
+    return category;
   }
 
   async setCategory(categoryId, toUpdate) {
@@ -39,6 +53,9 @@ class CategoryService {
   }
 
   async deleteCategory(categoryIdArray) {
+    if (categoryIdArray.length < 1) {
+      throw new Error("카테고리 선택을 올바를게 해주세요.");
+    }
     let category = await categoryIdArray.map((categoryId) =>
       this.categoryModel.deleteById({ categoryId })
     );
