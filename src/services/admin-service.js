@@ -23,7 +23,9 @@ class AdminService {
   async getOrders() {
     return await this.orderModel.findAll();
   }
-
+  async getOrdersByOrderId(orderId) {
+    return await this.orderModel.findById(orderId);
+  }
   async setOrderStatus(orderInfoRequired, toUpdate) {
     const { orderId, productId } = orderInfoRequired;
     const { status } = toUpdate;
@@ -109,11 +111,21 @@ class AdminService {
     });
   }
 
-  async deleteProduct(productIdArray) {
-    let product = await productIdArray.map((productId) =>
-      this.productModel.deleteById({ productId })
+  async deleteProduct({ orderId, productId }) {
+    const deleteOrderList = await this.orderModel.findById(orderId);
+    const newDelete = await deleteOrderList.orderList.filter(
+      (e) => e.productId !== productId
     );
-    return product;
+    const deleteUpdate = { $set: { orderList: newDelete } };
+    const newOrder = await this.orderModel.update({
+      orderId,
+      update: deleteUpdate,
+    });
+    if (newOrder.orderList.length < 1) {
+      return await this.orderModel.deleteById(orderId);
+    }
+
+    return await newOrder;
   }
 
   async addProduct(productInfo) {
@@ -130,8 +142,17 @@ class AdminService {
       detailDescription,
       userId,
     } = productInfo;
-    if (!name || !price || !category || !brandName || !img || !shortDescription || !detailDescription || !userId) {
-      throw new Error("상품 정보를 모두 입력해주세요.")
+    if (
+      !name ||
+      !price ||
+      !category ||
+      !brandName ||
+      !img ||
+      !shortDescription ||
+      !detailDescription ||
+      !userId
+    ) {
+      throw new Error("상품 정보를 모두 입력해주세요.");
     }
     // 상품명 중복 확인
     const user = await this.productModel.findByName(name);

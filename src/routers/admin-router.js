@@ -121,19 +121,28 @@ adminRouter.put(
   }
 );
 
-adminRouter.delete("/order/:orderId", loginRequired, async (req, res, next) => {
-  try {
-    const { orderId } = req.params;
-    const userId = req.currentUserId;
+adminRouter.delete(
+  "/order/delete",
 
-    await adminService.adminVerify(userId);
-    const orderInfoRequired = { orderId };
-    const deleteUserInfo = await adminService.deleteOrder(orderInfoRequired);
-    res.status(200).json(deleteUserInfo);
-  } catch (error) {
-    next(error);
+  async function (req, res, next) {
+    try {
+      contentTypeChecker(req.body);
+      const { orderId, productId } = req.body; // 배열
+      const userId = req.currentUserId;
+      adminService.adminVerify(userId);
+
+      const deleteOrderInfo = await adminService.deleteProduct({
+        orderId,
+        productId,
+      });
+      console.log("삭제 완료");
+
+      res.status(200).json(deleteOrderInfo);
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 //상품 정보 수정
 adminRouter.put(
