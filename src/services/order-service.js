@@ -65,7 +65,7 @@ class OrderService {
     );
   }
 
-  async deleteProduct({ orderId, productId }) {
+  async deleteOrderProduct({ orderId, productId }) {
     const deleteOrderList = await this.orderModel.findById(orderId);
     if (!deleteOrderList) {
       throw new Error("요청된 주문이 없습니다.");

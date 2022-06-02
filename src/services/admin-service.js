@@ -111,7 +111,7 @@ class AdminService {
     });
   }
 
-  async deleteProduct({ orderId, productId }) {
+  async deleteOrderProduct({ orderId, productId }) {
     const deleteOrderList = await this.orderModel.findById(orderId);
     const newDelete = await deleteOrderList.orderList.filter(
       (e) => e.productId !== productId
@@ -126,6 +126,13 @@ class AdminService {
     }
 
     return await newOrder;
+  }
+
+  async deleteProduct(productIdArray) {
+    let product = await productIdArray.map((productId) =>
+      this.productModel.deleteById({ productId })
+    );
+    return product;
   }
 
   async addProduct(productInfo) {

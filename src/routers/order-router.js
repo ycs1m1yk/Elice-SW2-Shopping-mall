@@ -86,7 +86,7 @@ orderRouter.delete("/delete", loginRequired, async function (req, res, next) {
       throw new Error("본인의 주문 내역만 취소할 수 있습니다.");
     }
 
-    const deleteOrderInfo = await orderService.deleteProduct({
+    const deleteOrderInfo = await orderService.deleteOrderProduct({
       orderId,
       productId,
     });

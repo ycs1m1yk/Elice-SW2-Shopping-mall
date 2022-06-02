@@ -123,7 +123,7 @@ adminRouter.put(
 
 adminRouter.delete(
   "/order/delete",
-
+  loginRequired,
   async function (req, res, next) {
     try {
       contentTypeChecker(req.body);
@@ -131,7 +131,7 @@ adminRouter.delete(
       const userId = req.currentUserId;
       adminService.adminVerify(userId);
 
-      const deleteOrderInfo = await adminService.deleteProduct({
+      const deleteOrderInfo = await adminService.deleteOrderProduct({
         orderId,
         productId,
       });
