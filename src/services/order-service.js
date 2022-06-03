@@ -8,7 +8,6 @@ class OrderService {
     return await this.orderModel.findByUserId();
   }
 
-  
   // 개인의 주문 목록 조회
   async getOrders(userId) {
     return await this.orderModel.findByUserId(userId);
@@ -26,7 +25,7 @@ class OrderService {
       orderInfo;
     // body 데이터 검증
     if (!userId || !address || !orderList || !totalPrice) {
-      throw new Error("주문 정보를 올바르게 입력해주세요.")
+      throw new Error("주문 정보를 올바르게 입력해주세요.");
     }
     const newOrderInfo = {
       userId,
