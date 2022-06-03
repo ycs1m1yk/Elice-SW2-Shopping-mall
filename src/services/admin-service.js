@@ -125,7 +125,7 @@ class AdminService {
       throw new Error("배송 상태 정보가 없습니다.");
     }
     const updateOrderList = await this.orderModel.findById(orderId);
-    if (updateOrderList) {
+    if (!updateOrderList) {
       throw new Error("주문 정보가 없습니다.");
     }
     const newUpdate = await updateOrderList.orderList.map((e) => {
