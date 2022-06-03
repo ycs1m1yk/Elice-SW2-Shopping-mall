@@ -17,6 +17,7 @@ const shortDescriptionInput = document.getElementById("shortDescriptionInput");
 const detailDescriptionInput = document.getElementById(
   "detailDescriptionInput"
 );
+const fileNameSpan = document.getElementById("fileNameSpan");
 const inventoryInput = document.getElementById("inventoryInput");
 const priceInput = document.getElementById("priceInput");
 const contentTitle = document.getElementById("content-title");
@@ -125,7 +126,7 @@ const request = async (role, req, formData) => {
 // 카테고리 동적 생성
 const paintCategoryList = async () => {
   const categoryList = await Api.get("/api/category");
-  let categoryOptions = '<option value="">카테고리를 선택해 주세요.</option>';
+  let categoryOptions = "<option value=''>카테고리를 선택해 주세요.</option>";
 
   categoryList.forEach((category) => {
     categoryOptions += `

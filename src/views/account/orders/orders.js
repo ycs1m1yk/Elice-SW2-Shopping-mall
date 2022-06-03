@@ -25,20 +25,27 @@ const paintOrders = async () => {
   for (const { _id, orderList, updatedAt } of orders) {
     const date = updatedAt.slice(0, 10);
     for await (const { productId, quantity, status } of orderList) {
-      const product = await Api.get("/api/product", productId);
-      const { img, price, name, brandName } = product;
-      const orderInfo = {
-        _id,
-        productId,
-        img,
-        name,
-        brandName,
-        date,
-        price,
-        quantity,
-        status,
-      };
-      orderInfos.push(orderInfo);
+      let product;
+      try {
+        product = await Api.get("/api/product", productId);
+      } catch (err) {
+        //
+      }
+      if (product) {
+        const { img, price, name, brandName } = product;
+        const orderInfo = {
+          _id,
+          productId,
+          img,
+          name,
+          brandName,
+          date,
+          price,
+          quantity,
+          status,
+        };
+        orderInfos.push(orderInfo);
+      }
     }
   }
 
