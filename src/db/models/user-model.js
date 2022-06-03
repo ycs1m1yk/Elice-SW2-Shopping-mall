@@ -12,12 +12,12 @@ export class UserModel {
     return await User.findOne({ _id });
   }
 
-  async create(userInfo) {
-    return await User.create(userInfo);
-  }
-
   async findAll() {
     return await User.find({});
+  }
+
+  async create(userInfo) {
+    return await User.create(userInfo);
   }
 
   async update({ userId, update }) {
