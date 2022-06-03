@@ -44,8 +44,20 @@
 	width: 100%
 }
 
+.delivery-info .address-info {
+	justify-content: flex-end;
+	align-items: center;
+}
+
 .delivery-info .subtitle {
-	padding-left: .4rem
+	flex-grow: 1;
+	padding-left: .4rem;
+	margin-bottom: 0
+}
+
+.delivery-info .address-choice {
+	font-size: small;
+	margin-right: .5rem
 }
 
 .delivery-info .field-label {
@@ -61,6 +73,12 @@
 	flex-basis: 35rem;
 	flex-grow: 0;
 	height: 3rem
+}
+
+.modal-content .box {
+	display: flex;
+	justify-content: center;
+	align-items: center
 }
 
 .select select {

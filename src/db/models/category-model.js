@@ -4,10 +4,6 @@ import { CategorySchema } from "../schemas/category-schema";
 const Category = model("category", CategorySchema);
 
 export class CategoryModel {
-  async create(categoryInfo) {
-    return await Category.create(categoryInfo);
-  }
-
   async findByName(name) {
     return await Category.findOne({ name });
   }
@@ -18,6 +14,10 @@ export class CategoryModel {
 
   async findAll() {
     return await Category.find({});
+  }
+
+  async create(categoryInfo) {
+    return await Category.create(categoryInfo);
   }
 
   async update({ categoryId, update }) {
