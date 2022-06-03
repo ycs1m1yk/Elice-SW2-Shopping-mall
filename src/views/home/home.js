@@ -208,10 +208,14 @@ const paintProduct = (product) => {
 
 // 랜덤 추천 상품 호출
 const todayRecommendation = (productList) => {
-  for (let i = 0; i < 3; i++) {
-    const randomeIdx = Math.floor(Math.random() * productList.length);
-    paintProduct(productList[randomeIdx]);
+  let productIdxs = [];
+  while (productIdxs.length < 3) {
+    let randomIdx = Math.floor(Math.random() * productList.length);
+
+    productIdxs.includes(randomIdx) ? null : productIdxs.push(randomIdx);
   }
+
+  productIdxs.forEach((idx) => paintProduct(productList[idx]));
 };
 
 // 데이터 받아와서 화면 그리기
