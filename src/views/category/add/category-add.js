@@ -43,14 +43,16 @@ const request = async (req, formData) => {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
     body: formData,
-  }).then((res) => {
-    if (res.ok) {
-      location.reload();
-      return alert("카테고리가 정상적으로 추가되었습니다.");
-    }
-    location.reload();
-    alert("카테고리 추가에 문제가 발생하였습니다. 다시 시도해주세요.");
-  });
+  })
+    .then((res) => res.json())
+    .then((result) => {
+      if (result.result === "error") {
+        location.reload();
+        return alert(result.reason);
+      }
+      location.href = "/category/edit";
+      alert("카테고리가 정상적으로 추가되었습니다.");
+    });
 };
 
 const handleSubmit = async (e) => {

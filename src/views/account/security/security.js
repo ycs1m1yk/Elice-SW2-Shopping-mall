@@ -129,7 +129,7 @@ const hadleCompleteButton = async (e) => {
 
   // 회원정보 수정 실패
   if (response.result === "error") {
-    return alert("오류가 발생했습니다. 다시 시도해주십시오.");
+    return alert(response.reason);
   }
 
   // 수정 성공 -> 회원 정보 페이지 라우팅 -> 페이지 다시 그리기
