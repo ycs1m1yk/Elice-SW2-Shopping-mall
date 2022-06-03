@@ -32,19 +32,17 @@ const handleModalButtonClick = async (e) => {
     body: JSON.stringify({
       currentPassword: formData.get("password"),
     }),
-  }).then((res) => {
-    // 삭제 완료
-    if (res.ok) {
+  })
+    .then((res) => res.json())
+    .then((result) => {
+      if (result.result === "error") {
+        window.location.href = "/account/signout";
+        return alert(result.reason);
+      }
       alert("회원 탈퇴가 정상적으로 이루어졌습니다.");
       window.location.href = "/";
       removeToken();
-      return;
-    }
-
-    // 삭제가 안됐을 시 다시 입력할 수 있게끔
-    alert("비밀번호를 다시 입력해주세요.");
-    window.location.href = "/account/signout";
-  });
+    });
 };
 
 registerForm.addEventListener("submit", handleSubmit);
