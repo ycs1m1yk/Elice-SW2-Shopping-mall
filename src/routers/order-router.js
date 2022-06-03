@@ -5,28 +5,28 @@ import { orderService } from "../services";
 import { contentTypeChecker } from "../utils/content-type-checker";
 const orderRouter = Router();
 
-// 내 주문 목록 보기 api (아래는 /:userId 이지만, 실제로는 /api/order/:userId로 요청해야 함.)
+// 내 주문 목록 조회
 orderRouter.get("/orderList", loginRequired, async function (req, res, next) {
   try {
+    // 토큰에서 userId 추출
     const userId = req.currentUserId;
-
+    // db에 주문 목록 조회
     const orderInfo = await orderService.getOrders(userId);
-
+    // front에 데이터 전달
     res.status(200).json(orderInfo);
   } catch (error) {
     next(error);
   }
 });
 
-// 주문하기 api (아래는 /complete이지만, 실제로는 /api/order/complete로 요청해야 함.)
+// 주문하기
 orderRouter.post("/complete", loginRequired, async (req, res, next) => {
   try {
-    // Content-Type: application/json 설정을 안 한 경우, 에러를 만들도록 함.
-    // application/json 설정을 프론트에서 안 하면, body가 비어 있게 됨.
+    // Content-Type 체크
     contentTypeChecker(req.body);
 
+    // 토큰에서 userId 추출
     const userId = req.currentUserId;
-    // req (request)의 body 에서 데이터 가져오기
 
     const {
       addressName,
@@ -41,6 +41,7 @@ orderRouter.post("/complete", loginRequired, async (req, res, next) => {
       shippingFee,
     } = req.body;
 
+    // 각 주소 정보를 하나의 address 객체에 삽입
     const address = {
       addressName,
       receiverName,
@@ -49,6 +50,7 @@ orderRouter.post("/complete", loginRequired, async (req, res, next) => {
       address1,
       address2,
     };
+    // 한 번 주문할 때 상품이 여러개 이므로, 객체로 받아 배열로 변환한다.
     const wholeorderList = Object.values(orderList).map((e) => ({
       productId: e.productId,
       title: e.title,
@@ -57,7 +59,7 @@ orderRouter.post("/complete", loginRequired, async (req, res, next) => {
       status: e.status,
     }));
 
-    // 위 데이터를 주문 db에 추가하기
+    // db에 주문 정보 추가
     const newOrder = await orderService.addOrder({
       userId,
       address,
@@ -67,25 +69,28 @@ orderRouter.post("/complete", loginRequired, async (req, res, next) => {
       shippingFee,
     });
 
-    // 추가된 주문 db 데이터를 프론트에 다시 보내줌
-    // 물론 프론트에서 안 쓸 수도 있지만, 편의상 일단 보내 줌
+    // front에 새로 추가된 주문 정보 전달
     res.status(201).json(newOrder);
   } catch (error) {
     next(error);
   }
 });
 
+// 주문 상품 삭제
 orderRouter.delete("/delete", loginRequired, async function (req, res, next) {
   try {
+    // Content-Type 체크
     contentTypeChecker(req.body);
-    const { orderId, productId } = req.body; // 배열
+    const { orderId, productId } = req.body;
+    // 토큰에서 userId 추출
     const userId = req.currentUserId;
+    // db에 주문의 특정 상품 삭제
     const deleteOrderInfo = await orderService.deleteOrderProduct({
       orderId,
       productId,
       userId,
     });
-
+    // front에 주문 정보 전달
     res.status(200).json(deleteOrderInfo);
   } catch (error) {
     next(error);

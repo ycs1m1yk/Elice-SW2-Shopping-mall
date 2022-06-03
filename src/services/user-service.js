@@ -178,6 +178,9 @@ class UserService {
     if (!userInfo) {
       throw new Error("해당 회원 정보가 없습니다.");
     }
+    if (!addressName) {
+      throw new Error("삭제할 주소가 없습니다.");
+    }
     const newDelete = await userInfo.address.filter(
       (e) => e.addressName !== addressName
     );
