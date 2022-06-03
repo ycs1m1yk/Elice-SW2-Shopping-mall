@@ -112,7 +112,9 @@ const paintOrders = async (orders) => {
       let product;
       try {
         product = await Api.get("/api/product", productId);
-      } catch (err) {}
+      } catch (err) {
+        //
+      }
       if (product) {
         const { img, price, name, brandName } = product;
         const orderInfo = {
