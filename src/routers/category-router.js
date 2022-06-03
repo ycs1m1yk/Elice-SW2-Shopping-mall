@@ -16,6 +16,21 @@ categoryRouter.get("/", async function (req, res, next) {
   }
 });
 
+//카테고리id를 통해 특정 카테고리 정보 보내기
+categoryRouter.get("/:id", loginRequired, async function (req, res, next) {
+  try {
+    const userId = req.currentUserId;
+    await adminService.adminVerify(userId); //admin 확인 작업
+
+    const categoryId = req.params.id;
+    const categoryInfo = await categoryService.getCategoryById(categoryId);
+    // 카테고리 정보를 JSON 형태로 프론트에 보냄
+    res.status(200).json(categoryInfo);
+  } catch (error) {
+    next(error);
+  }
+});
+
 //카테고리 추가
 categoryRouter.post(
   "/add",
@@ -42,21 +57,6 @@ categoryRouter.post(
     }
   }
 );
-
-//카테고리id를 통해 특정 카테고리 정보 보내기
-categoryRouter.get("/:id", loginRequired, async function (req, res, next) {
-  try {
-    const userId = req.currentUserId;
-    await adminService.adminVerify(userId); //admin 확인 작업
-
-    const categoryId = req.params.id;
-    const categoryInfo = await categoryService.getCategoryById(categoryId);
-    // 카테고리 정보를 JSON 형태로 프론트에 보냄
-    res.status(200).json(categoryInfo);
-  } catch (error) {
-    next(error);
-  }
-});
 
 //카테고리 업데이트
 categoryRouter.put(
