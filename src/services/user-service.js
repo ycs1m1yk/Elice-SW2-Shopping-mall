@@ -173,6 +173,25 @@ class UserService {
     }
   }
 
+  async deleteAddress(userId, addressName) {
+    const userInfo = await this.getMyInfo(userId);
+    if (!userInfo) {
+      throw new Error("해당 회원 정보가 없습니다.");
+    }
+    const newDelete = await userInfo.address.filter(
+      (e) => e.addressName !== addressName
+    );
+    const deleteUpdate = { $set: { address: newDelete } };
+    const deletedUserAddress = await this.userModel.update({
+      userId,
+      update: deleteUpdate,
+    });
+    if (!deletedUserAddress) {
+      throw new Error("주소가 정상적으로 삭제되지 않았습니다.");
+    }
+    return deletedUserAddress;
+  }
+
   async exceptPwd(userInfo) {
     return await (({ password, ...o }) => o)(userInfo);
   }

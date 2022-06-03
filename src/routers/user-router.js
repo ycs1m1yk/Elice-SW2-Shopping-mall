@@ -189,4 +189,20 @@ userRouter.delete("/user", loginRequired, async function (req, res, next) {
   }
 });
 
+userRouter.delete("/address", loginRequired, async (req, res, next) => {
+  try {
+    contentTypeChecker(req.body);
+    const { addressName } = req.body;
+    const userId = req.currentUserId;
+    const deletedUserAddress = await userService.deleteAddress(
+      userId,
+      addressName
+    );
+
+    res.status(200).json(deletedUserAddress);
+  } catch (error) {
+    next(error);
+  }
+});
+
 export { userRouter };
