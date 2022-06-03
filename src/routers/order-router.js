@@ -80,17 +80,11 @@ orderRouter.delete("/delete", loginRequired, async function (req, res, next) {
     contentTypeChecker(req.body);
     const { orderId, productId } = req.body; // 배열
     const userId = req.currentUserId;
-
-    const orderInfo = await orderService.getOrdersByOrderId(orderId);
-    if (userId !== orderInfo.userId) {
-      throw new Error("본인의 주문 내역만 취소할 수 있습니다.");
-    }
-
     const deleteOrderInfo = await orderService.deleteOrderProduct({
       orderId,
       productId,
+      userId,
     });
-    console.log("삭제 완료");
 
     res.status(200).json(deleteOrderInfo);
   } catch (error) {
