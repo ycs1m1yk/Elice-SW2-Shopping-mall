@@ -4,17 +4,6 @@ import header from "/components/Header.js";
 
 document.body.insertAdjacentElement("afterbegin", header);
 
-//TODO
-/**
- * - [] paint 주문정보
- *  ㄴ [x] GET /api/order/orderList
- *  ㄴ [x] makeOrderItem
- *  ㄴ [] Document.createDocumentFragment() 사용하기
- * - [x] 모달창
- * - [x] 주문취소
- *  ㄴ [x] DELETE /api/order/delete
- * - [x] 후기작성 redirect
- */
 const ordersContainer = document.querySelector("#ordersContainer");
 const modal = document.querySelector("#modal");
 
