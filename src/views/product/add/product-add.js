@@ -114,7 +114,7 @@ const request = async (role, req, formData) => {
       const { reason } = errorContent;
 
       alert(reason);
-      location.reload();
+      location.href = "#";
       return;
     }
     alert("상품 등록이 정상적으로 이루어졌습니다.");
