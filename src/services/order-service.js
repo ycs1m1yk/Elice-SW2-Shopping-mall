@@ -65,7 +65,11 @@ class OrderService {
     );
   }
 
-  async deleteOrderProduct({ orderId, productId }) {
+  async deleteOrderProduct({ orderId, productId, userId }) {
+    const orderInfo = await this.getOrdersByOrderId(orderId);
+    if (userId !== orderInfo.userId) {
+      throw new Error("본인의 주문 내역만 취소할 수 있습니다.");
+    }
     const deleteOrderList = await this.orderModel.findById(orderId);
     if (!deleteOrderList) {
       throw new Error("요청된 주문이 없습니다.");
@@ -78,10 +82,14 @@ class OrderService {
       orderId,
       update: deleteUpdate,
     });
+
+    if (!newOrder) {
+      throw new Error("주문이 정상적으로 취소되지 않았습니다.");
+    }
+
     if (newOrder.orderList.length < 1) {
       return await this.orderModel.deleteById(orderId);
     }
-
     return newOrder;
   }
 }
