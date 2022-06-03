@@ -229,9 +229,14 @@ adminRouter.delete(
   loginRequired,
   async function (req, res, next) {
     try {
+<<<<<<< HEAD
       // Content-Type 체크
       contentTypeChecker(req.body);
       const { orderId, productId } = req.body; // 배열
+=======
+      const { productIdList } = req.body;
+      console.log(productIdList);
+>>>>>>> 83affa258320e92349a19650e048e06cee82bc28
       const userId = req.currentUserId;
       // 관리자 계정 검증
       adminService.adminVerify(userId);

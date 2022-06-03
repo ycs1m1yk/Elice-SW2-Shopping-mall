@@ -1,5 +1,5 @@
 import header from "/components/Header.js";
-import { getToken } from "/useful-functions.js";
+import { decodeJWT } from "/useful-functions.js";
 import * as Api from "/api.js";
 
 document.body.insertAdjacentElement("afterbegin", header);
@@ -84,16 +84,22 @@ if (productId) {
 }
 
 // API 요청 함수화
-const request = async (req, formData) => {
+const request = async (role, req, formData) => {
   let apiUrl;
 
-  for (const a of formData) {
-    console.log(a);
+  if (role === "admin") {
+    if (req === "POST") {
+      apiUrl = `/api/admin/product/add`;
+    } else if (req === "PUT") {
+      apiUrl = `/api/admin/product/${productId}`;
+    }
+  } else if (role === "seller") {
+    if (req === "POST") {
+      apiUrl = `/api/product/add`;
+    } else if (req === "PUT") {
+      apiUrl = `/api/product/${productId}/update`;
+    }
   }
-
-  req === "POST"
-    ? (apiUrl = "/api/product/add")
-    : (apiUrl = `/api/product/${productId}/update`);
 
   // 상품 추가 또는 수정 요청
   await fetch(`${apiUrl}`, {
@@ -187,8 +193,9 @@ const handleSubmit = async (e) => {
 
   const bodyForm = new FormData(registerProductForm);
   bodyForm.append("keyword", keywords);
+  const role = decodeJWT(localStorage.getItem("token")).role;
 
-  productId ? request("PATCH", bodyForm) : request("POST", bodyForm);
+  productId ? request(role, "PUT", bodyForm) : request(role, "POST", bodyForm);
 };
 
 addKeywordButton.addEventListener("click", handleAddKeyword);
