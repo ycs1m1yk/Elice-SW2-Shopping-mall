@@ -47,7 +47,6 @@ const handleCategoryDelete = async (e) => {
   );
 
   const bodyData = [targetCategory.flat(Infinity)[0]];
-  console.log(bodyData);
 
   await fetch("/api/category/delete", {
     method: "DELETE",
@@ -58,14 +57,16 @@ const handleCategoryDelete = async (e) => {
     body: JSON.stringify({
       categoryIdList: bodyData,
     }),
-  }).then((res) => {
-    if (res.ok) {
+  })
+    .then((res) => res.json())
+    .then((result) => {
+      if (result.result === "error") {
+        location.reload();
+        return alert(result.reason);
+      }
       location.reload();
-      return alert("카테고리가 성공적으로 삭제되었습니다.");
-    }
-    location.reload();
-    alert("카테고리 삭제 중 문제가 발생하였습니다. 다시 시도해주십시오.");
-  });
+      alert("카테고리가 성공적으로 삭제되었습니다.");
+    });
 };
 
 const getDataFromApi = async () => {

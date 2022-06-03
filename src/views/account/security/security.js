@@ -31,10 +31,10 @@ const paintUserInfo = (userInfo) => {
   fullNameInput.value = userInfo.fullName;
 
   // 주소 정보가 있는 경우에만 화면에 표시
-  if (userInfo.address) {
-    postalCodeInput.value = userInfo.address.postalCode;
-    address1Input.value = userInfo.address.address1;
-    address2Input.value = userInfo.address.address2;
+  if (userInfo.address[0]) {
+    postalCodeInput.value = userInfo.address[0].postalCode;
+    address1Input.value = userInfo.address[0].address1;
+    address2Input.value = userInfo.address[0].address2;
   }
 
   // 핸드폰 번호 정보가 있는 경우에만 화면에 표시
@@ -125,11 +125,11 @@ const hadleCompleteButton = async (e) => {
     currentPassword: currentPasswordInput.value,
   };
 
-  const response = await Api.patch("/api/user", editUserInfo); // 회원 정보 수정 요청
+  const response = await Api.put("/api/user", editUserInfo); // 회원 정보 수정 요청
 
   // 회원정보 수정 실패
   if (response.result === "error") {
-    return alert("오류가 발생했습니다. 다시 시도해주십시오.");
+    return alert(response.reason);
   }
 
   // 수정 성공 -> 회원 정보 페이지 라우팅 -> 페이지 다시 그리기
