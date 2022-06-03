@@ -4,6 +4,12 @@ import header from "/components/Header.js";
 
 document.body.insertAdjacentElement("afterbegin", header);
 
+const counts = {
+  ordersCount,
+  prepareCount,
+  deliveryCount,
+  completeCount,
+};
 const ordersContainer = document.querySelector("#ordersContainer");
 const modal = document.querySelector("#modal");
 
@@ -19,10 +25,19 @@ const handleChange = async (e) => {
 
     const status = options[selectedIndex].text;
     const columns = target.closest(".columns");
+    columns.dataset.status = status;
     const { orderId, productId } = columns.dataset;
     await Api.put(`/api/admin/order/${orderId}/${productId}`, {
       status,
     });
+
+    if (status === "배송완료") {
+      const targetButton =
+        target.parentElement.parentElement.nextElementSibling.firstElementChild;
+      targetButton.textContent = "완료";
+    }
+
+    location.reload();
   }
 };
 
@@ -54,10 +69,27 @@ const handleConfirm = async (e) => {
     const targetColumnsElem = document.querySelector(
       `.columns[data-order-id="${orderId}"][data-product-id="${productId}"]`
     );
+
+    const statusCounterMap = {
+      "상품 준비중": "prepareCount",
+      "상품 배송중": "deliveryCount",
+    };
+    statusCounterMap["배송완료"] = "completeCount";
+    const { status } = targetColumnsElem.dataset;
+    counts[statusCounterMap[status]] -= 1;
+    counts.ordersCount -= 1;
+
     targetColumnsElem.remove();
+    updateNav();
   }
 
   modal.classList.toggle("is-active");
+};
+
+const updateNav = () => {
+  [...document.querySelectorAll(".level-item p.title")].forEach((el) => {
+    el.textContent = counts[el.id];
+  });
 };
 
 const addAllElements = async () => {
@@ -83,20 +115,15 @@ const paintNav = (orders) => {
     }, [])
     .flat();
 
-  const ordersCount = entireStatusList.length;
-  const prepareCount = entireStatusList.filter(
+  counts.ordersCount = entireStatusList.length;
+  counts.prepareCount = entireStatusList.filter(
     (el) => el === "상품 준비중"
   ).length;
-  const deliveryCount = entireStatusList.filter(
+  counts.deliveryCount = entireStatusList.filter(
     (el) => el === "상품 배송중"
   ).length;
-  const completeCount = ordersCount - prepareCount - deliveryCount;
-  const counts = {
-    ordersCount,
-    prepareCount,
-    deliveryCount,
-    completeCount,
-  };
+  counts.completeCount =
+    counts.ordersCount - counts.prepareCount - counts.deliveryCount;
 
   [...document.querySelectorAll(".level-item p.title")].forEach((el) => {
     el.textContent = counts[el.id];

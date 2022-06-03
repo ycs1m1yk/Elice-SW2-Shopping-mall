@@ -53,6 +53,24 @@ const paintProductList = (productList) => {
   });
 };
 
+// 카테고리 메뉴 생성 함수
+const paintCategoryMenu = (categoryList) => {
+  const categoryMenu = document.querySelector(".categories");
+
+  categoryList.forEach((category) => {
+    const categoryLi = document.createElement("li");
+    const categoryLink = document.createElement("a");
+
+    categoryLink.classList.add("navbar-item");
+    categoryLink.href = `/product/list?category=${category.name}`;
+    categoryLink.innerText = `${category.name.replace(" Clothes", "")}`;
+    categoryLink.style = "font-size: 24px";
+
+    categoryLi.appendChild(categoryLink);
+    categoryMenu.appendChild(categoryLi);
+  });
+};
+
 // 카테고리에 맞는 상품을 불러오는 API
 const getDataFromApi = async () => {
   const url = new URL(location.href);
@@ -60,7 +78,9 @@ const getDataFromApi = async () => {
 
   // 카테고리에 맞는 상품 리스트 요청
   const productList = await Api.get("/api/product/category", category);
+  const categoryList = await Api.get("/api/category");
 
+  paintCategoryMenu(categoryList);
   paintProductList(productList);
 };
 
