@@ -1,24 +1,23 @@
 import { Router } from "express";
-// 폴더에서 import하면, 자동으로 폴더의 index.js에서 가져옴
 import { loginRequired } from "../middlewares";
 import { productService } from "../services";
 import { upload } from "../middlewares";
 import { contentTypeChecker } from "../utils/content-type-checker";
 const productRouter = Router();
 
-// 전체 상품 가져오기
+// 전체 상품 가져오기 api (아래는 / 이지만, 실제로는 /api/product로 요청해야 함.)
 productRouter.get("/", async function (req, res, next) {
   try {
-    // 전체 사용자 목록을 얻음
+    // 전체 상품 목록을 얻음
     const products = await productService.getProducts();
-    // 사용자 목록(배열)을 JSON 형태로 프론트에 보냄
+    // 상품 목록(배열)을 JSON 형태로 프론트에 보냄
     res.status(200).json(products);
   } catch (error) {
     next(error);
   }
 });
 
-//상품 상세 페이지
+//상품 상세 페이지 api (아래는 /:id 이지만, 실제로는 /api/product/:id로 요청해야 함)
 productRouter.get("/:id", async function (req, res, next) {
   try {
     const productId = req.params.id;
@@ -30,7 +29,21 @@ productRouter.get("/:id", async function (req, res, next) {
   }
 });
 
-//상품 수정 위해 상품 데이터 보내기
+// 카테고리별 상품 목록 api
+productRouter.get("/category/:category", async (req, res, next) => {
+  try {
+    const category = req.params.category;
+
+    // 특정 카테고리에 맞는 상품 목록을 얻음
+    const products = await productService.getProductsByCategory(category);
+    // 상품 목록(배열)을 JSON 형태로 프론트에 보냄
+    res.status(200).json(products);
+  } catch (error) {
+    next(error);
+  }
+});
+
+//상품 수정 위해 상품 데이터 보내기 api (아래는 /:id/update 이지만, 실제로는 /api/product/:id/update로 요청해야 함)
 productRouter.get(
   "/:id/update",
   loginRequired,
@@ -42,7 +55,7 @@ productRouter.get(
         productId,
         userId
       );
-      // 상품 스키마를 JSON 형태로 프론트에 보냄
+      // 상품 데이터를 JSON 형태로 프론트에 보냄
       res.status(200).json(productInfo);
     } catch (error) {
       next(error);
@@ -50,7 +63,7 @@ productRouter.get(
   }
 );
 
-//상품 정보 수정
+//상품 정보 수정 api (아래는 /:id/update 이지만, 실제로는 /api/product/:id/update로 요청해야 함.)
 productRouter.put(
   "/:id/update",
   loginRequired,
@@ -97,7 +110,7 @@ productRouter.put(
   }
 );
 
-// 상품 업로드 api
+// 상품 판매 api (아래는 /add 이지만, 실제로는 /api/product/add로 요청해야 함.)
 productRouter.post(
   "/add",
   upload.single("image-file"),
@@ -118,7 +131,7 @@ productRouter.post(
         detailDescription,
       } = req.body;
 
-      // 위 데이터를 유저 db에 추가하기
+      // 위 데이터를 상품 db에 추가하기
       const newProduct = await productService.addProduct({
         name,
         price,
@@ -132,8 +145,7 @@ productRouter.post(
         userId,
       });
 
-      // 추가된 유저의 db 데이터를 프론트에 다시 보내줌
-      // 물론 프론트에서 안 쓸 수도 있지만, 편의상 일단 보내 줌
+      // 추가된 상품의 db 데이터를 프론트에 다시 보내줌
       res.status(201).json(newProduct);
     } catch (error) {
       next(error);
@@ -141,7 +153,7 @@ productRouter.post(
   }
 );
 
-//상품 판매 삭제 기능
+//상품 판매 삭제
 productRouter.delete("/delete", loginRequired, async function (req, res, next) {
   try {
     contentTypeChecker(req.body);
@@ -153,20 +165,6 @@ productRouter.delete("/delete", loginRequired, async function (req, res, next) {
 
     const deleteProductInfo = await productService.deleteProduct(productIdList);
     res.status(200).json(deleteProductInfo);
-  } catch (error) {
-    next(error);
-  }
-});
-
-// 카테고리에 맞는 상품 api
-productRouter.get("/category/:category", async (req, res, next) => {
-  try {
-    const category = req.params.category;
-
-    // 특정 카테고리에 맞는 상품 목록을 얻음
-    const products = await productService.getProductsByCategory(category);
-    // 상품 목록(배열)을 JSON 형태로 프론트에 보냄
-    res.status(200).json(products);
   } catch (error) {
     next(error);
   }
