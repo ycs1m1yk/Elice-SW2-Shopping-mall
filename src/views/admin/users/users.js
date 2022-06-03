@@ -192,7 +192,7 @@ const handleAuthChange = async (e) => {
   const email = e.target.closest(".orders-item").dataset.email; // 현재 선택한 행(유저)의 이메일
 
   await fetch(`/api/admin/user/${email}`, {
-    method: "PATCH",
+    method: "PUT",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${getToken()}`,
