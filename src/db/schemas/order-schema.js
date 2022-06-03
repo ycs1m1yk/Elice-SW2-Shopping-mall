@@ -6,17 +6,12 @@ const OrderSchema = new Schema(
       type: String,
       required: true,
     },
-    fullName: {
-      type: String,
-      required: true,
-    },
-    phoneNumber: {
-      type: String,
-      required: true,
-    },
     address: {
       type: new Schema(
         {
+          addressName: String,
+          receiverName: String,
+          receiverPhoneNumber: String,
           postalCode: String,
           address1: String,
           address2: String,
@@ -27,7 +22,7 @@ const OrderSchema = new Schema(
       ),
       required: true,
     },
-    requirement: {
+    request: {
       type: String,
       required: false,
       default: "요청사항 없음",
@@ -35,8 +30,14 @@ const OrderSchema = new Schema(
     orderList: [
       new Schema({
         productId: String,
+        title: String,
         quantity: Number,
         price: Number,
+        status: {
+          type: String,
+          required: false,
+          default: "상품 준비중",
+        },
       }),
     ],
     totalPrice: {

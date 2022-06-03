@@ -1,21 +1,26 @@
 import { userModel } from "../db";
+import { productModel } from "../db";
 
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 class UserService {
   // 본 파일의 맨 아래에서, new UserService(userModel) 하면, 이 함수의 인자로 전달됨
-  constructor(userModel) {
+  constructor(userModel, productModel) {
     this.userModel = userModel;
+    this.productModel = productModel;
   }
 
   // 회원가입
   async addUser(userInfo) {
     // 객체 destructuring
     const { email, fullName, password } = userInfo;
-
+    if (!email || !fullName || !password) {
+      throw new Error("Need All Elements in body");
+    }
     // 이메일 중복 확인
     const user = await this.userModel.findByEmail(email);
+
     if (user) {
       throw new Error(
         "이 이메일은 현재 사용중입니다. 다른 이메일을 입력해 주세요."
@@ -30,16 +35,16 @@ class UserService {
     const newUserInfo = { fullName, email, password: hashedPassword };
 
     // db에 저장
-    const createdNewUser = await this.userModel.create(newUserInfo);
-
-    return createdNewUser;
+    return await this.userModel.create(newUserInfo);
   }
 
   // 로그인
   async getUserToken(loginInfo) {
     // 객체 destructuring
     const { email, password } = loginInfo;
-
+    if (!email || !password) {
+      throw new Error("Need All Elements in body");
+    }
     // 우선 해당 이메일의 사용자 정보가  db에 존재하는지 확인
     const user = await this.userModel.findByEmail(email);
     if (!user) {
@@ -76,24 +81,27 @@ class UserService {
     return { token };
   }
 
-  // 사용자 목록을 받음.
-  async getUsers() {
-    const users = await this.userModel.findAll();
-    return users;
+  async getMyInfo(userId) {
+    if (!userId) {
+      throw new Error("Need to login");
+    }
+    return await userModel.findById(userId);
   }
 
   // 유저정보 수정, 현재 비밀번호가 있어야 수정 가능함.
   async setUser(userInfoRequired, toUpdate) {
     // 객체 destructuring
     const { userId, currentPassword } = userInfoRequired;
-
+    const { fullName, password, address, phoneNumber, role } = toUpdate;
+    if (!fullName || !password || !address || !phoneNumber || !role) {
+      throw new Error("Need All Elements in body");
+    }
     // 기본 코드 수정. 유저 정보 존재 확인 및 비밀번호 검증 메소드
     await this.userVerify(userId, currentPassword);
 
     // 이제 드디어 업데이트 시작
 
     // 비밀번호도 변경하는 경우에는, 회원가입 때처럼 해쉬화 해주어야 함.
-    const { password } = toUpdate;
 
     if (password) {
       const newPasswordHash = await bcrypt.hash(password, 10);
@@ -101,7 +109,7 @@ class UserService {
     }
 
     // 업데이트 진행
-    let user = await this.userModel.update({
+    const user = await this.userModel.update({
       userId,
       update: toUpdate,
     });
@@ -109,15 +117,34 @@ class UserService {
     return user;
   }
 
+  async setUserAddress(userId, address) {
+    const { addressName, postalCode, address1, address2 } = address;
+    if (!addressName || !postalCode || !address1 || !address2) {
+      throw new Error("주소를 전부 입력해 주세요.");
+    }
+    const userInfo = await this.userModel.findById(userId);
+    if (!userInfo) {
+      throw new Error("없는 사용자 입니다.");
+    }
+    const newAddressArray = [{ addressName, postalCode, address1, address2 }];
+    const addressUpdate = { $push: { address: newAddressArray } };
+    const updatedUser = await this.userModel.update({
+      userId,
+      update: addressUpdate,
+    });
+    if (!updatedUser) {
+      throw new Error("배송지가 정상적으로 추가되지 않았습니다.");
+    }
+    return updatedUser;
+  }
+
   async deleteUser(userInfoRequired) {
     const { userId, currentPassword } = userInfoRequired;
-    console.log("user-service", userId);
 
     // 기본 코드 수정. 유저 정보 존재 확인 및 비밀번호 검증 메소드
     await this.userVerify(userId, currentPassword);
 
-    let user = await this.userModel.deleteById({ userId });
-    return user;
+    return await this.userModel.deleteById(userId);
   }
 
   async userVerify(userId, currentPassword) {
@@ -133,6 +160,7 @@ class UserService {
 
     // 비밀번호 일치 여부 확인
     const correctPasswordHash = user.password;
+
     const isPasswordCorrect = await bcrypt.compare(
       currentPassword,
       correctPasswordHash
@@ -144,8 +172,15 @@ class UserService {
       );
     }
   }
+
+  async exceptPwd(userInfo) {
+    return await (({ password, ...o }) => o)(userInfo);
+  }
+
+  //유저별 판매 목록 조회
+  async getProductsByUserId(userId) {
+    return await this.productModel.findByUserId(userId);
+  }
 }
 
-const userService = new UserService(userModel);
-
-export { userService };
+export const userService = new UserService(userModel, productModel);

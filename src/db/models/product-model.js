@@ -4,44 +4,41 @@ import { ProductSchema } from "../schemas/product-schema";
 const Product = model("products", ProductSchema);
 
 export class ProductModel {
-  async findByName(productName) {
-    const product = await Product.findOne({ name: productName });
-    return product;
+  async findByName(name) {
+    return await Product.findOne({ name });
   }
 
-  async findById(productId) {
-    const product = await Product.findOne({ _id: productId });
-    return product;
+  async findById(_id) {
+    return await Product.findOne({ _id });
   }
 
   async findByCategory(category) {
-    const product = await Product.find({ category });
-    return product;
-  }
-
-  async create(productInfo) {
-    const createdNewProduct = await Product.create(productInfo);
-    return createdNewProduct;
+    return await Product.find({ category });
   }
 
   async findAll() {
-    const products = await Product.find({});
-    return products;
+    return await Product.find({});
+  }
+
+  async findByUserId(userId) {
+    return await Product.find({ userId });
+  }
+
+  async create(productInfo) {
+    return await Product.create(productInfo);
   }
 
   async update({ productId, update }) {
     const filter = { _id: productId };
     const option = { returnOriginal: false };
 
-    const updatedProduct = await Product.findOneAndUpdate(
-      filter,
-      update,
-      option
-    );
-    return updatedProduct;
+    return await Product.findOneAndUpdate(filter, update, option);
+  }
+
+  async deleteById({ productId }) {
+    const filter = { _id: productId };
+    return await Product.findOneAndDelete(filter);
   }
 }
 
-const productModel = new ProductModel();
-
-export { productModel };
+export const productModel = new ProductModel();

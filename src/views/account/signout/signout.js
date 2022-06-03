@@ -3,14 +3,18 @@ import header from "/components/Header.js";
 
 document.body.insertAdjacentElement("afterbegin", header);
 
-const submitButton = document.getElementById("submitButton");
+const registerForm = document.getElementById("registerUserForm");
 const modalBox = document.getElementById("modal");
 const modalButton = document.getElementById("deleteCompleteButton");
-let password = ""; // 현재 비밀번호
+const passwordInput = document.getElementById("passwordInput");
 
-const handleSubmitButtonClick = (e) => {
+const formData = new FormData();
+
+passwordInput.focus();
+
+const handleSubmit = (e) => {
   e.preventDefault();
-  password = e.target.form[0].value;
+  formData.append("password", e.target[0].value);
   // 모달 창 재확인
   modalBox.classList.toggle("is-active");
 };
@@ -18,35 +22,28 @@ const handleSubmitButtonClick = (e) => {
 const handleModalButtonClick = async (e) => {
   e.preventDefault();
   const token = localStorage.getItem("token");
-  const payload = decodeJWT(token);
-  const userId = payload.userId;
 
-  // console.log(userId);
-  // console.log(password);
-
-  await fetch(`/api/users/${userId}`, {
+  await fetch("/api/user", {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
       Authorization: "Bearer " + token,
     },
     body: JSON.stringify({
-      currentPassword: password,
+      currentPassword: formData.get("password"),
     }),
-  }).then((res) => {
-    // 삭제 완료
-    if (res.ok) {
+  })
+    .then((res) => res.json())
+    .then((result) => {
+      if (result.result === "error") {
+        window.location.href = "/account/signout";
+        return alert(result.reason);
+      }
       alert("회원 탈퇴가 정상적으로 이루어졌습니다.");
       window.location.href = "/";
       removeToken();
-      return;
-    }
-
-    // 삭제가 안됐을 시 다시 입력할 수 있게끔
-    alert("비밀번호를 다시 입력해주세요.");
-    window.location.href = "/account/signout";
-  });
+    });
 };
 
-submitButton.addEventListener("click", handleSubmitButtonClick);
+registerForm.addEventListener("submit", handleSubmit);
 modalButton.addEventListener("click", handleModalButtonClick);

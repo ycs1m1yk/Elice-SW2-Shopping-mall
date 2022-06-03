@@ -44,198 +44,314 @@
           </div>
         </div>
 
-        <div class="tile is-ancestor">
-          <div class="tile is-parent cart-products">
-            <div class="box delivery-info">
-              <!-- 배송지 정보 -->
-              <p class="subtitle is-4">배송지정보</p>
-              <div class="field is-horizontal">
-                <div class="field-label is-normal">
-                  <label class="label" for="receiverName">이름</label>
+        <form class="order-form" id="order-form">
+          <div class="tile is-ancestor">
+            <div class="tile is-parent cart-products">
+              <div class="box delivery-info">
+                <!-- 배송지 정보 -->
+                <div class="field is-horizontal address-info">
+                  <p class="subtitle is-4">배송지정보</p>
+                  <input
+                    type="radio"
+                    name="address"
+                    id="customAddress"
+                    checked
+                  />
+                  <label class="address-choice" for="customAddress"
+                    >직접 입력
+                  </label>
+                  <button
+                    type="button"
+                    class="button is-small is-light is-success"
+                    id="addressSaveButton"
+                  >
+                    배송지 저장
+                  </button>
+                  <button
+                    type="button"
+                    class="button is-small is-light is-danger is-hidden"
+                    id="addressDeleteButton"
+                    data-address-name=""
+                  >
+                    배송지 삭제
+                  </button>
                 </div>
-                <div class="field-body">
-                  <div class="field">
-                    <p class="control">
-                      <input
-                        class="input"
-                        id="receiverName"
-                        type="text"
-                        placeholder="받는 분 이름을 입력해 주세요."
-                        autocomplete="on"
-                      />
-                    </p>
+                <div class="field is-horizontal">
+                  <div class="field-label is-normal">
+                    <label class="label" for="receiverName">이름</label>
+                  </div>
+                  <div class="field-body">
+                    <div class="field">
+                      <p class="control">
+                        <input
+                          class="input"
+                          id="receiverName"
+                          name="receiverName"
+                          type="text"
+                          placeholder="받는 분 이름을 입력해 주세요."
+                          autocomplete="on"
+                        />
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-
-              <div class="field is-horizontal">
-                <div class="field-label is-normal">
-                  <label class="label" for="receiverPhoneNumber">연락처</label>
-                </div>
-                <div class="field-body">
-                  <div class="field">
-                    <p class="control">
-                      <input
-                        class="input"
-                        id="receiverPhoneNumber"
-                        type="number"
-                        placeholder="- 없이 입력해 주세요."
-                        autocomplete="on"
-                      />
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div class="field is-horizontal">
-                <div class="field-label is-normal">
-                  <label class="label" for="address2">주소</label>
-                </div>
-                <div class="field-body search">
-                  <div class="field">
-                    <p class="control">
-                      <input
-                        class="input"
-                        id="postalCode"
-                        type="text"
-                        placeholder="주소찾기를 클릭해 주세요."
-                        readonly
-                      />
-                    </p>
-                  </div>
-                  <div>
-                    <button
-                      class="button is-light is-hovered"
-                      id="searchAddressButton"
+                <div class="field is-horizontal">
+                  <div class="field-label is-normal">
+                    <label class="label" for="receiverPhoneNumber"
+                      >연락처</label
                     >
-                      주소찾기
-                    </button>
+                  </div>
+                  <div class="field-body">
+                    <div class="field">
+                      <p class="control">
+                        <input
+                          class="input"
+                          id="receiverPhoneNumber"
+                          name="receiverPhoneNumber"
+                          type="number"
+                          placeholder="- 없이 입력해 주세요."
+                          autocomplete="on"
+                        />
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="field is-horizontal">
+                  <div class="field-label is-normal">
+                    <label class="label" for="address2">주소</label>
+                  </div>
+                  <div class="field-body search">
+                    <div class="field">
+                      <p class="control">
+                        <input
+                          class="input"
+                          id="postalCode"
+                          name="postalCode"
+                          type="text"
+                          placeholder="주소찾기를 클릭해 주세요."
+                          readonly
+                        />
+                      </p>
+                    </div>
+                    <div>
+                      <button
+                        type="button"
+                        class="button is-light is-hovered"
+                        id="searchAddressButton"
+                      >
+                        주소찾기
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="field is-horizontal">
+                  <div class="field-label is-normal no-label"></div>
+                  <div class="field-body">
+                    <div class="field">
+                      <p class="control">
+                        <input
+                          class="input"
+                          id="address1"
+                          name="address1"
+                          type="text"
+                          placeholder=""
+                          autocomplete="on"
+                          readonly
+                        />
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="field is-horizontal">
+                  <div class="field-label is-normal no-label"></div>
+                  <div class="field-body">
+                    <div class="field">
+                      <p class="control">
+                        <input
+                          class="input"
+                          id="address2"
+                          name="address2"
+                          type="text"
+                          placeholder=""
+                          autocomplete="on"
+                        />
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="field is-horizontal">
+                  <div class="field-label is-normal">
+                    <label class="label" for="requestSelectBox">요청사항</label>
+                  </div>
+                  <div class="field-body">
+                    <div class="select">
+                      <select id="requestSelectBox" name="request">
+                        <option value="0">
+                          배송시 요청사항을 선택해 주세요.
+                        </option>
+                        <option value="1" class="select-option">
+                          직접 수령하겠습니다.
+                        </option>
+                        <option value="2" class="select-option">
+                          배송 전 연락바랍니다.
+                        </option>
+                        <option value="3" class="select-option">
+                          부재 시 경비실에 맡겨주세요.
+                        </option>
+                        <option value="4" class="select-option">
+                          부재 시 문 앞에 놓아주세요.
+                        </option>
+                        <option value="5" class="select-option">
+                          부재 시 택배함에 넣어주세요.
+                        </option>
+                        <option value="6" class="select-option">
+                          직접 입력
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="field is-horizontal custom-request"
+                  id="customRequestContainer"
+                >
+                  <div class="field-label is-normal no-label"></div>
+                  <div class="field-body">
+                    <div class="field">
+                      <p class="control">
+                        <input
+                          class="input"
+                          id="customRequest"
+                          name="customRequest"
+                          type="text"
+                          maxlength="50"
+                          placeholder="최대 50자 입력이 가능합니다."
+                          autocomplete="on"
+                        />
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
-
-              <div class="field is-horizontal">
-                <div class="field-label is-normal no-label"></div>
-                <div class="field-body">
-                  <div class="field">
-                    <p class="control">
-                      <input
-                        class="input"
-                        id="address1"
-                        type="text"
-                        placeholder=""
-                        autocomplete="on"
-                        readonly
-                      />
-                    </p>
+            </div>
+            <!-- 주문 정보 요약 -->
+            <div class="tile is-parent tile-order-summary">
+              <div class="box order-summary">
+                <div class="header">
+                  <p>결제정보</p>
+                </div>
+                <div class="order-info">
+                  <div class="info">
+                    <p>주문상품</p>
+                    <p class="products-title" id="productsTitle"></p>
+                  </div>
+                  <div class="info">
+                    <p>상품총액</p>
+                    <p id="productsTotal"></p>
+                  </div>
+                  <div class="info">
+                    <p>배송비</p>
+                    <p id="deliveryFee"></p>
                   </div>
                 </div>
-              </div>
-
-              <div class="field is-horizontal">
-                <div class="field-label is-normal no-label"></div>
-                <div class="field-body">
-                  <div class="field">
-                    <p class="control">
-                      <input
-                        class="input"
-                        id="address2"
-                        type="text"
-                        placeholder=""
-                        autocomplete="on"
-                      />
-                    </p>
-                  </div>
+                <div class="total">
+                  <p class="total-label">총 결제금액</p>
+                  <p class="total-price" id="orderTotal"></p>
                 </div>
-              </div>
-
-              <div class="field is-horizontal">
-                <div class="field-label is-normal">
-                  <label class="label" for="requestSelectBox">요청사항</label>
-                </div>
-                <div class="field-body">
-                  <div class="select">
-                    <select id="requestSelectBox">
-                      <option value="0">
-                        배송시 요청사항을 선택해 주세요.
-                      </option>
-                      <option value="1" class="select-option">
-                        직접 수령하겠습니다.
-                      </option>
-                      <option value="2" class="select-option">
-                        배송 전 연락바랍니다.
-                      </option>
-                      <option value="3" class="select-option">
-                        부재 시 경비실에 맡겨주세요.
-                      </option>
-                      <option value="4" class="select-option">
-                        부재 시 문 앞에 놓아주세요.
-                      </option>
-                      <option value="5" class="select-option">
-                        부재 시 택배함에 넣어주세요.
-                      </option>
-                      <option value="6" class="select-option">직접 입력</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                class="field is-horizontal custom-request"
-                id="customRequestContainer"
-              >
-                <div class="field-label is-normal no-label"></div>
-                <div class="field-body">
-                  <div class="field">
-                    <p class="control">
-                      <input
-                        class="input"
-                        id="customRequest"
-                        type="text"
-                        maxlength="50"
-                        placeholder="최대 50자 입력이 가능합니다."
-                        autocomplete="on"
-                      />
-                    </p>
-                  </div>
+                <div class="purchase">
+                  <button
+                    type="submit"
+                    class="button is-info"
+                    id="checkoutButton"
+                  >
+                    결제하기
+                  </button>
                 </div>
               </div>
             </div>
           </div>
-
-          <!-- 주문 정보 요약 -->
-          <div class="tile is-parent tile-order-summary">
-            <div class="box order-summary">
-              <div class="header">
-                <p>결제정보</p>
-              </div>
-              <div class="order-info">
-                <div class="info">
-                  <p>주문상품</p>
-                  <p class="products-title" id="productsTitle"></p>
-                </div>
-                <div class="info">
-                  <p>상품총액</p>
-                  <p id="productsTotal"></p>
-                </div>
-                <div class="info">
-                  <p>배송비</p>
-                  <p id="deliveryFee"></p>
-                </div>
-              </div>
-              <div class="total">
-                <p class="total-label">총 결제금액</p>
-                <p class="total-price" id="orderTotal"></p>
-              </div>
-              <div class="purchase">
-                <button class="button is-info" id="checkoutButton">
-                  결제하기
-                </button>
-              </div>
+        </form>
+      </div>
+    </section>
+    <div
+      id="modal"
+      class="modal"
+      data-postal-code=""
+      data-address1=""
+      data-address2=""
+    >
+      <div class="modal-background" id="modalBackground"></div>
+      <div class="modal-content">
+        <div class="box">
+          <div class="field-label is-normal">
+            <label class="label" for="addressName">배송지명</label>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <p class="control">
+                <input
+                  class="input"
+                  id="addressNameInput"
+                  name="addressName"
+                  type="text"
+                  placeholder="배송지명을 입력해 주세요."
+                  autocomplete="on"
+                />
+              </p>
             </div>
+          </div>
+          <div>
+            <button
+              class="button ml-2"
+              id="submitButton"
+              data-action="submit"
+              aria-label="close"
+            >
+              제출
+            </button>
           </div>
         </div>
       </div>
-    </section>
+      <button
+        class="modal-close is-large"
+        id="modalCloseButton"
+        data-action="close"
+        aria-label="close"
+      ></button>
+    </div>
+    <div id="modal2" class="modal" data-target-address-name="">
+      <div class="modal-background" id="modal2Background"></div>
+      <div class="modal-content">
+        <div class="box">
+          <p class="mr-5">배송지를 삭제하시겠습니까?</p>
+
+          <div class="buttons">
+            <button
+              class="button mt-5"
+              id="deleteCompleteButton"
+              data-action="delete"
+              aria-label="close"
+            >
+              네
+            </button>
+            <button
+              class="button is-primary mt-5"
+              id="deleteCancelButton"
+              data-action="close"
+              aria-label="close"
+            >
+              아니오
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <button
+        class="modal-close is-large"
+        id="modal2CloseButton"
+        data-action="close"
+        aria-label="close"
+      ></button>
+    </div>
   </body>
 </html>

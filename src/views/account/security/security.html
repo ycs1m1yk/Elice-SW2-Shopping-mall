@@ -21,6 +21,7 @@
       src="https://kit.fontawesome.com/7630448495.js"
       crossorigin="anonymous"
     ></script>
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <!-- 커스텀 css, js -->
     <link rel="stylesheet" href="security.css" />
     <script src="security.js" type="module" defer></script>
@@ -29,9 +30,7 @@
     <section class="section">
       <div class="container">
         <div class="block account-header">
-          <h1 class="subtitle is-4" id="securityTitle">
-            회원정보 관리 (test@test.com)
-          </h1>
+          <h1 class="subtitle is-4" id="securityTitle"></h1>
         </div>
         <div class="menu-container">
           <div class="form-container">
@@ -150,7 +149,7 @@
                         class="input"
                         id="address2Input"
                         type="text"
-                        placeholder=""
+                        placeholder="상세주소"
                         autocomplete="on"
                         disabled=""
                       />

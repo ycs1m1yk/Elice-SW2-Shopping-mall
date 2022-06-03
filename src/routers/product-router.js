@@ -1,137 +1,108 @@
 import { Router } from "express";
-import is from "@sindresorhus/is";
-// 폴더에서 import하면, 자동으로 폴더의 index.js에서 가져옴
 import { loginRequired } from "../middlewares";
 import { productService } from "../services";
 import { upload } from "../middlewares";
+import { contentTypeChecker } from "../utils/content-type-checker";
 const productRouter = Router();
 
-// 전체 상품 가져오기
-productRouter.get("/list", async function (req, res, next) {
+// 전체 상품 목록 조회
+productRouter.get("/", async function (req, res, next) {
   try {
-    // 전체 사용자 목록을 얻음
+    // db에서 전체 상품 목록 가져옴
     const products = await productService.getProducts();
-    // 사용자 목록(배열)을 JSON 형태로 프론트에 보냄
+    // 상품 목록(배열)을 JSON 형태로 프론트에 보냄
     res.status(200).json(products);
   } catch (error) {
     next(error);
   }
 });
 
-//상품 상세 페이지
-productRouter.get("/:productId", async function (req, res, next) {
+//상품 상세정보 조회
+productRouter.get("/:id", async function (req, res, next) {
   try {
-    const productId = req.params.productId;
-    const productInfo = await productService.getProductById(productId);
-    // 상품 스키마를 JSON 형태로 프론트에 보냄
+    const productId = req.params.id;
+    //db에서 상품 정보를 가져옴
+    const productInfo = await productService.getProductByProductId(productId);
+    // 상품 정보를 JSON 형태로 프론트에 보냄
     res.status(200).json(productInfo);
   } catch (error) {
     next(error);
   }
 });
 
-//상품 수정 위해 상품 데이터 보내기
-productRouter.get("/:productId/update", async function (req, res, next) {
+// 카테고리별 상품 목록 조회
+productRouter.get("/category/:category", async (req, res, next) => {
   try {
-    const productId = req.params.productId;
-    const productInfo = await productService.getProductById(productId);
-    // 상품 스키마를 JSON 형태로 프론트에 보냄
-    res.status(200).json(productInfo);
+    const category = req.params.category;
+
+    // 특정 카테고리에 맞는 상품 목록을 얻음
+    const products = await productService.getProductsByCategory(category);
+    // 상품 목록(배열)을 JSON 형태로 프론트에 보냄
+    res.status(200).json(products);
   } catch (error) {
     next(error);
   }
 });
 
-productRouter.patch(
-  "/:productId/update",
-  upload.single("image-file"),
+//상품 수정 위해 상품 데이터 조회
+productRouter.get(
+  "/:id/update",
+  loginRequired,
   async function (req, res, next) {
     try {
-      if (is.emptyObject(req.body)) {
-        throw new Error(
-          "headers의 Content-Type을 application/json으로 설정해주세요"
-        );
-      }
-
+      // 토큰에서 userId 추출
+      const userId = req.currentUserId;
       const productId = req.params.id;
-      const img = req.file.location;
-      const name = req.body.name;
-      const price = req.body.price;
-      const category = req.body.category;
-      const quantity = req.body.quantity;
-      const size = req.body.size;
-      const brandName = req.body.brandName;
-      const keyword = req.body.keyword;
-      const shortDescription = req.body.shortDescription;
-      const detailDescription = req.body.detailDescription;
-
-      const toUpdate = {
-        ...(img && { img }),
-        ...(name && { name }),
-        ...(price && { price }),
-        ...(category && { category }),
-        ...(quantity && { quantity }),
-        ...(size && { size }),
-        ...(brandName && { brandName }),
-        ...(keyword && { keyword }),
-        ...(shortDescription && { shortDescription }),
-        ...(detailDescription && { detailDescription }),
-      };
-
-      // 사용자 정보를 업데이트함.
-      const updatedProductInfo = await productService.setProduct(
+      // db에서 user가 등록한 상품을 가져옴
+      const productInfo = await productService.getProductForUpdate(
         productId,
-        toUpdate
+        userId
       );
-      res.status(200).json(updatedProductInfo);
+      // 상품 데이터를 JSON 형태로 프론트에 보냄
+      res.status(200).json(productInfo);
     } catch (error) {
       next(error);
     }
   }
 );
 
-// 상품 업로드 api
+// 상품 판매
 productRouter.post(
   "/add",
   upload.single("image-file"),
+  loginRequired,
   async (req, res, next) => {
     try {
-      if (is.emptyObject(req.body)) {
-        throw new Error(
-          "headers의 Content-Type을 application/json으로 설정해주세요"
-        );
-      }
+      // Content-Type 체크
+      contentTypeChecker(req.body);
+      const userId = req.currentUserId;
+      const { location: img } = req.file;
+      const {
+        name,
+        price,
+        category,
+        quantity,
+        brandName,
+        keyword,
+        shortDescription,
+        detailDescription,
+      } = req.body;
 
-      const img = req.file.location;
-
-      const name = req.body.name;
-      const price = req.body.price;
-      const category = req.body.category;
-      const quantity = req.body.quantity;
-      const size = req.body.size;
-      const brandName = req.body.brandName;
-      const keyword = req.body.keyword;
-      const shortDescription = req.body.shortDescription;
-      const detailDescription = req.body.detailDescription;
-
-      console.log(name);
-
-      // 위 데이터를 유저 db에 추가하기
+      // 위 데이터를 상품 db에 추가
       const newProduct = await productService.addProduct({
         name,
         price,
         img,
         category,
         quantity,
-        size,
         brandName,
         keyword,
         shortDescription,
         detailDescription,
+        userId,
       });
 
-      // 추가된 유저의 db 데이터를 프론트에 다시 보내줌
-      // 물론 프론트에서 안 쓸 수도 있지만, 편의상 일단 보내 줌
+      // 추가된 상품의 데이터를 JSON 형태로 프론트에 보냄
       res.status(201).json(newProduct);
     } catch (error) {
       next(error);
@@ -139,14 +110,68 @@ productRouter.post(
   }
 );
 
-// 카테고리에 맞는 상품 api
-productRouter.get("/list/category/:category", async (req, res, next) => {
+//상품 정보 수정
+productRouter.put(
+  "/:id/update",
+  loginRequired,
+  upload.single("image-file"),
+  async function (req, res, next) {
+    try {
+      contentTypeChecker(req.body);
+      const userId = req.currentUserId;
+      const productId = req.params.id;
+      const { location: img } = req.file;
+      const {
+        name,
+        price,
+        category,
+        quantity,
+        brandName,
+        keyword,
+        shortDescription,
+        detailDescription,
+      } = req.body;
+
+      const toUpdate = {
+        ...(img && { img }),
+        ...(name && { name }),
+        ...(price && { price }),
+        ...(category && { category }),
+        ...(quantity && { quantity }),
+        ...(brandName && { brandName }),
+        ...(keyword && { keyword }),
+        ...(shortDescription && { shortDescription }),
+        ...(detailDescription && { detailDescription }),
+      };
+
+      // 상품 정보를 업데이트함.
+      const updatedProductInfo = await productService.setProduct(
+        userId,
+        productId,
+        toUpdate
+      );
+      // 업데이트한 상품 정보를 JSON 형태로 프론트에 보냄
+      res.status(200).json(updatedProductInfo);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+//상품 판매 삭제
+productRouter.delete("/delete", loginRequired, async function (req, res, next) {
   try {
-    const category = req.params.category;
-    // 특정 카테고리에 맞는 상품 목록을 얻음
-    const products = await productService.getProductsByCategory(category);
-    // 상품 목록(배열)을 JSON 형태로 프론트에 보냄
-    res.status(200).json(products);
+    // Content-Type 체크
+    contentTypeChecker(req.body);
+
+    const productIdList = req.body.productIdList;
+    const userId = req.currentUserId;
+    // 판매자 계정 검증
+    await productService.checkProductsForDelete(userId, productIdList);
+    // db에 회원 정보 삭제
+    const deleteProductInfo = await productService.deleteProduct(productIdList);
+    // 상품 삭제 정보 데이터를 JSON 형태로 프론트에 보냄
+    res.status(200).json(deleteProductInfo);
   } catch (error) {
     next(error);
   }

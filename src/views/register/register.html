@@ -59,6 +59,13 @@
               autocomplete="on"
             />
           </div>
+          <button
+            style="margin-top: 1rem"
+            class="button is-primary"
+            id="emailConfirmButton"
+          >
+            인증번호 받기
+          </button>
         </div>
 
         <div class="field">
@@ -90,6 +97,39 @@
         <button class="button is-primary is-fullwidth" id="submitButton">
           회원가입하기
         </button>
+
+        <div id="modal" class="modal">
+          <div class="modal-background" id="modalBackground"></div>
+          <div style="overflow-y: hidden" class="modal-content">
+            <label style="color: white" class="label" for="emailConfirmInput"
+              >인증 번호 입력</label
+            >
+            <div class="control">
+              <input
+                class="input"
+                id="emailConfirmInput"
+                type="password"
+                autocomplete="off"
+              />
+            </div>
+
+            <div class="buttons">
+              <button
+                class="button mt-5"
+                id="emailSubmitButton"
+                aria-label="close"
+              >
+                제출
+              </button>
+            </div>
+          </div>
+
+          <button
+            class="modal-close is-large"
+            id="modalCloseButton"
+            aria-label="close"
+          ></button>
+        </div>
       </form>
     </div>
   </body>

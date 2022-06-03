@@ -23,25 +23,23 @@ const ProductSchema = new Schema(
       type: String,
       required: true,
     },
-    size: {
-      type: Number,
-      required: false,
-      default: 0,
-    },
     brandName: {
       type: String,
-      required: false,
-      default: null,
+      required: true,
     },
     keyword: {
       type: [String],
       required: false,
     },
-    shortDecription: {
+    shortDescription: {
       type: String,
       required: true,
     },
-    detailDecription: {
+    detailDescription: {
+      type: String,
+      required: true,
+    },
+    userId: {
       type: String,
       required: true,
     },

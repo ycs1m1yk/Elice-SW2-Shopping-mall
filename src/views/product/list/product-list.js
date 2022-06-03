@@ -1,58 +1,55 @@
 import * as Api from "/api.js";
 import header from "/components/Header.js";
 
-/*
-Grid 형태로 화면에 출력
-
-예시 이미지: "https://images.unsplash.com/photo-1653257340129-148be674836c?crop=entropy&cs=tinysrgb&fm=jpg&ixlib=rb-1.2.1&q=80&raw_url=true&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=300"
-
-Image
-title
-shortDescription
-price
-brandName 
-[keyword]
-
-참조: http://www.leelin.co.kr/shop/shopbrand.html?type=X&xcode=026
-*/
-
 document.body.insertAdjacentElement("afterbegin", header);
 const producItemContainer = document.getElementById("producItemContainer"); // API를 통해 호출된 데이터로 만든 엘리먼트가 추가될 엘리먼트
 
 const paintProductList = (productList) => {
-  // console.log(productList);
-  productList.map((product, index) => {
-    const productLink = document.createElement("div"); // 포스터 눌렀을 때 제품 상세 페이지로 이동
-    const productImage = document.createElement("img"); // product.img
-    const productTitle = document.createElement("div"); // product.name
-    const productDesc = document.createElement("div"); // product.shortDescription
-    const productKeyword = document.createElement("span"); // product.keyword[]
-    const productBrand = document.createElement("div"); // product.brandName
-    const productPrice = document.createElement("div"); // product.price;
+  productList.forEach((product) => {
+    let itemCard = document.createElement("a");
+    let tags = document.createElement("div");
 
-    // 포스터 이미지
-    productImage.style.backgroundImage =
-      "url('https://images.unsplash.com/photo-1653257340129-148be674836c?crop=entropy&cs=tinysrgb&fm=jpg&ixlib=rb-1.2.1&q=80&raw_url=true&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=300')";
+    tags.id = "tagContainer";
+    itemCard.classList.add("card");
 
-    // 상품 정보
-    productTitle.innerText = product.name;
-    productDesc.innerText = product.shortDescription;
-    productBrand.innerText = product.brandName;
-    productPrice.innerText = product.price;
+    itemCard.href = `/product/detail/?id=${product._id}`;
 
-    productLink.append(
-      productImage,
-      productTitle,
-      productDesc,
-      productPrice,
-      productBrand
-    );
+    itemCard.innerHTML = `
+    <div class="card-image">
+      <figure class="image is-4by3">
+        <img src="${product.img}" alt="Placeholder image">
+      </figure>
+    </div>
+    <div class="card-content">
+      <div class="media">
+        <div class="media-left">
+          
+        </div>
+        <div class="media-content">
+          <p class="title is-4">${product.name}</p>
+          <p class="subtitle is-6">${product.shortDescription}</p>
+        </div>
+      </div>
 
-    producItemContainer.append(productLink);
-    productLink.onclick = () => {
-      window.location.href = `/product/detail/?id=${product._id}`;
-    };
-    productLink.style.cursor = "pointer";
+      <div class="content${product._id}">
+        <div style="margin-bottom: 1rem" id="itemPrice"><b>가격: ${product.price.toLocaleString()}원</b></div>
+      </div>
+    </div>
+    `;
+
+    // 상품 키워드 태그 추가
+    product.keyword.forEach((keyword) => {
+      let tag = document.createElement("span");
+
+      tag.classList.add("tag");
+      tag.classList.add("is-sucess");
+      tag.innerText = keyword;
+
+      tags.append(tag);
+    });
+
+    producItemContainer.append(itemCard);
+    document.querySelector(`.content${product._id}`).append(tags);
   });
 };
 
@@ -62,9 +59,8 @@ const getDataFromApi = async () => {
   const category = url.searchParams.get("category"); // 현재 선택한 카테고리
 
   // 카테고리에 맞는 상품 리스트 요청
-  const productList = await Api.get("/api/product/list/category", category);
+  const productList = await Api.get("/api/product/category", category);
 
-  // TODO: API를 통해 받아온 모든 상품들을 순회하면서 동적으로 producItemContainer에 추가
   paintProductList(productList);
 };
 

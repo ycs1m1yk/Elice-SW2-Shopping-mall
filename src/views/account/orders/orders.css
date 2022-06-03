@@ -29,12 +29,27 @@
   text-align: center
 }
 
+
 .orders-item:not(:last-child) {
   border-bottom: 1px solid #bbb
 }
 
-.order-summary {
+.orders-item>div {
+  display: flex
+}
+
+.orders-item>div>p {
+  flex-grow: 1;
+  align-self: center
+}
+
+.product-info,
+.order-info {
   white-space: pre-line
+}
+
+.order-status {
+  margin-bottom: 5px
 }
 
 .modal .box {

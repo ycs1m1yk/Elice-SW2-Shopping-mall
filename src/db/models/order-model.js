@@ -5,34 +5,35 @@ const Order = model("orders", OrderSchema);
 
 export class OrderModel {
   async findByUserId(userId) {
-    const order = await Order.find({ userId });
-    return order;
+    return await Order.find({ userId });
   }
 
-  async findByOrderId(orderId) {
-    console.log("파인드전", orderId);
-    const order = await Order.findOne({ _id: orderId });
-    console.log("파인드후", order._id);
-    return order;
+  async findById(_id) {
+    return await Order.findOne({ _id });
   }
 
   async create(orderInfo) {
-    const createdNewOrder = await Order.create(orderInfo);
-    return createdNewOrder;
+    return await Order.create(orderInfo);
+  }
+
+  async update({ orderId, update }) {
+    const filter = { _id: orderId };
+    const option = { returnOriginal: false };
+
+    return await Order.findOneAndUpdate(filter, update, option);
+  }
+
+  async updateStatus({ findCondition, update }) {
+    return await Order.findOneAndUpdate(findCondition, update);
   }
 
   async findAll() {
-    const orders = await Order.find({});
-    return orders;
+    return await Order.find({});
   }
 
-  async deleteByProductId({ productId }) {
-    const filter = { _id: productId };
-    const deleteProduct = await Order.findOneAndDelete(filter);
-    return deleteProduct;
+  async deleteById(_id) {
+    return await Order.findOneAndDelete({ _id });
   }
 }
 
-const orderModel = new OrderModel();
-
-export { orderModel };
+export const orderModel = new OrderModel();
