@@ -11,12 +11,20 @@ class UserService {
     this.productModel = productModel;
   }
 
+  //유저별 판매 목록 조회
+  async getProductsByUserId(userId) {
+    const products = await this.productModel.findByUserId(userId);
+    if (!products) {
+      throw new Error("판매 목록을 조회할 수 없습니다.");
+    }
+    return products;
+  }
+
   // 회원가입
   async addUser(userInfo) {
-    // 객체 destructuring
     const { email, fullName, password } = userInfo;
     if (!email || !fullName || !password) {
-      throw new Error("Need All Elements in body");
+      throw new Error("모든 정보를 입력해 주세요.");
     }
     // 이메일 중복 확인
     const user = await this.userModel.findByEmail(email);
@@ -34,16 +42,19 @@ class UserService {
 
     const newUserInfo = { fullName, email, password: hashedPassword };
 
-    // db에 저장
-    return await this.userModel.create(newUserInfo);
+    // db에 새로운 회원 정보 저장
+    const newUser = await this.userModel.create(newUserInfo);
+    if (!newUser) {
+      throw new Error("회원가입이 정상적으로 처리되지 않았습니다.");
+    }
+    return newUser;
   }
 
-  // 로그인
+  // 로그인 및 토큰 발급
   async getUserToken(loginInfo) {
-    // 객체 destructuring
     const { email, password } = loginInfo;
     if (!email || !password) {
-      throw new Error("Need All Elements in body");
+      throw new Error("이메일 혹은 비밀번호를 입력해 주세요.");
     }
     // 우선 해당 이메일의 사용자 정보가  db에 존재하는지 확인
     const user = await this.userModel.findByEmail(email);
@@ -73,35 +84,39 @@ class UserService {
     // 로그인 성공 -> JWT 웹 토큰 생성
     const secretKey = process.env.JWT_SECRET_KEY || "secret-key";
 
-    // 2개 프로퍼티를 jwt 토큰에 담음
+    // userId와 role (일반 회원, 판매자, 관리자)을 토큰에 담아 발급한다.
     const token = jwt.sign({ userId: user._id, role: user.role }, secretKey, {
       expiresIn: "1h", // token 1시간 뒤  만료
     });
 
+    if (!token) {
+      throw new Error("토큰이 정상적으로 발급되지 않았습니다.");
+    }
+
     return { token };
   }
 
+  // 내 정보 보기
   async getMyInfo(userId) {
     if (!userId) {
-      throw new Error("Need to login");
+      throw new Error("로그인이 필요합니다.");
     }
-    return await userModel.findById(userId);
+    const my = await userModel.findById(userId);
+    if (!my) {
+      throw new Error("회원 정보를 불러올 수 없습니다.");
+    }
+    return my;
   }
 
-  // 유저정보 수정, 현재 비밀번호가 있어야 수정 가능함.
+  // 회원 정보 수정.
   async setUser(userInfoRequired, toUpdate) {
-    // 객체 destructuring
     const { userId, currentPassword } = userInfoRequired;
     const { fullName, password, address, phoneNumber, role } = toUpdate;
     if (!fullName || !password || !address || !phoneNumber || !role) {
-      throw new Error("Need All Elements in body");
+      throw new Error("모든 정보를 입력해 주세요.");
     }
     // 기본 코드 수정. 유저 정보 존재 확인 및 비밀번호 검증 메소드
     await this.userVerify(userId, currentPassword);
-
-    // 이제 드디어 업데이트 시작
-
-    // 비밀번호도 변경하는 경우에는, 회원가입 때처럼 해쉬화 해주어야 함.
 
     if (password) {
       const newPasswordHash = await bcrypt.hash(password, 10);
@@ -114,9 +129,14 @@ class UserService {
       update: toUpdate,
     });
 
+    if (!user) {
+      throw new Error("회원 정보 수정이 정상적으로 처리되지 않았습니다.");
+    }
+
     return user;
   }
 
+  // 회원 정보에 배송지 추가
   async setUserAddress(userId, address) {
     const { addressName, postalCode, address1, address2 } = address;
     if (!addressName || !postalCode || !address1 || !address2) {
@@ -138,15 +158,47 @@ class UserService {
     return updatedUser;
   }
 
+  // 회원 탈퇴
   async deleteUser(userInfoRequired) {
     const { userId, currentPassword } = userInfoRequired;
 
+    if (!userId || !currentPassword) {
+      throw new Error("현재 비밀번호를 입력해 주세요.");
+    }
     // 기본 코드 수정. 유저 정보 존재 확인 및 비밀번호 검증 메소드
     await this.userVerify(userId, currentPassword);
 
-    return await this.userModel.deleteById(userId);
+    const deletedUser = await this.userModel.deleteById(userId);
+    if (!deletedUser) {
+      throw new Error("회원 탈퇴가 정상적으로 처리되지 않았습니다.");
+    }
+    return deletedUser;
   }
 
+  // 회원 정보에서 배송지 삭제
+  async deleteAddress(userId, addressName) {
+    const userInfo = await this.getMyInfo(userId);
+    if (!userInfo) {
+      throw new Error("해당 회원 정보가 없습니다.");
+    }
+    if (!addressName) {
+      throw new Error("삭제할 주소가 없습니다.");
+    }
+    const newDelete = await userInfo.address.filter(
+      (e) => e.addressName !== addressName
+    );
+    const deleteUpdate = { $set: { address: newDelete } };
+    const deletedUserAddress = await this.userModel.update({
+      userId,
+      update: deleteUpdate,
+    });
+    if (!deletedUserAddress) {
+      throw new Error("주소가 정상적으로 삭제되지 않았습니다.");
+    }
+    return deletedUserAddress;
+  }
+
+  // 유저 정보 존재 확인 및 비밀번호 검증 메소드
   async userVerify(userId, currentPassword) {
     // 우선 해당 id의 유저가 db에 있는지 확인
     let user = await this.userModel.findById(userId);
@@ -173,35 +225,8 @@ class UserService {
     }
   }
 
-  async deleteAddress(userId, addressName) {
-    const userInfo = await this.getMyInfo(userId);
-    if (!userInfo) {
-      throw new Error("해당 회원 정보가 없습니다.");
-    }
-    if (!addressName) {
-      throw new Error("삭제할 주소가 없습니다.");
-    }
-    const newDelete = await userInfo.address.filter(
-      (e) => e.addressName !== addressName
-    );
-    const deleteUpdate = { $set: { address: newDelete } };
-    const deletedUserAddress = await this.userModel.update({
-      userId,
-      update: deleteUpdate,
-    });
-    if (!deletedUserAddress) {
-      throw new Error("주소가 정상적으로 삭제되지 않았습니다.");
-    }
-    return deletedUserAddress;
-  }
-
   async exceptPwd(userInfo) {
     return await (({ password, ...o }) => o)(userInfo);
-  }
-
-  //유저별 판매 목록 조회
-  async getProductsByUserId(userId) {
-    return await this.productModel.findByUserId(userId);
   }
 }
 

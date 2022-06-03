@@ -22,6 +22,7 @@ class AdminService {
 
   // 주문 목록 조회
   async getOrders() {
+    // db에서 주문 정보 조회
     const orders = await this.orderModel.findAll();
     if (!orders) {
       throw new Error("주문 목록을 조회할 수 없습니다.");
@@ -31,6 +32,7 @@ class AdminService {
 
   // orderId로 주문 목록 조회
   async getOrdersByOrderId(orderId) {
+    // db에서 주문 정보 조회
     const order = await this.orderModel.findById(orderId);
     if (!order) {
       throw new Error("주문 목록을 조회할 수 없습니다.");
