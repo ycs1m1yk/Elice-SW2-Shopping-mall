@@ -7,8 +7,33 @@ import { contentTypeChecker } from "../utils/content-type-checker";
 
 const userRouter = Router();
 
+// 내 정보 보기 api
+userRouter.get("/my", loginRequired, async (req, res, next) => {
+  try {
+    const userId = req.currentUserId;
+    let myInfo = await userService.getMyInfo(userId);
+
+    const myInfoWithoutPwd = await userService.exceptPwd(myInfo._doc);
+    res.status(200).json(myInfoWithoutPwd);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 내 판매 목록 보기 api
+userRouter.get("/user/sellinglist", loginRequired, async (req, res, next) => {
+  try {
+    const userId = req.currentUserId;
+    const mySellingInfo = await userService.getProductsByUserId(userId);
+    res.status(200).json(mySellingInfo);
+  } catch (error) {
+    next(error);
+  }
+});
+
 // 회원가입 할때 작성한 이메일로 인증코드가 담긴 메일 전송
 userRouter.post("/mail", async (req, res, next) => {
+  contentTypeChecker(req.body);
   let authNum = Math.random().toString().substr(2, 6);
   const mailOptions = {
     from: "rhakdjfk@ajou.ac.kr",
@@ -71,25 +96,16 @@ userRouter.post("/login", async function (req, res, next) {
   }
 });
 
-// 내 정보 보기 api
-userRouter.get("/my", loginRequired, async (req, res, next) => {
+userRouter.post("/address", loginRequired, async (req, res, next) => {
   try {
-    const userId = req.currentUserId;
-    let myInfo = await userService.getMyInfo(userId);
+    contentTypeChecker(req.body);
 
-    const myInfoWithoutPwd = await userService.exceptPwd(myInfo._doc);
-    res.status(200).json(myInfoWithoutPwd);
-  } catch (error) {
-    next(error);
-  }
-});
-
-// 내 판매 목록 보기 api
-userRouter.get("/user/sellinglist", loginRequired, async (req, res, next) => {
-  try {
     const userId = req.currentUserId;
-    const mySellingInfo = await userService.getProductsByUserId(userId);
-    res.status(200).json(mySellingInfo);
+    const { addressName, postalCode, address1, address2 } = req.body;
+    const address = { addressName, postalCode, address1, address2 };
+
+    const newAddress = await userService.setUserAddress(userId, address);
+    res.status(200).json(newAddress);
   } catch (error) {
     next(error);
   }
@@ -142,21 +158,6 @@ userRouter.put("/user", loginRequired, async function (req, res, next) {
     );
     // 업데이트 이후의 유저 데이터를 프론트에 보내 줌
     res.status(200).json(userInfoWithoutPwd);
-  } catch (error) {
-    next(error);
-  }
-});
-
-userRouter.post("/address", loginRequired, async (req, res, next) => {
-  try {
-    contentTypeChecker(req.body);
-
-    const userId = req.currentUserId;
-    const { addressName, postalCode, address1, address2 } = req.body;
-    const address = { addressName, postalCode, address1, address2 };
-
-    const newAddress = await userService.setUserAddress(userId, address);
-    res.status(200).json(newAddress);
   } catch (error) {
     next(error);
   }

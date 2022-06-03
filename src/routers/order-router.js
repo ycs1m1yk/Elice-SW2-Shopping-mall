@@ -5,6 +5,19 @@ import { orderService } from "../services";
 import { contentTypeChecker } from "../utils/content-type-checker";
 const orderRouter = Router();
 
+// 내 주문 목록 보기 api (아래는 /:userId 이지만, 실제로는 /api/order/:userId로 요청해야 함.)
+orderRouter.get("/orderList", loginRequired, async function (req, res, next) {
+  try {
+    const userId = req.currentUserId;
+
+    const orderInfo = await orderService.getOrders(userId);
+
+    res.status(200).json(orderInfo);
+  } catch (error) {
+    next(error);
+  }
+});
+
 // 주문하기 api (아래는 /complete이지만, 실제로는 /api/order/complete로 요청해야 함.)
 orderRouter.post("/complete", loginRequired, async (req, res, next) => {
   try {
@@ -62,19 +75,6 @@ orderRouter.post("/complete", loginRequired, async (req, res, next) => {
   }
 });
 
-// 내 주문 목록 보기 api (아래는 /:userId 이지만, 실제로는 /api/order/:userId로 요청해야 함.)
-orderRouter.get("/orderList", loginRequired, async function (req, res, next) {
-  try {
-    const userId = req.currentUserId;
-
-    const orderInfo = await orderService.getOrders(userId);
-
-    res.status(200).json(orderInfo);
-  } catch (error) {
-    next(error);
-  }
-});
-
 orderRouter.delete("/delete", loginRequired, async function (req, res, next) {
   try {
     contentTypeChecker(req.body);
@@ -90,7 +90,6 @@ orderRouter.delete("/delete", loginRequired, async function (req, res, next) {
       orderId,
       productId,
     });
-    console.log("삭제 완료");
 
     res.status(200).json(deleteOrderInfo);
   } catch (error) {
