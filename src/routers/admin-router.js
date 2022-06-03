@@ -230,6 +230,7 @@ adminRouter.delete(
   async function (req, res, next) {
     try {
 <<<<<<< HEAD
+<<<<<<< HEAD
       // Content-Type 체크
       contentTypeChecker(req.body);
       const { orderId, productId } = req.body; // 배열
@@ -237,6 +238,11 @@ adminRouter.delete(
       const { productIdList } = req.body;
       console.log(productIdList);
 >>>>>>> 83affa258320e92349a19650e048e06cee82bc28
+=======
+      // Content-Type 체크
+      contentTypeChecker(req.body);
+      const { orderId, productId } = req.body; // 배열
+>>>>>>> da1d5842dcc8cc4008599c07f63125b2cbc55f30
       const userId = req.currentUserId;
       // 관리자 계정 검증
       adminService.adminVerify(userId);
