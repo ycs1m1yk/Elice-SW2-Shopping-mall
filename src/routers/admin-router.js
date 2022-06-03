@@ -15,11 +15,8 @@ adminRouter.get("/users", loginRequired, async (req, res, next) => {
     await adminService.adminVerify(userId);
     // db에서 전체 회원 목록 가져옴
     const users = await adminService.getUsers();
-    // 회원 정보에서 password를 제외하고 front에 전달
-    const usersWithoutPwd = await users.map((e) => {
-      return adminService.exceptPwd(e._doc);
-    });
-    res.status(200).json(usersWithoutPwd);
+
+    res.status(200).json(users);
   } catch (error) {
     next(error);
   }
