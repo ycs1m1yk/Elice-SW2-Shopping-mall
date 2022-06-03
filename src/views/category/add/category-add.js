@@ -58,7 +58,7 @@ const handleSubmit = async (e) => {
 
   const formData = new FormData(categoryForm);
 
-  categoryId ? request("PATCH", formData) : request("POST", formData);
+  categoryId ? request("PUT", formData) : request("POST", formData);
 };
 
 const handleUpload = () => {

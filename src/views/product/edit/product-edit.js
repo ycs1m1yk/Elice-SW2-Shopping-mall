@@ -4,6 +4,7 @@ import { getToken, decodeJWT } from "/useful-functions.js";
 
 document.body.insertAdjacentElement("afterbegin", header);
 
+const token = decodeJWT(localStorage.getItem("token"));
 const productForm = document.getElementById("productForm");
 const productArr = [];
 
@@ -38,7 +39,6 @@ const paintProductList = (productList) => {
 };
 
 const handleProductDelete = async (e) => {
-  console.log(e.target);
   e.preventDefault();
   const targetName = e.target.closest(".field").dataset.name;
 
@@ -48,7 +48,19 @@ const handleProductDelete = async (e) => {
 
   const bodyData = [targetProduct.flat(Infinity)[0]];
 
-  await fetch("/api/product/delete", {
+  // /api/product/delete, /api/admin/product/delete
+  let apiUrl;
+
+  if (token.role === "admin") {
+    apiUrl = "/api/admin/product/delete";
+  } else if (token.role === "seller") {
+    apiUrl = "/api/product/delete";
+  }
+
+  console.log(apiUrl);
+  console.log(bodyData);
+
+  await fetch(`${apiUrl}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -68,7 +80,6 @@ const handleProductDelete = async (e) => {
 };
 
 const getDataFromApi = async () => {
-  const token = decodeJWT(localStorage.getItem("token"));
   let productList;
   if (token.role === "admin") {
     productList = await Api.get("/api/product");
@@ -76,10 +87,8 @@ const getDataFromApi = async () => {
     productList = await Api.get("/api/user/sellinglist");
   }
 
-  console.log(productList);
   productList.forEach(({ _id, name, ...rest }) => productArr.push([_id, name]));
 
-  console.log(productArr);
   paintProductList(productList);
 };
 
