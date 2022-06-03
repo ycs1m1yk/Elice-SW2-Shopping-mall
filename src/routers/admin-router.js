@@ -199,6 +199,7 @@ adminRouter.delete(
   async function (req, res, next) {
     try {
       const { productIdList } = req.body;
+      console.log(productIdList);
       const userId = req.currentUserId;
       await adminService.adminVerify(userId); //admin인지 확인
 
