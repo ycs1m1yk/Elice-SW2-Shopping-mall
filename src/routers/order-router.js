@@ -90,7 +90,6 @@ orderRouter.delete("/delete", loginRequired, async function (req, res, next) {
       orderId,
       productId,
     });
-    console.log("삭제 완료");
 
     res.status(200).json(deleteOrderInfo);
   } catch (error) {
