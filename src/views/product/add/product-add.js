@@ -89,13 +89,13 @@ const request = async (role, req, formData) => {
 
   if (role === "admin") {
     if (req === "POST") {
-      apiUrl = `/api/admin/product/add`;
+      apiUrl = "/api/admin/product/add";
     } else if (req === "PUT") {
       apiUrl = `/api/admin/product/${productId}`;
     }
   } else if (role === "seller") {
     if (req === "POST") {
-      apiUrl = `/api/product/add`;
+      apiUrl = "/api/product/add";
     } else if (req === "PUT") {
       apiUrl = `/api/product/${productId}/update`;
     }
@@ -114,7 +114,7 @@ const request = async (role, req, formData) => {
       const { reason } = errorContent;
 
       alert(reason);
-      location.reload();
+      location.href = "#";
       return;
     }
     alert("상품 등록이 정상적으로 이루어졌습니다.");

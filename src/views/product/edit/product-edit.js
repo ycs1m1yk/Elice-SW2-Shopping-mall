@@ -57,9 +57,6 @@ const handleProductDelete = async (e) => {
     apiUrl = "/api/product/delete";
   }
 
-  console.log(apiUrl);
-  console.log(bodyData);
-
   await fetch(`${apiUrl}`, {
     method: "DELETE",
     headers: {
@@ -69,14 +66,16 @@ const handleProductDelete = async (e) => {
     body: JSON.stringify({
       productIdList: bodyData,
     }),
-  }).then((res) => {
-    if (res.ok) {
+  })
+    .then((res) => res.json())
+    .then((result) => {
+      if (result.result === "error") {
+        location.reload();
+        return alert(result.reason);
+      }
       location.reload();
-      return alert("상품이 성공적으로 삭제되었습니다.");
-    }
-    location.reload();
-    alert("본인이 등록한 상품이 아닙니다. 다시 시도해주십시오.");
-  });
+      alert("상품이 성공적으로 삭제되었습니다.");
+    });
 };
 
 const getDataFromApi = async () => {

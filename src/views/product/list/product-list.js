@@ -5,8 +5,6 @@ document.body.insertAdjacentElement("afterbegin", header);
 const producItemContainer = document.getElementById("producItemContainer"); // API를 통해 호출된 데이터로 만든 엘리먼트가 추가될 엘리먼트
 
 const paintProductList = (productList) => {
-  console.log(productList);
-
   productList.forEach((product) => {
     let itemCard = document.createElement("a");
     let tags = document.createElement("div");

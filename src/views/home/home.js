@@ -151,7 +151,7 @@ const paintCategoryMenu = (categoryList) => {
     categoryLink.classList.add("navbar-item");
     categoryLink.href = `/product/list?category=${category.name}`;
     categoryLink.innerText = `${category.name.replace(" Clothes", "")}`;
-    categoryLink.style = `font-size: 24px`;
+    categoryLink.style = "font-size: 24px";
 
     categoryLi.appendChild(categoryLink);
     categoryMenu.appendChild(categoryLi);
