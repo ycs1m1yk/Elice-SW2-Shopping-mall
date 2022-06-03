@@ -12,6 +12,10 @@ export class OrderModel {
     return await Order.findOne({ _id });
   }
 
+  async findAll() {
+    return await Order.find({});
+  }
+
   async create(orderInfo) {
     return await Order.create(orderInfo);
   }
@@ -25,10 +29,6 @@ export class OrderModel {
 
   async updateStatus({ findCondition, update }) {
     return await Order.findOneAndUpdate(findCondition, update);
-  }
-
-  async findAll() {
-    return await Order.find({});
   }
 
   async deleteById(_id) {
