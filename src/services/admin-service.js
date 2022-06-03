@@ -91,9 +91,8 @@ class AdminService {
     }
   }
 
-  exceptPwd(object) {
-    const { password, ...otherKeys } = object;
-    return otherKeys;
+  async exceptPwd(userInfo) {
+    return await (({ password, ...o }) => o)(userInfo);
   }
 
   async setProduct(productId, toUpdate) {

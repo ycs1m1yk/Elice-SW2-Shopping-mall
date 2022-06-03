@@ -5,6 +5,19 @@ import { orderService } from "../services";
 import { contentTypeChecker } from "../utils/content-type-checker";
 const orderRouter = Router();
 
+// 내 주문 목록 보기 api (아래는 /:userId 이지만, 실제로는 /api/order/:userId로 요청해야 함.)
+orderRouter.get("/orderList", loginRequired, async function (req, res, next) {
+  try {
+    const userId = req.currentUserId;
+
+    const orderInfo = await orderService.getOrders(userId);
+
+    res.status(200).json(orderInfo);
+  } catch (error) {
+    next(error);
+  }
+});
+
 // 주문하기 api (아래는 /complete이지만, 실제로는 /api/order/complete로 요청해야 함.)
 orderRouter.post("/complete", loginRequired, async (req, res, next) => {
   try {
@@ -57,19 +70,6 @@ orderRouter.post("/complete", loginRequired, async (req, res, next) => {
     // 추가된 주문 db 데이터를 프론트에 다시 보내줌
     // 물론 프론트에서 안 쓸 수도 있지만, 편의상 일단 보내 줌
     res.status(201).json(newOrder);
-  } catch (error) {
-    next(error);
-  }
-});
-
-// 내 주문 목록 보기 api (아래는 /:userId 이지만, 실제로는 /api/order/:userId로 요청해야 함.)
-orderRouter.get("/orderList", loginRequired, async function (req, res, next) {
-  try {
-    const userId = req.currentUserId;
-
-    const orderInfo = await orderService.getOrders(userId);
-
-    res.status(200).json(orderInfo);
   } catch (error) {
     next(error);
   }
