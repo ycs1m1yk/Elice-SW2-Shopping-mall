@@ -2,5 +2,6 @@
 node_modules
 yarn.lock
 **/access.log
-**/.DS_Store
+.DS_Store
 .cache
+.env
